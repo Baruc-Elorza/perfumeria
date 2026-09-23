@@ -1,5 +1,6 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   imports: [RouterOutlet],
@@ -8,5 +9,14 @@ import { RouterOutlet } from '@angular/router';
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly title = signal('Pfrontend');
+  mensaje = '';
+  constructor(private http: HttpClient){
+    this.http
+    .get('http://localhost:8080/api/hola', {
+      responseType: 'text'
+    })
+    .subscribe(respuesta =>{
+      this.mensaje = respuesta;
+    });
+  }
 }
