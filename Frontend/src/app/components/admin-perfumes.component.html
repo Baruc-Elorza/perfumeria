@@ -1,0 +1,51 @@
+<div class="container my-4">
+  <h2>Administración Perfumes en Inventario</h2>
+
+  <!-- Formulario para agregar perfume -->
+  <form (ngSubmit)="guardarPerfume()" class="card p-3 mb-4 shadow-sm">
+    <h4>Agregar Nuevo Perfume</h4>
+    <div class="row g-2">
+      <div class="col-md-3">
+        <input type="text" class="form-control" placeholder="Nombre" [(ngModel)]="nuevoPerfume.nombre" name="nombre" required>
+      </div>
+      <div class="col-md-3">
+        <input type="text" class="form-control" placeholder="Marca" [(ngModel)]="nuevoPerfume.marca" name="marca" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" class="form-control" placeholder="Precio" [(ngModel)]="nuevoPerfume.precio" name="precio" required>
+      </div>
+      <div class="col-md-2">
+        <input type="number" class="form-control" placeholder="Stock" [(ngModel)]="nuevoPerfume.stock" name="stock" required>
+      </div>
+      <div class="col-md-2">
+        <button type="submit" class="btn btn-primary w-100">Guardar</button>
+      </div>
+    </div>
+  </form>
+
+  <!-- Tabla de inventario -->
+  <table class="table table-striped align-middle">
+    <thead class="table-dark">
+      <tr>
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Marca</th>
+        <th>Precio</th>
+        <th>Stock</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of perfumes">
+        <td>{{ p.id }}</td>
+        <td>{{ p.nombre }}</td>
+        <td>{{ p.marca }}</td>
+        <td>${{ p.precio }}</td>
+        <td>{{ p.stock }}</td>
+        <td>
+          <button class="btn btn-danger btn-sm" (click)="eliminarPerfume(p.id)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
