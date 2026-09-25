@@ -10,17 +10,27 @@ public class Perfume {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String nombre;
+
+    @Column(nullable = false)
     private String marca;
+
+    @Column(length = 500)
+    private String descripcion; // Requerido para H.U.-09
+
     private Double precio;
+
     private Integer stock;
+
     private String imagenUrl;
 
     public Perfume() {}
 
-    public Perfume(String nombre, String marca, Double precio, Integer stock, String imagenUrl) {
+    public Perfume(String nombre, String marca, String descripcion, Double precio, Integer stock, String imagenUrl) {
         this.nombre = nombre;
         this.marca = marca;
+        this.descripcion = descripcion;
         this.precio = precio;
         this.stock = stock;
         this.imagenUrl = imagenUrl;
@@ -35,6 +45,9 @@ public class Perfume {
 
     public String getMarca() { return marca; }
     public void setMarca(String marca) { this.marca = marca; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
     public Double getPrecio() { return precio; }
     public void setPrecio(Double precio) { this.precio = precio; }

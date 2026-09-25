@@ -22,6 +22,14 @@ public class PerfumeController {
         return perfumeRepository.findAll();
     }
 
+    // GET: Obtener el detalle de un perfume por ID (H.U.-09)
+    @GetMapping("/{id}")
+    public ResponseEntity<Perfume> obtenerDetalle(@PathVariable Long id) {
+        return perfumeRepository.findById(id)
+                .map(perfume -> ResponseEntity.ok(perfume))
+                .orElse(ResponseEntity.notFound().build());
+    }
+
     // POST: Registrar un nuevo perfume
     @PostMapping
     public ResponseEntity<Perfume> agregar(@RequestBody Perfume perfume) {
