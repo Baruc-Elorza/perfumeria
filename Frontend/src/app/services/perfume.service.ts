@@ -15,6 +15,11 @@ export class PerfumeService {
     return this.http.get<Perfume[]>(this.apiUrl);
   }
 
+  // H.U.-09: Obtener el detalle de un perfume por su ID
+  getPerfumePorId(id: number): Observable<Perfume> {
+    return this.http.get<Perfume>(`${this.apiUrl}/${id}`);
+  }
+
   agregarPerfume(perfume: Perfume): Observable<Perfume> {
     return this.http.post<Perfume>(this.apiUrl, perfume);
   }

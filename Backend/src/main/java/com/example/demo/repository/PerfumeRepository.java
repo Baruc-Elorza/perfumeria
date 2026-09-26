@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PerfumeRepository extends JpaRepository<Perfume, Long> {
+    // JpaRepository ya incluye los métodos findById, findAll, save y deleteById
 }
