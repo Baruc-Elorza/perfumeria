@@ -1,0 +1,63 @@
+<main class="catalogo">
+  <header class="encabezado">
+    <p class="etiqueta">Perfumería</p>
+    <h1>Catálogo de fragancias</h1>
+    <p>Encuentra tu próxima fragancia y consulta su disponibilidad.</p>
+  </header>
+
+  <section class="buscador" aria-label="Búsqueda de perfumes">
+    <label for="busqueda">Buscar por nombre</label>
+    <input
+      id="busqueda"
+      type="search"
+      name="busqueda"
+      [(ngModel)]="textoBusqueda"
+      (input)="buscar()"
+      placeholder="Ej. Sauvage"
+      autocomplete="off"
+    >
+  </section>
+
+  <p *ngIf="cargando" class="estado">Cargando perfumes...</p>
+  <p *ngIf="errorCarga" class="estado error">
+    No fue posible cargar el catálogo. Intenta nuevamente más tarde.
+  </p>
+
+  <section *ngIf="!cargando && !errorCarga" class="resultados" aria-live="polite">
+    <p *ngIf="textoBusqueda.trim() && perfumesFiltrados.length === 0" class="estado">
+      No se encontraron perfumes con ese nombre.
+    </p>
+
+    <p *ngIf="!textoBusqueda.trim() && perfumesFiltrados.length === 0" class="estado">
+      Aún no hay perfumes en el catálogo.
+    </p>
+
+    <div class="rejilla">
+      <article *ngFor="let perfume of perfumesFiltrados" class="tarjeta">
+        <img
+          *ngIf="perfume.imagenUrl"
+          [src]="perfume.imagenUrl"
+          [alt]="'Frasco de ' + perfume.nombre"
+        >
+        <div *ngIf="!perfume.imagenUrl" class="sin-imagen" aria-hidden="true">
+          {{ perfume.nombre.charAt(0) }}
+        </div>
+
+        <div class="contenido">
+          <p class="marca">{{ perfume.marca }}</p>
+          <h2>{{ perfume.nombre }}</h2>
+          <p *ngIf="perfume.descripcion" class="descripcion">{{ perfume.descripcion }}</p>
+          <p class="precio">{{ perfume.precio | currency:'MXN':'symbol-narrow':'1.2-2' }}</p>
+
+          <p class="existencia" [class.agotado]="perfume.stock <= 0">
+            {{ perfume.stock > 0 ? 'Disponible: ' + perfume.stock + ' unidades' : 'Agotado' }}
+          </p>
+
+          <button type="button" [disabled]="perfume.stock <= 0">
+            {{ perfume.stock > 0 ? 'Comprar' : 'Sin existencia' }}
+          </button>
+        </div>
+      </article>
+    </div>
+  </section>
+</main>

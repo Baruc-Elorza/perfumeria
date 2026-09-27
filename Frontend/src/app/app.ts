@@ -1,8 +1,8 @@
 import { Component } from '@angular/core';
-import { AdminPerfumesComponent } from './components/admin-perfumes/admin-perfumes.component';
+import { CatalogoPerfumesComponent } from './components/catalogo-perfumes/catalogo-perfumes.component';
 
 @Component({
-  imports: [AdminPerfumesComponent],
+  imports: [CatalogoPerfumesComponent],
   selector: 'app-root',
   styleUrl: './app.css',
   templateUrl: './app.html',
