@@ -40,17 +40,28 @@ public class PagoController {
         return ResponseEntity.ok(response);
     }
     @GetMapping("/estado/{id}")
-    public ResponseEntity<?> estadoPago(
+        public ResponseEntity<?> estadoPago(
         @PathVariable String id)
         throws StripeException {
 
-        String estado =
+    String estado =
             pagoService.verificarPago(id);
 
-        Map<String, String> response =
+    Map<String, String> response =
             new HashMap<>();
 
-    response.put("estado", estado);
+    if ("succeeded".equals(estado)) {
+        response.put("estado", "PAGADO");
+        response.put("mensaje", "Pago aprobado");
+    }
+    else if ("requires_payment_method".equals(estado)) {
+        response.put("estado", "RECHAZADO");
+        response.put("mensaje", "Tarjeta rechazada. Intente nuevamente.");
+    }
+    else {
+        response.put("estado", estado);
+        response.put("mensaje", "Pago en proceso");
+    }
 
     return ResponseEntity.ok(response);
 }
