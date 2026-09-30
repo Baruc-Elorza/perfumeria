@@ -1,0 +1,39 @@
+<div class="contenedor">
+
+  <h1>Perfumería</h1>
+
+  <div class="tarjeta">
+
+    <h2>Pago de pedido</h2>
+
+    <p>Importe: $500 MXN</p>
+
+    @if (cargando) {
+      <p>Preparando pago...</p>
+    }
+
+    <div id="payment-element"></div>
+
+    @if (mensaje) {
+      <p class="mensaje">
+        {{ mensaje }}
+      </p>
+    }
+
+    @if (!pagoExitoso) {
+      <button
+        type="button"
+        (click)="pagar()">
+        Pagar $500 MXN
+      </button>
+    }
+
+    @if (pagoExitoso) {
+      <p class="pago-confirmado">
+        ✓ Pago completado correctamente
+      </p>
+    }
+
+  </div>
+
+</div>

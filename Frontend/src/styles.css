@@ -1,1 +1,41 @@
-/* You can add global styles to this file, and also import other style files */
+/* estilos de pagos */
+body {
+  background-color: #ffffff;
+}
+
+.contenedor {
+  text-align: center;
+  margin-top: 50px;
+}
+
+h1 {
+  color: #b8860b;
+  margin-bottom: 30px;
+}
+
+.tarjeta {
+  width: 400px;
+  margin: auto;
+  padding: 25px;
+  border: 2px solid #d4af37;
+  border-radius: 12px;
+  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+}
+
+button {
+  background-color: #d4af37;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.mensaje {
+  margin-top: 20px;
+  font-weight: bold;
+}
