@@ -17,20 +17,21 @@ public class Perfume {
     private String marca;
 
     @Column(length = 500)
-    private String descripcion; // Requerido para H.U.-09
-
+    private String notasTop; // Requerido para H.U.-09
+    private String notasMiddle;
+    private String notasBase;
     private Double precio;
-
     private Integer stock;
-
     private String imagenUrl;
 
     public Perfume() {}
 
-    public Perfume(String nombre, String marca, String descripcion, Double precio, Integer stock, String imagenUrl) {
+    public Perfume(String nombre, String marca, String notasTop, String notasMiddle, String notasBase, Double precio, Integer stock, String imagenUrl) {
         this.nombre = nombre;
         this.marca = marca;
-        this.descripcion = descripcion;
+        this.notasTop = notasTop;
+        this.notasMiddle = notasMiddle;
+        this.notasBase = notasBase;
         this.precio = precio;
         this.stock = stock;
         this.imagenUrl = imagenUrl;
@@ -46,8 +47,14 @@ public class Perfume {
     public String getMarca() { return marca; }
     public void setMarca(String marca) { this.marca = marca; }
 
-    public String getDescripcion() { return descripcion; }
-    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public String getNotasTop() { return notasTop; }
+    public void setNotasTop(String notasTop) { this.notasTop = notasTop; }
+
+    public String getNotasMiddle() { return notasMiddle; }
+    public void setNotasMiddle(String notasMiddle) { this.notasMiddle = notasMiddle; }
+
+    public String getNotasBase() { return notasBase; }
+    public void setNotasBase(String notasBase) { this.notasBase = notasBase; }
 
     public Double getPrecio() { return precio; }
     public void setPrecio(Double precio) { this.precio = precio; }
