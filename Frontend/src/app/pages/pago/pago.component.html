@@ -1,15 +1,23 @@
 <div class="contenedor">
 
-  <h1>Perfumería</h1>
+  <h1>GMPerfumería</h1>
+
+  <p class="subtitulo">
+    Elegancia y aroma en cada compra
+  </p>
 
   <div class="tarjeta">
 
     <h2>Pago de pedido</h2>
 
-    <p>Importe: $500 MXN</p>
+    <p class="importe">
+      Importe: <strong>$500 MXN</strong>
+    </p>
 
     @if (cargando) {
-      <p>Preparando pago...</p>
+      <p class="mensaje">
+        Preparando pago...
+      </p>
     }
 
     <div id="payment-element"></div>
@@ -29,9 +37,10 @@
     }
 
     @if (pagoExitoso) {
-      <p class="pago-confirmado">
-        ✓ Pago completado correctamente
-      </p>
+      <div class="pago-confirmado">
+        <p>✓ Pago completado correctamente</p>
+        <p>Monto pagado: $500 MXN</p>
+      </div>
     }
 
   </div>
