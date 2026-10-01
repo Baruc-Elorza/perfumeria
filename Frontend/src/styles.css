@@ -12,7 +12,7 @@
 
         /* HEADER */
         header {
-            background: #111;
+            background: #FFD700;
             color: white;
             padding: 20px 7%;
             display: flex;
@@ -188,7 +188,7 @@
             width: 100%;
             padding: 15px;
             margin-top: 25px;
-            background: #111;
+            background: #FFD700;
             color: white;
             border: none;
             border-radius: 7px;
@@ -204,7 +204,7 @@
             display: block;
             text-align: center;
             margin-top: 15px;
-            color: #333;
+            color: #FFD700;
             font-size: 14px;
             text-decoration: none;
         }
@@ -241,7 +241,7 @@
         .coupon button {
             padding: 0 15px;
             border: none;
-            background: #222;
+            background: #FFD700;
             color: white;
             border-radius: 5px;
             cursor: pointer;
@@ -267,7 +267,7 @@
         .empty-cart a {
             display: inline-block;
             padding: 13px 25px;
-            background: #111;
+            background: #FFD700;
             color: white;
             text-decoration: none;
             border-radius: 6px;
