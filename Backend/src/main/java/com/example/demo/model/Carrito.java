@@ -2,6 +2,9 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity 
 @Table(name = "carrito")
 public class Carrito {
@@ -10,16 +13,19 @@ public class Carrito {
     private Long id;
 
     @Column(nullable = false)
-    private double total;
+    private double subtotal;
+
+    @OneToMany(mappedBy = "carrito")
+    private List<CarritoPerfume> perfumes = new ArrayList<>();
 
     public Carrito(){}
 
-    public Carrito(double total){
-        this.total=total;
+    public Carrito(double subtotal){
+        this.subtotal=subtotal;
     }
 
     public Long getId(){return id;}
     
-    public double getTotal(){return total;}
-    public void setTotal(double total){this.total=total;}
+    public double getSubtotal(){return subtotal;}
+    public void setSubtotal(double subtotal){this.subtotal=subtotal;}
 }
