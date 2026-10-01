@@ -9,7 +9,7 @@ import { CarritoService } from '../../services/carrito';
   templateUrl: './carrito.html',
 })
 export class Carrito implements OnInit {
-  carrito: any;
+  carrito: any[] = [];
   constructor(private carritoService: CarritoService){}
 
   ngOnInit(): void {
@@ -24,4 +24,14 @@ export class Carrito implements OnInit {
       }
   });
   }
+
+  getTotal(): number {
+
+    return this.carrito.reduce(
+        (total, producto) =>
+            total + (producto.precio * producto.cantidad),
+        0
+    );
+
+}
 }
