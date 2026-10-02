@@ -13,7 +13,7 @@
         /* HEADER */
         header {
             background: #FFD700;
-            color: white;
+            color: #222;
             padding: 20px 7%;
             display: flex;
             justify-content: space-between;
@@ -27,7 +27,7 @@
         }
 
         .back-link {
-            color: white;
+            color: #222;
             text-decoration: none;
             font-size: 14px;
         }
@@ -189,7 +189,7 @@
             padding: 15px;
             margin-top: 25px;
             background: #FFD700;
-            color: white;
+            color: #222;
             border: none;
             border-radius: 7px;
             font-size: 16px;
@@ -198,13 +198,14 @@
 
         .checkout:hover {
             background: #333;
+            color: white;
         }
 
         .continue {
             display: block;
             text-align: center;
             margin-top: 15px;
-            color: #FFD700;
+            color: #665600;
             font-size: 14px;
             text-decoration: none;
         }
@@ -268,10 +269,37 @@
             display: inline-block;
             padding: 13px 25px;
             background: #FFD700;
-            color: white;
+            color: #222;
             text-decoration: none;
             border-radius: 6px;
         }
+
+        button:disabled,
+        button:disabled:hover {
+            background: #ddd;
+            color: #666;
+            cursor: not-allowed;
+        }
+
+        .sin-imagen {
+            display: grid;
+            place-items: center;
+            background: #eee;
+            color: #666;
+            font-size: 3rem;
+        }
+
+        .estado {
+            margin-bottom: 24px;
+            padding: 24px;
+            background: white;
+            border-radius: 10px;
+        }
+
+        .estado button { margin-top: 12px; padding: 8px 16px; cursor: pointer; }
+        .error { color: #b00020; }
+        .total { gap: 12px; flex-wrap: wrap; }
+        :focus-visible { outline: 3px solid #665600; outline-offset: 3px; }
 
         /* RESPONSIVE */
         @media (max-width: 850px) {

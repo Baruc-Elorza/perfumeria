@@ -17,6 +17,9 @@ public class Perfume {
     private String marca;
 
     @Column(length = 500)
+    private String descripcion;
+
+    @Column(length = 500)
     private String notasTop; // Requerido para H.U.-09
     private String notasMiddle;
     private String notasBase;
@@ -47,6 +50,8 @@ public class Perfume {
     public void setMarca(String marca) { this.marca = marca; }
 
     public String getNotasTop() { return notasTop; }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
     public void setNotasTop(String notasTop) { this.notasTop = notasTop; }
 
     public String getNotasMiddle() { return notasMiddle; }

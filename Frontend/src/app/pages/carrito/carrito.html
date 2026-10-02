@@ -1,104 +1,67 @@
-<!DOCTYPE html>
-<html lang="es">
+<header>
+  <div class="logo">PERFUMERÍA</div>
+  <a routerLink="/" class="back-link">← Seguir comprando</a>
+</header>
 
-<head>
-    <link rel="stylesheet" href="../../../styles.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Carrito | Perfumería</title>
-
-</head>
-
-
-<body>
-
-    <header>
-        <div class="logo">
-            PERFUMERÍA
-        </div>
-
-        <a href="#" class="back-link">
-            ← Seguir comprando
-        </a>
-    </header>
-
-
-    <main class="container">
-
-        <h1>Mi carrito</h1>
-
-        <div class="cart-layout">
-
-            <!-- PRODUCTOS -->
-            <section class="cart-products">
-
-                @for (producto of carrit; track producto.id){
-                <div class="cart-product">
-                    <img [src]="producto.imagen" [alt]="producto.nombre">
-
-                    <div class="peoduct-info" <h2>
-                        {{ producto.nombre }}
-                        </h2>
-
-                        <p>
-                            ${{ producto.precio }} MXN
-                        </p>
-
-                        <div class="cantidad">
-                            <button>-</button>
-
-                            <span>
-                                {{ producto.cantidad }}
-                            </span>
-
-                            <button>+</button>
-                        </div>
-
-                    </div>
-
-                    <div class="product-total">
-
-                        ${{ producto.precio * producto.cantidad }} MXN
-
-                        <button>
-                            Eliminar
-                        </button>
-
-                    </div>
-
-                    }
-
-            </section>
-
-
-            <!-- RESUMEN -->
-            <aside class="summary">
-
-                <h2>Resumen del pedido</h2>
-
-                <p>
-                    Subtotal:
-                    ${{ getTotal() }} MXN
-                </p>
-
-                <p>
-                    Envío: Gratis
-                </p>
-
-                <h2>
-                    Total: ${{ getTotal() }} MXN
-                </h2>
-
-                <button>
-                    Proceder al pago
-                </button>
-
-            </aside>
-
-        </div>
-
-    </main>
-
-</body>
-
-</html>
+<main class="container" [attr.aria-busy]="cargando() || actualizando()">
+  <h1>Mi carrito</h1>
+  @if (error()) {
+    <div class="estado error" role="alert">
+      <p>{{ error() }}</p>
+      <button type="button" (click)="cargar()" [disabled]="actualizando()">Reintentar</button>
+    </div>
+  }
+  @if (cargando()) {
+    <p class="estado" role="status">Cargando carrito...</p>
+  } @else if (carrito().items.length) {
+    <div class="cart-layout">
+      <section class="cart-products" aria-label="Productos del carrito">
+        @for (producto of carrito().items; track producto.perfumeId) {
+          <article class="cart-product">
+            @if (producto.imagenUrl) {
+              <img class="product-image" [src]="producto.imagenUrl" [alt]="producto.nombre">
+            } @else {
+              <div class="product-image sin-imagen" aria-hidden="true">{{ producto.nombre.charAt(0) }}</div>
+            }
+            <div class="product-info">
+              <h2>{{ producto.nombre }}</h2>
+              <p>{{ producto.marca }}</p>
+              <p class="price">{{ producto.precio | currency:'MXN':'symbol-narrow' }} MXN</p>
+              <div class="quantity">
+                <button type="button" (click)="cambiarCantidad(producto, -1)"
+                  [disabled]="actualizando() || producto.cantidad <= 1"
+                  [attr.aria-label]="'Reducir cantidad de ' + producto.nombre">−</button>
+                <span aria-live="polite">{{ producto.cantidad }}</span>
+                <button type="button" (click)="cambiarCantidad(producto, 1)"
+                  [disabled]="actualizando() || producto.cantidad >= producto.stock"
+                  [attr.aria-label]="'Aumentar cantidad de ' + producto.nombre">+</button>
+              </div>
+              @if (producto.cantidad > producto.stock) {
+                <p class="error">Las existencias cambiaron. Ajusta la cantidad o elimina este perfume.</p>
+              }
+            </div>
+            <div class="product-total">
+              {{ producto.precio * producto.cantidad | currency:'MXN':'symbol-narrow' }} MXN
+              <button class="remove" type="button" (click)="eliminar(producto)"
+                [disabled]="actualizando()" [attr.aria-label]="'Eliminar ' + producto.nombre">Eliminar</button>
+            </div>
+          </article>
+        }
+      </section>
+      <aside class="summary">
+        <h2>Resumen del pedido</h2>
+        <div class="summary-row"><span>Subtotal</span><span>{{ carrito().subtotal | currency:'MXN':'symbol-narrow' }} MXN</span></div>
+        <p>El envío se calculará al confirmar la compra.</p>
+        <div class="total"><span>Total de productos</span><span>{{ carrito().subtotal | currency:'MXN':'symbol-narrow' }}</span></div>
+        <button class="checkout" type="button" disabled>Pago próximamente</button>
+        <a routerLink="/" class="continue">Seguir comprando</a>
+      </aside>
+    </div>
+  } @else if (!error()) {
+    <section class="empty-cart">
+      <h2>Tu carrito está vacío</h2>
+      <p>Agrega una fragancia desde el catálogo.</p>
+      <a routerLink="/">Ver catálogo</a>
+    </section>
+  }
+</main>

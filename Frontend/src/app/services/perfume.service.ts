@@ -15,6 +15,12 @@ export class PerfumeService {
     return this.http.get<Perfume[]>(this.apiUrl);
   }
 
+  buscarPorNombre(nombre: string): Observable<Perfume[]> {
+    return this.http.get<Perfume[]>(this.apiUrl, {
+      params: { nombre: nombre.trim() }
+    });
+  }
+
   // H.U.-09: Obtener el detalle de un perfume por su ID
   getPerfumePorId(id: number): Observable<Perfume> {
     return this.http.get<Perfume>(`${this.apiUrl}/${id}`);
@@ -26,5 +32,9 @@ export class PerfumeService {
 
   eliminarPerfume(id: number): Observable<void> {
     return this.http.delete<void>(`${this.apiUrl}/${id}`);
+  }
+
+  actualizarPerfume(id: number, perfume: Perfume): Observable<Perfume> {
+    return this.http.put<Perfume>(`${this.apiUrl}/${id}`, perfume);
   }
 }
