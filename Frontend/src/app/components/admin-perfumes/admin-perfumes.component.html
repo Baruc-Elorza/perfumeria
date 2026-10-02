@@ -17,9 +17,9 @@
         <label>Existencias *<input type="number" name="stock" [(ngModel)]="nuevoPerfume.stock" required min="0" step="1"></label>
         <label class="ancho">Descripción<textarea name="descripcion" [(ngModel)]="nuevoPerfume.descripcion" maxlength="500" rows="3"></textarea></label>
         <label class="ancho">URL de imagen<input type="url" name="imagenUrl" [(ngModel)]="nuevoPerfume.imagenUrl" maxlength="255" placeholder="https://ejemplo.com/perfume.jpg"></label>
-        <label>Notas de salida<input name="notasTop" [(ngModel)]="nuevoPerfume.notasTop" maxlength="500"></label>
-        <label>Notas de corazón<input name="notasMiddle" [(ngModel)]="nuevoPerfume.notasMiddle" maxlength="255"></label>
-        <label>Notas de fondo<input name="notasBase" [(ngModel)]="nuevoPerfume.notasBase" maxlength="255"></label>
+        <label>Aroma inicial<input name="notasTop" [(ngModel)]="nuevoPerfume.notasTop" maxlength="500"></label>
+        <label>Aroma de cuerpo<input name="notasMiddle" [(ngModel)]="nuevoPerfume.notasMiddle" maxlength="255"></label>
+        <label>Aroma final<input name="notasBase" [(ngModel)]="nuevoPerfume.notasBase" maxlength="255"></label>
       </div>
       <div class="acciones">
         <button type="submit" class="checkout" [disabled]="formulario.invalid || guardando() || cargando()">{{ guardando() ? 'Procesando...' : (editandoId === null ? 'Agregar perfume' : 'Guardar cambios') }}</button>
@@ -41,9 +41,9 @@
       <h2>{{ producto.nombre }} — {{ producto.marca }}</h2>
       <p>{{ producto.descripcion || 'Sin descripción.' }}</p>
       <p>{{ producto.precio | currency:'MXN':'symbol-narrow' }} MXN · Existencias: {{ producto.stock }}</p>
-      <p>Salida: {{ producto.notasTop || 'Sin especificar' }}</p>
-      <p>Corazón: {{ producto.notasMiddle || 'Sin especificar' }}</p>
-      <p>Fondo: {{ producto.notasBase || 'Sin especificar' }}</p>
+      <p>Aroma inicial: {{ producto.notasTop || 'Sin especificar' }}</p>
+      <p>Aroma de cuerpo: {{ producto.notasMiddle || 'Sin especificar' }}</p>
+      <p>Aroma final: {{ producto.notasBase || 'Sin especificar' }}</p>
       <button type="button" (click)="detalle.set(null)">Cerrar detalle</button>
     </section>
   }
