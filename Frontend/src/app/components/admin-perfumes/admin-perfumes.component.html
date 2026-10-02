@@ -1,75 +1,80 @@
-<div class="container my-4">
-  <h2>Administración Perfumes en Inventario</h2>
+<header>
+  <div class="logo">PERFUMERÍA</div>
+  <a routerLink="/" class="back-link">Volver al catálogo</a>
+</header>
+<main class="container">
+  <h1>Administrar perfumes</h1>
+  @if (error()) { <p class="estado error" role="alert">{{ error() }}</p> }
+  @if (mensaje()) { <p class="estado shipping" role="status">{{ mensaje() }}</p> }
 
-  <div *ngIf="perfumeSeleccionado" class="card p-3 mb-4 shadow border-primary">
-    <div class="d-flex justify-content-between align-items-center mb-2">
-      <h4 class="text-primary mb-0">Detalle del Perfume</h4>
-      <button type="button" class="btn-close" (click)="cerrarDetalle()"></button>
-    </div>
-    <hr />
-    <h5>{{ perfumeSeleccionado.nombre }}</h5>
-    <p class="text-muted mb-1"><strong>Marca:</strong> {{ perfumeSeleccionado.marca }}</p>
-    <p class="mb-1"><strong>Descripción:</strong> {{ perfumeSeleccionado.descripcion || 'Sin descripción disponible.' }}</p>
-    <p class="mb-2"><strong>Precio:</strong> ${{ perfumeSeleccionado.precio }}</p>
-
-    <div>
-      <strong>Disponibilidad: </strong>
-      <span *ngIf="perfumeSeleccionado.stock > 0" class="badge bg-success">
-        Disponible ({{ perfumeSeleccionado.stock }} unidades)
-      </span>
-      <span *ngIf="perfumeSeleccionado.stock <= 0" class="badge bg-danger">
-        Agotado / Sin existencia
-      </span>
-    </div>
-  </div>
-
-  <form (ngSubmit)="guardarPerfume()" class="card p-3 mb-4 shadow-sm">
-    <h4>Agregar Nuevo Perfume</h4>
-    <div class="row g-2">
-      <div class="col-md-3">
-        <input type="text" class="form-control" placeholder="Nombre" [(ngModel)]="nuevoPerfume.nombre" name="nombre" required>
+  <form #formulario="ngForm" (ngSubmit)="guardarPerfume(formulario)" class="cart-products formulario">
+    <h2>{{ editandoId === null ? 'Agregar perfume' : 'Editar perfume' }}</h2>
+    <fieldset [disabled]="guardando() || cargando()">
+      <div class="campos">
+        <label>Nombre *<input name="nombre" [(ngModel)]="nuevoPerfume.nombre" required maxlength="255"></label>
+        <label>Marca *<input name="marca" [(ngModel)]="nuevoPerfume.marca" required maxlength="255"></label>
+        <label>Precio (MXN) *<input type="number" name="precio" [(ngModel)]="nuevoPerfume.precio" required min="0" step="0.01"></label>
+        <label>Existencias *<input type="number" name="stock" [(ngModel)]="nuevoPerfume.stock" required min="0" step="1"></label>
+        <label class="ancho">Descripción<textarea name="descripcion" [(ngModel)]="nuevoPerfume.descripcion" maxlength="500" rows="3"></textarea></label>
+        <label class="ancho">URL de imagen<input type="url" name="imagenUrl" [(ngModel)]="nuevoPerfume.imagenUrl" maxlength="255" placeholder="https://ejemplo.com/perfume.jpg"></label>
+        <label>Notas de salida<input name="notasTop" [(ngModel)]="nuevoPerfume.notasTop" maxlength="500"></label>
+        <label>Notas de corazón<input name="notasMiddle" [(ngModel)]="nuevoPerfume.notasMiddle" maxlength="255"></label>
+        <label>Notas de fondo<input name="notasBase" [(ngModel)]="nuevoPerfume.notasBase" maxlength="255"></label>
       </div>
-      <div class="col-md-3">
-        <input type="text" class="form-control" placeholder="Marca" [(ngModel)]="nuevoPerfume.marca" name="marca" required>
+      <div class="acciones">
+        <button type="submit" class="checkout" [disabled]="formulario.invalid || guardando() || cargando()">{{ guardando() ? 'Procesando...' : (editandoId === null ? 'Agregar perfume' : 'Guardar cambios') }}</button>
+        @if (editandoId !== null) { <button type="button" (click)="cancelar(formulario)">Cancelar edición</button> }
       </div>
-      <div class="col-md-2">
-        <input type="number" class="form-control" placeholder="Precio" [(ngModel)]="nuevoPerfume.precio" name="precio" required>
-      </div>
-      <div class="col-md-2">
-        <input type="number" class="form-control" placeholder="Stock" [(ngModel)]="nuevoPerfume.stock" name="stock" required>
-      </div>
-      <div class="col-md-2">
-        <button type="submit" class="btn btn-primary w-100">Guardar</button>
-      </div>
-      <div class="col-md-12 mt-2">
-        <input type="text" class="form-control" placeholder="Descripción (opcional)" [(ngModel)]="nuevoPerfume.descripcion" name="descripcion">
-      </div>
-    </div>
+    </fieldset>
   </form>
 
-  <table class="table table-striped align-middle">
-    <thead class="table-dark">
-      <tr>
-        <th>ID</th>
-        <th>Nombre</th>
-        <th>Marca</th>
-        <th>Precio</th>
-        <th>Stock</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let p of perfumes">
-        <td>{{ p.id }}</td>
-        <td>{{ p.nombre }}</td>
-        <td>{{ p.marca }}</td>
-        <td>${{ p.precio }}</td>
-        <td>{{ p.stock }}</td>
-        <td>
-          <button class="btn btn-info btn-sm text-white me-2" (click)="verDetalle(p.id)">Ver detalle</button>
-          <button class="btn btn-danger btn-sm" (click)="eliminarPerfume(p.id)">Eliminar</button>
-        </td>
-      </tr>
-    </tbody>
-  </table>
-</div>
+  @if (pendienteEliminar(); as producto) {
+    <section class="estado" role="alert" aria-label="Confirmar eliminación">
+      <p>¿Eliminar «{{ producto.nombre }}» del catálogo? Esta acción no se puede deshacer.</p>
+      <button type="button" [disabled]="guardando() || cargando()" (click)="eliminarPerfume(formulario)">Confirmar eliminación</button>
+      <button type="button" [disabled]="guardando()" (click)="pendienteEliminar.set(null)">Cancelar</button>
+    </section>
+  }
+
+  @if (detalle(); as producto) {
+    <section class="estado product-info" aria-label="Detalle del perfume">
+      <h2>{{ producto.nombre }} — {{ producto.marca }}</h2>
+      <p>{{ producto.descripcion || 'Sin descripción.' }}</p>
+      <p>{{ producto.precio | currency:'MXN':'symbol-narrow' }} MXN · Existencias: {{ producto.stock }}</p>
+      <p>Salida: {{ producto.notasTop || 'Sin especificar' }}</p>
+      <p>Corazón: {{ producto.notasMiddle || 'Sin especificar' }}</p>
+      <p>Fondo: {{ producto.notasBase || 'Sin especificar' }}</p>
+      <button type="button" (click)="detalle.set(null)">Cerrar detalle</button>
+    </section>
+  }
+
+  <section class="cart-products" aria-label="Inventario">
+    <div class="acciones encabezado">
+      <h2>Inventario</h2>
+      <button type="button" (click)="cargarPerfumes()" [disabled]="cargando() || guardando()">Actualizar lista</button>
+    </div>
+    @if (cargando()) { <p role="status">Cargando perfumes...</p> }
+    @else if (!perfumes().length) { <p>No hay perfumes para mostrar. Usa el formulario para agregar uno.</p> }
+    @else {
+      <div class="tabla">
+        <table>
+          <caption class="sr-only">Perfumes registrados y acciones de administración</caption>
+          <thead><tr><th scope="col">Nombre</th><th scope="col">Marca</th><th scope="col">Precio</th><th scope="col">Existencias</th><th scope="col">Acciones</th></tr></thead>
+          <tbody>
+            @for (producto of perfumes(); track producto.id) {
+              <tr>
+                <td>{{ producto.nombre }}</td><td>{{ producto.marca }}</td>
+                <td>{{ producto.precio | currency:'MXN':'symbol-narrow' }}</td><td>{{ producto.stock }}</td>
+                <td><div class="acciones">
+                  <button type="button" [disabled]="guardando()" (click)="detalle.set(producto)">Ver detalle</button>
+                  <button type="button" [disabled]="guardando()" (click)="editar(producto, formulario)">Editar</button>
+                  <button type="button" class="remove" [disabled]="guardando()" (click)="pendienteEliminar.set(producto)">Eliminar</button>
+                </div></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </section>
+</main>
