@@ -1,41 +1,147 @@
-/* estilos de pagos */
+/* Fondo general */
 body {
-  background-color: #ffffff;
+  margin: 0;
+  padding: 0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: linear-gradient(
+    135deg,
+    #ffffff 0%,
+    #f8f8f8 100%
+  );
+  min-height: 100vh;
 }
 
+/* Contenedor principal */
 .contenedor {
-  text-align: center;
-  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
 }
 
+/* Título principal */
 h1 {
-  color: #b8860b;
+  color: #c9a227;
+  font-size: 3rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+/* Subtítulo */
+.subtitulo {
+  color: #666;
   margin-bottom: 30px;
+  font-size: 1rem;
+  text-align: center;
 }
 
+/* Tarjeta principal */
 .tarjeta {
-  width: 400px;
-  margin: auto;
-  padding: 25px;
-  border: 2px solid #d4af37;
-  border-radius: 12px;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 500px;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow:
+    0 10px 30px rgba(0, 0, 0, 0.08),
+    0 2px 8px rgba(201, 162, 39, 0.15);
+  border: 1px solid rgba(201, 162, 39, 0.2);
 }
 
+/* Título de sección */
+.tarjeta h2 {
+  margin-top: 0;
+  color: #333;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+/* Importe */
+.importe {
+  text-align: center;
+  font-size: 1.2rem;
+  color: #444;
+  margin-bottom: 20px;
+}
+
+.importe strong {
+  color: #c9a227;
+  font-size: 1.4rem;
+}
+
+/* Stripe Payment Element */
+#payment-element {
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+/* Botón de pago */
 button {
-  background-color: #d4af37;
-  color: white;
+  width: 100%;
+  padding: 14px;
   border: none;
-  padding: 12px 20px;
-  border-radius: 8px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    #d4af37,
+    #b8860b
+  );
+  color: white;
+  font-size: 1rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
 button:hover {
-  opacity: 0.9;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(212, 175, 55, 0.35);
 }
 
+button:active {
+  transform: scale(0.98);
+}
+
+/* Mensajes */
 .mensaje {
   margin-top: 20px;
+  padding: 12px;
+  border-radius: 10px;
+  text-align: center;
+  font-weight: 600;
+  background-color: #fff8e6;
+  color: #8a6d00;
+  border: 1px solid #e8cf74;
+}
+
+/* Pago exitoso */
+.pago-confirmado {
+  margin-top: 20px;
+  text-align: center;
+  padding: 14px;
+  border-radius: 10px;
+  background-color: #edf8ef;
+  color: #2e7d32;
   font-weight: bold;
+  border: 1px solid #81c784;
+}
+
+.pago-confirmado p {
+  margin: 5px 0;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+
+  .tarjeta {
+    padding: 25px;
+  }
+
+  h1 {
+    font-size: 2.2rem;
+  }
+
 }
