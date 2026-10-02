@@ -38,9 +38,9 @@
               <p>{{ perfume.marca }}</p>
               <h2>{{ perfume.nombre }}</h2>
               @if (perfume.descripcion) { <p>{{ perfume.descripcion }}</p> }
-              @if (perfume.notasTop) { <p><strong>Notas de salida:</strong> {{ perfume.notasTop }}</p> }
-              @if (perfume.notasMiddle) { <p><strong>Notas de corazón:</strong> {{ perfume.notasMiddle }}</p> }
-              @if (perfume.notasBase) { <p><strong>Notas de fondo:</strong> {{ perfume.notasBase }}</p> }
+              @if (perfume.notasTop) { <p><strong>Aroma inicial:</strong> {{ perfume.notasTop }}</p> }
+              @if (perfume.notasMiddle) { <p><strong>Aroma de cuerpo:</strong> {{ perfume.notasMiddle }}</p> }
+              @if (perfume.notasBase) { <p><strong>Aroma final:</strong> {{ perfume.notasBase }}</p> }
               <p class="price">{{ perfume.precio | currency:'MXN':'symbol-narrow' }} MXN</p>
               <p [class.shipping]="perfume.stock > 0" [class.error]="!(perfume.stock > 0)">
                 {{ perfume.stock > 0 ? 'Disponible: ' + perfume.stock + ' unidades' : 'Agotado' }}

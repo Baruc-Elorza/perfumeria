@@ -34,13 +34,28 @@ class DemoApplicationTests {
     private Long disponible;
     private Long agotado;
 
-    @BeforeEach
+  @BeforeEach
     void preparar() {
         lineas.deleteAll();
         carritos.deleteAll();
         perfumes.deleteAll();
-        disponible = perfumes.save(new Perfume("Sauvage", "Dior", "Bergamota", "", "", 2450.50, 3, "")).getId();
-        agotado = perfumes.save(new Perfume("Eros", "Versace", "", "", "", 2100.0, 0, "")).getId();
+
+        Perfume perfume1 = new Perfume();
+        perfume1.setNombre("Sauvage");
+        perfume1.setMarca("Dior");
+        perfume1.setDescripcion("Descripcion Sauvage");
+        perfume1.setPrecio(2450.50);
+        perfume1.setStock(3);
+        disponible = perfumes.save(perfume1).getId();
+
+        Perfume perfume2 = new Perfume();
+        perfume2.setNombre("Eros");
+        perfume2.setMarca("Versace");
+        perfume2.setDescripcion("Descripcion Eros");
+        perfume2.setPrecio(2100.0);
+        perfume2.setStock(0);
+        agotado = perfumes.save(perfume2).getId();
+
         cliente = nuevoCliente();
     }
 
