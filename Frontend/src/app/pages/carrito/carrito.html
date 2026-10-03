@@ -1,1 +1,174 @@
-<p>carrito works!</p>
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <link rel="stylesheet" href="../../../styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Carrito | Perfumería</title>
+
+</head>
+
+
+<body>
+
+    <header>
+        <div class="logo">
+            PERFUMERÍA
+        </div>
+
+        <a href="#" class="back-link">
+            ← Seguir comprando
+        </a>
+    </header>
+
+
+    <main class="container">
+
+        <h1>Mi carrito</h1>
+
+        <div class="cart-layout">
+
+            <!-- PRODUCTOS -->
+            <section class="cart-products">
+
+                <!-- PRODUCTO 1 -->
+                <article class="cart-product">
+
+                    <img src="https://via.placeholder.com/300x350" alt="Perfume Dior Sauvage" class="product-image">
+
+                    <div class="product-info">
+
+                        <h2>Dior Sauvage Eau de Toilette</h2>
+
+                        <p>100 ml · Hombre</p>
+
+                        <span class="price">
+                            $2,350.00 MXN
+                        </span>
+
+                        <div class="quantity">
+
+                            <button type="button">−</button>
+
+                            <span>1</span>
+
+                            <button type="button">+</button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="product-total">
+
+                        $2,350.00 MXN
+
+                        <button class="remove">
+                            Eliminar
+                        </button>
+
+                    </div>
+
+                </article>
+
+
+                <!-- PRODUCTO 2 -->
+                <article class="cart-product">
+
+                    <img src="https://via.placeholder.com/300x350" alt="Perfume YSL Libre" class="product-image">
+
+                    <div class="product-info">
+
+                        <h2>YSL Libre Eau de Parfum</h2>
+
+                        <p>90 ml · Mujer</p>
+
+                        <span class="price">
+                            $2,700.00 MXN
+                        </span>
+
+                        <div class="quantity">
+
+                            <button type="button">−</button>
+
+                            <span>2</span>
+
+                            <button type="button">+</button>
+
+                        </div>
+
+                    </div>
+
+                    <div class="product-total">
+
+                        $5,400.00 MXN
+
+                        <button class="remove">
+                            Eliminar
+                        </button>
+
+                    </div>
+
+                </article>
+
+            </section>
+
+
+            <!-- RESUMEN -->
+            <aside class="summary">
+
+                <h2>Resumen del pedido</h2>
+
+                <div class="summary-row">
+                    <span>Subtotal</span>
+                    <span>$7,750.00</span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Envío</span>
+                    <span class="shipping">Gratis</span>
+                </div>
+
+                <div class="total">
+                    <span>Total</span>
+                    <span>$7,750.00</span>
+                </div>
+
+
+                <!-- CUPÓN -->
+                <div class="coupon">
+
+                    <label for="coupon">
+                        ¿Tienes un cupón?
+                    </label>
+
+                    <div class="coupon-form">
+
+                        <input type="text" id="coupon" placeholder="Código de cupón">
+
+                        <button type="button">
+                            Aplicar
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <button class="checkout">
+                    Proceder al pago
+                </button>
+
+                <a href="#" class="continue">
+                    ← Continuar comprando
+                </a>
+
+            </aside>
+
+        </div>
+
+    </main>
+
+</body>
+
+</html>
