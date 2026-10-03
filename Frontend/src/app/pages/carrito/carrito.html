@@ -32,11 +32,12 @@
             <!-- PRODUCTOS -->
             <section class="cart-products">
 
-                @for (producto of carrit; track producto.id){
+                @for (producto of carrito; track producto.id){
                 <div class="cart-product">
                     <img [src]="producto.imagen" [alt]="producto.nombre">
 
-                    <div class="peoduct-info" <h2>
+                    <div class="peoduct-info" >
+                        <h2>
                         {{ producto.nombre }}
                         </h2>
 
@@ -66,6 +67,7 @@
 
                     </div>
 
+                    </div>
                     }
 
             </section>

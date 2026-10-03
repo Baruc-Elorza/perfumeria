@@ -12,10 +12,10 @@ import com.example.demo.service.CarritoService;
 @RequestMapping("/api")
 @CrossOrigin(origins = "http://localhost:4200")
 
-public class CarritoController {
+public class carritoController {
     private final CarritoService carritoService;
 
-    public CarritoController(CarritoService carritoService){
+    public carritoController(CarritoService carritoService){
         this.carritoService = carritoService;
     }
 
