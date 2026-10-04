@@ -63,9 +63,9 @@ export class AdminPerfumesComponent implements OnInit {
     const datos = { ...this.nuevoPerfume, nombre: this.nuevoPerfume.nombre.trim(),
       marca: this.nuevoPerfume.marca.trim() };
     if (formulario.invalid || !datos.nombre || !datos.marca || datos.precio == null
-      || !Number.isFinite(datos.precio) || datos.precio < 0 || datos.stock == null
+      || !Number.isFinite(datos.precio) || datos.precio < 0.01 || datos.stock == null
       || !Number.isInteger(datos.stock) || datos.stock < 0) {
-      this.error.set('Completa nombre y marca, un precio no negativo y existencias enteras no negativas.');
+      this.error.set('Completa nombre y marca, un precio mínimo de $0.01 MXN y existencias enteras no negativas.');
       return;
     }
     const editando = this.editandoId !== null;

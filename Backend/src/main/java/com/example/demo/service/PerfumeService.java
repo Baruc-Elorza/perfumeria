@@ -54,9 +54,9 @@ public class PerfumeService {
                 || datos.getMarca() == null || datos.getMarca().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nombre y marca son obligatorios.");
         }
-        if (datos.getPrecio() == null || !Double.isFinite(datos.getPrecio()) || datos.getPrecio() < 0
+        if (datos.getPrecio() == null || !Double.isFinite(datos.getPrecio()) || datos.getPrecio() < 0.01
                 || datos.getStock() == null || datos.getStock() < 0) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Precio y existencias deben ser números no negativos.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El precio mínimo es $0.01 MXN y las existencias deben ser no negativas.");
         }
         validarLongitud(datos.getNombre(), 255);
         validarLongitud(datos.getMarca(), 255);

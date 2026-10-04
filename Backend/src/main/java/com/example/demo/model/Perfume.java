@@ -30,7 +30,7 @@ public class Perfume {
     private String notasBase;
 
     @NotNull(message = "El precio es obligatorio") 
-    @DecimalMin(value = "0.01", message = "El precio debe ser mayor a 0") 
+    @DecimalMin(value = "0.01", message = "El precio mínimo es $0.01 MXN")
     private Double precio;
 
     @NotNull(message = "El stock es obligatorio") 

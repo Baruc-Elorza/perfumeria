@@ -104,4 +104,10 @@ npm exec --yes --package=node@24 -- node node_modules/@angular/cli/bin/ng.js bui
 
 Se cubren búsqueda, cancelación de respuestas antiguas, recuperación ante errores, rutas, subtotal, persistencia del carrito, sesiones independientes, cantidades inválidas, agotados y CORS.
 
+## HU-13: notificación de compra
+
+El módulo `com.example.demo.notificaciones` registra correos pendientes para pedidos con pago exitoso y los procesa mediante SMTP con reintentos. El envío está desactivado por defecto. Falta conectar la confirmación real de pedidos/pagos (HU-16/HU-05) y configurar SMTP; todavía no tiene tests automatizados propios ni verificación de entrega de correo.
+
+Contrato Java, responsabilidades por historia, ejemplo de integración, variables de entorno y comprobaciones pendientes: [Guía de integración HU-13](docs/HU-13-integracion.md).
+
 La versión de Node está indicada en `Frontend/.nvmrc`. Spring Boot administra las versiones de sus starters y del driver MySQL para mantenerlas alineadas ([documentación oficial](https://docs.spring.io/spring-boot/reference/using/build-systems.html)). La interfaz usa signals para actualizarse al recibir las respuestas HTTP ([Angular](https://angular.dev/guide/signals)).
