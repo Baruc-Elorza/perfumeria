@@ -1,0 +1,27 @@
+<div class="metodo-pago-container">
+  <div class="opcion-pago">
+    <input
+      type="radio"
+      id="stripe"
+      name="metodoPago"
+      value="stripe"
+      [(ngModel)]="metodoSeleccionado"
+      (change)="alCambiarMetodo()">
+    <label for="stripe">Tarjeta de Crédito / Débito (Stripe)</label>
+  </div>
+
+  <!-- Formulario de tarjeta de Stripe -->
+  <div *ngIf="metodoSeleccionado === 'stripe'" class="stripe-card-box">
+    <label for="card-element">Datos de la tarjeta</label>
+    <div id="card-element" class="card-input-container"></div>
+    <div id="card-errors" role="alert" class="error-text"></div>
+  </div>
+</div>
+
+<!-- Botón para procesar el pago -->
+<button
+  class="btn-procesar"
+  [disabled]="cargando || (metodoSeleccionado === 'stripe' && !tarjetaCompleta)"
+  (click)="procesarPago()">
+  {{ cargando ? 'Procesando...' : 'Pagar ' + (total | currency:'MXN') }}
+</button>

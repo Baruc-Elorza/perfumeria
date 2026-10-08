@@ -295,3 +295,24 @@ h1 {
 .empty-cart a:hover {
   background-color: #1f2937;
 }
+.btn-proceder-pago {
+  width: 100%;
+  padding: 14px 20px;
+  background-color: #111827 !important; /* Negro/Gris oscuro */
+  color: #ffffff !important;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer !important; /* Habilita el cursor de mano */
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  display: block;
+  text-align: center;
+  text-decoration: none;
+  margin-top: 16px;
+}
+
+.btn-proceder-pago:hover {
+  background-color: #1f2937 !important;
+  cursor: pointer !important;
+}

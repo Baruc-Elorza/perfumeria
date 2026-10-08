@@ -1,0 +1,17 @@
+<div class="stripe-pay-wrapper">
+  @if (cargando) {
+    <p class="loading-text">Cargando pasarela de pago segura...</p>
+  }
+
+  <div id="payment-element"></div>
+
+  @if (mensaje) {
+    <p class="status-message" [class.success]="pagoExitoso">{{ mensaje }}</p>
+  }
+
+  @if (!cargando && !pagoExitoso) {
+    <button class="btn-confirmar-pago" (click)="pagar()">
+      Confirmar y Pagar
+    </button>
+  }
+</div>

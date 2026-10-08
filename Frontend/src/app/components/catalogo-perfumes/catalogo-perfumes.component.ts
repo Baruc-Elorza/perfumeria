@@ -6,7 +6,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Subject, catchError, map, of, startWith, switchMap, timer } from 'rxjs';
 import { Perfume } from '../../models/perfume.model';
 import { PerfumeService } from '../../services/perfume.service';
-import { CarritoService } from '../../services/carrito';
+import { CarritoService } from '../../services/carrito.service';
 
 @Component({
   selector: 'app-catalogo-perfumes',

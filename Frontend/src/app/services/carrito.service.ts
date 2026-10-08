@@ -21,10 +21,13 @@ export class CarritoService {
       { cantidad: 1 }, { withCredentials: true });
   }
 
-  cambiarCantidad(perfumeId: number, cantidad: number): Observable<CarritoRespuesta> {
-    return this.http.patch<CarritoRespuesta>(`${this.apiUrl}/items/${perfumeId}`,
-      { cantidad }, { withCredentials: true });
-  }
+ cambiarCantidad(perfumeId: number, cantidad: number): Observable<CarritoRespuesta> {
+  return this.http.patch<CarritoRespuesta>(
+    `${this.apiUrl}/items/${perfumeId}`,
+    { cantidad },
+    { withCredentials: true }
+  );
+}
 
   eliminar(perfumeId: number): Observable<CarritoRespuesta> {
     return this.http.delete<CarritoRespuesta>(`${this.apiUrl}/items/${perfumeId}`, { withCredentials: true });
