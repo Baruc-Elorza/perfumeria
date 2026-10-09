@@ -19,7 +19,6 @@ public class Usuario {
     private String email;
 
     @NotBlank(message = "La contraseña es obligtoria")
-    @Column(nullable = false)
     private String contraseña;
 
     public Usuario(){}
