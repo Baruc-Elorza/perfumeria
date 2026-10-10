@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { AdminPerfumesComponent } from './components/admin-perfumes/admin-perfumes.component';
+import { AdminPerfumesComponent } from './pages/admin-perfumes/admin-perfumes.component';
 import { Carrito } from './pages/carrito/carrito';
-import { CatalogoPerfumesComponent } from './components/catalogo-perfumes/catalogo-perfumes.component';
+import { CatalogoPerfumesComponent } from './pages/catalogo-perfumes/catalogo-perfumes.component';
 import { CheckoutComponent } from './components/checkout/checkout.component'; // 1. Importar el componente
 
 export const routes: Routes = [
