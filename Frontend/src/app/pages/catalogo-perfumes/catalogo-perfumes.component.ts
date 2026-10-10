@@ -7,6 +7,7 @@ import { Subject, catchError, map, of, startWith, switchMap, timer } from 'rxjs'
 import { Perfume } from '../../models/perfume.model';
 import { PerfumeService } from '../../services/perfume.service';
 import { CarritoService } from '../../services/carrito.service';
+import { AuthService } from '../../services/auth.service';
 
 @Component({
   selector: 'app-catalogo-perfumes',
@@ -25,10 +26,12 @@ export class CatalogoPerfumesComponent implements OnInit {
   private readonly cambios = new Subject<string>();
   private readonly perfumes = inject(PerfumeService);
   private readonly carrito = inject(CarritoService);
+  readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
+    this.auth.sesionActual().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     this.cambios.pipe(
       startWith(''),
       switchMap(nombre => {
@@ -46,6 +49,13 @@ export class CatalogoPerfumesComponent implements OnInit {
       this.perfumesFiltrados.set(resultado.perfumes);
       this.errorCarga.set(resultado.error);
       this.cargando.set(false);
+    });
+  }
+
+  cerrarSesion(): void {
+    this.auth.cerrarSesion().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+      next: () => void this.router.navigate(['/']),
+      error: () => this.auth.usuario.set(null),
     });
   }
 

@@ -19,14 +19,17 @@ public class Usuario {
     private String email;
 
     @NotBlank(message = "La contraseña es obligtoria")
-    private String contraseña;
+    private String contrasenia;
+
+    private boolean activo;
 
     public Usuario(){}
 
-    public Usuario(String nombre, String email, String contraseña){
+    public Usuario(String nombre, String email, String contrasenia){
         this.nombre = nombre;
         this.email = email;
-        this.contraseña = contraseña;
+        this.contrasenia = contrasenia;
+        this.activo = true;
     }
 
     public Long getId() { return id; }
@@ -37,4 +40,10 @@ public class Usuario {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public String getContrasenia() { return contrasenia; }
+    public void setContrasenia(String contrasenia) { this.contrasenia = contrasenia; }
+
+    public boolean getActivo(){ return activo;}
+    public void setActivo(boolean activo){this.activo=activo;}
 }

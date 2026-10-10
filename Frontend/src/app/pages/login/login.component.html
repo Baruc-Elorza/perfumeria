@@ -1,0 +1,31 @@
+<main class="login-page">
+  <section class="login-card" aria-labelledby="titulo-login">
+    <a class="marca" routerLink="/">PERFUMERÍA</a>
+    <p class="eyebrow">TU CUENTA</p>
+    <h1 id="titulo-login">{{ registrando() ? 'Crear cuenta' : 'Bienvenido de nuevo' }}</h1>
+    <p class="descripcion">{{ registrando() ? 'Regístrate para guardar tu carrito y hacer tus pedidos.' : 'Inicia sesión para continuar con tu compra.' }}</p>
+
+    @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+
+    <form (ngSubmit)="enviar()" #form="ngForm">
+      @if (registrando()) {
+        <label for="nombre">Nombre</label>
+        <input id="nombre" name="nombre" [(ngModel)]="nombre" required maxlength="120" autocomplete="name">
+      }
+      <label for="email">Correo electrónico</label>
+      <input id="email" name="email" type="email" [(ngModel)]="email" required email autocomplete="email">
+      <label for="contrasenia">Contraseña</label>
+      <input id="contrasenia" name="contrasenia" type="password" [(ngModel)]="contrasenia" required [minlength]="registrando() ? 8 : 1" autocomplete="{{ registrando() ? 'new-password' : 'current-password' }}">
+      @if (registrando()) { <p class="ayuda">Usa al menos 8 caracteres.</p> }
+      <button type="submit" [disabled]="form.invalid || cargando()">
+        {{ cargando() ? 'Procesando…' : (registrando() ? 'Crear cuenta' : 'Iniciar sesión') }}
+      </button>
+    </form>
+
+    <p class="alternativa">
+      {{ registrando() ? '¿Ya tienes cuenta?' : '¿Aún no tienes cuenta?' }}
+      <button type="button" class="link" (click)="alternarModo()">{{ registrando() ? 'Inicia sesión' : 'Regístrate' }}</button>
+    </p>
+    <a class="volver" routerLink="/">Volver al catálogo</a>
+  </section>
+</main>

@@ -6,3 +6,4 @@
 .tarjeta { display: flex; flex-direction: column; }
 .imagen-catalogo { width: 100%; height: 210px; object-fit: contain; border-radius: 8px; margin-bottom: 20px; }
 .tarjeta .product-info { flex: 1; }
+.auth-button { border: 0; background: transparent; font: inherit; cursor: pointer; }
