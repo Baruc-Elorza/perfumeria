@@ -2,6 +2,8 @@
   <div class="logo">PERFUMERÍA</div>
   <a routerLink="/admin/perfumes" class="back-link">Administrar perfumes</a>
   <a routerLink="/carrito" class="back-link">Ver carrito</a>
+  <a routerLink="/mis-pedidos" class="back-link">Mis pedidos</a>
+
   @if (auth.usuario(); as usuario) {
     <span class="back-link">{{ usuario.email }}</span>
     <button type="button" class="back-link auth-button" (click)="cerrarSesion()">Cerrar sesión</button>

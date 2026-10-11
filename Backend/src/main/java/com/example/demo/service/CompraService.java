@@ -6,6 +6,8 @@ import com.example.demo.notificaciones.NotificacionCompraService;
 import com.example.demo.repository.PedidoRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.demo.dto.CarritoRespuesta;
+import java.util.UUID;
 
 import java.math.BigDecimal;
 import java.time.Instant;
@@ -25,6 +27,61 @@ public class CompraService {
     }
 
     @Transactional
+    public Pedido crearPedidoPendiente(
+        String clienteEmail,
+        String calle,
+        String colonia,
+        String ciudad,
+        String codigoPostal,
+        String telefono,
+        CarritoRespuesta carrito) {
+
+    if (clienteEmail == null || clienteEmail.isBlank()) {
+        throw new IllegalArgumentException("El usuario debe iniciar sesión.");
+    }
+
+    if (carrito == null || carrito.items() == null || carrito.items().isEmpty()) {
+        throw new IllegalArgumentException("El carrito está vacío.");
+    }
+
+    BigDecimal subtotal = carrito.subtotal();
+
+    if (subtotal == null || subtotal.compareTo(BigDecimal.ZERO) <= 0) {
+        throw new IllegalArgumentException("El total del pedido no es válido.");
+    }
+
+    Pedido pedido = new Pedido();
+    pedido.setId(UUID.randomUUID().toString());
+    pedido.setClienteEmail(clienteEmail);
+    pedido.setClienteNombre(clienteEmail);
+    pedido.setDestinatarioEnvio(clienteEmail);
+    pedido.setDireccionEnvio(
+        calle + ", " + colonia + ", " + ciudad + ", C.P. " + codigoPostal
+    );
+    pedido.setTelefono(telefono);
+    pedido.setEstado(Pedido.EstadoPedido.PENDIENTE);
+    pedido.setSubtotal(subtotal);
+    pedido.setEnvio(BigDecimal.ZERO);
+    pedido.setDescuento(BigDecimal.ZERO);
+    pedido.setTotal(subtotal);
+
+    
+    pedido.setProductos(
+        carrito.items().stream()
+            .map(item -> new Pedido.ItemProducto(
+                String.valueOf(item.perfumeId()),
+                item.nombre(),
+                item.marca(),
+                item.cantidad(),
+                item.precio()
+            ))
+            .toList()
+    );
+
+
+    return pedidoRepository.save(pedido);
+}
+
     public void confirmarCompraYPago(String pedidoId, String referenciaPagoProveedor) {
         // 1. Cargar el pedido de la base de datos
         Pedido pedido = pedidoRepository.findById(pedidoId)

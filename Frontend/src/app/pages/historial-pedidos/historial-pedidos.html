@@ -1,0 +1,157 @@
+
+<header class="encabezado">
+  <a routerLink="/" class="logo">PERFUMERÍA</a>
+
+  <nav aria-label="Navegación principal">
+    <a routerLink="/">Volver al catálogo</a>
+    <a routerLink="/carrito" class="enlace-carrito">Mi carrito</a>
+  </nav>
+</header>
+<main class="historial">
+  <section class="presentacion">
+    <span class="etiqueta">TU ESPACIO PERSONAL</span>
+    <h1>Mis pedidos</h1>
+    <p>
+      Consulta tus compras, revisa los productos y conoce
+      el estado de cada pedido.
+    </p>
+  </section>
+
+  @if (cargando) {
+    <section class="mensaje">
+      <p>Cargando tu historial de compras...</p>
+    </section>
+  } @else if (error) {
+    <section class="mensaje mensaje-error">
+      <h2>No pudimos cargar tus pedidos</h2>
+      <p>{{ error }}</p>
+      <button type="button" (click)="cargarHistorial()">
+        Intentar de nuevo
+      </button>
+    </section>
+  } @else if (pedidos.length === 0) {
+    <section class="vacio">
+      <div class="icono-vacio" aria-hidden="true">♡</div>
+      <h2>Tu historia comienza aquí</h2>
+      <p>Aún no tienes pedidos registrados.</p>
+      <a routerLink="/" class="boton-principal">
+        Explorar perfumes
+      </a>
+    </section>
+  } @else {
+    <div class="resumen">
+      <div>
+        <span class="resumen-label">PEDIDOS REGISTRADOS</span>
+        <strong>{{ pedidos.length }}</strong>
+      </div>
+      <p>Ordenados del más reciente al más antiguo</p>
+    </div>
+
+    <section class="lista" aria-label="Lista de pedidos">
+      @for (pedido of pedidos; track pedido.id) {
+        <article class="pedido">
+          <div class="pedido-cabecera">
+            <div class="pedido-identidad">
+              <span class="pedido-label">NÚMERO DE PEDIDO</span>
+              <h2>{{ pedido.id }}</h2>
+              <p class="fecha">
+                {{ pedido.fechaCreacion | date:'d MMM y, HH:mm' }}
+              </p>
+            </div>
+
+            <span
+              class="estado"
+              [class.pagado]="pedido.estado === 'PAGADO'"
+              [class.pendiente]="pedido.estado === 'PENDIENTE'"
+              [class.rechazado]="pedido.estado === 'RECHAZADO'"
+              [class.cancelado]="pedido.estado === 'CANCELADO'">
+              {{ textoEstado(pedido.estado) }}
+            </span>
+          </div>
+
+          <div class="pedido-resumen">
+            <div>
+              <span class="dato-label">Total del pedido</span>
+              <strong class="total">
+                {{ pedido.total | currency:'MXN':'symbol':'1.2-2' }}
+              </strong>
+            </div>
+
+            <button
+              type="button"
+              class="boton-detalle"
+              [attr.aria-expanded]="pedidoSeleccionado?.id === pedido.id"
+              (click)="verDetalle(pedido)">
+              {{ pedidoSeleccionado?.id === pedido.id
+                ? 'Ocultar detalle'
+                : 'Ver detalle' }}
+              <span aria-hidden="true">
+                {{ pedidoSeleccionado?.id === pedido.id ? '−' : '+' }}
+              </span>
+            </button>
+          </div>
+
+          @if (pedidoSeleccionado?.id === pedido.id) {
+            <div class="detalle">
+              <h3>Detalle de tu compra</h3>
+
+              <div class="datos-envio">
+                <div>
+                  <span class="dato-label">Destinatario</span>
+                  <p>{{ pedido.destinatarioEnvio || 'No disponible' }}</p>
+                </div>
+                <div>
+                  <span class="dato-label">Dirección de envío</span>
+                  <p>{{ pedido.direccionEnvio || 'No disponible' }}</p>
+                </div>
+                <div>
+                  <span class="dato-label">Teléfono</span>
+                  <p>{{ pedido.telefono || 'No disponible' }}</p>
+                </div>
+              </div>
+
+              <h4>Productos</h4>
+
+              @for (producto of pedido.productos; track $index) {
+                <div class="producto">
+                  <div class="producto-info">
+                    <strong>{{ producto.nombre }}</strong>
+                    <span>Cantidad: {{ producto.cantidad }}</span>
+                  </div>
+                  <strong>
+                    {{ producto.precioUnitario
+                      | currency:'MXN':'symbol':'1.2-2' }}
+                  </strong>
+                </div>
+              }
+
+              <div class="totales">
+                <div>
+                  <span>Subtotal</span>
+                  <span>{{ pedido.subtotal | currency:'MXN':'symbol':'1.2-2' }}</span>
+                </div>
+                <div>
+                  <span>Envío</span>
+                  <span>{{ pedido.envio | currency:'MXN':'symbol':'1.2-2' }}</span>
+                </div>
+                <div>
+                  <span>Descuento</span>
+                  <span>{{ pedido.descuento | currency:'MXN':'symbol':'1.2-2' }}</span>
+                </div>
+                <div class="total-final">
+                  <strong>Total</strong>
+                  <strong>{{ pedido.total | currency:'MXN':'symbol':'1.2-2' }}</strong>
+                </div>
+              </div>
+            </div>
+          }
+        </article>
+      }
+    </section>
+  }
+</main>
+
+<footer class="pie">
+  <span>PERFUMERÍA</span>
+  <p>Gracias por elegir tu próxima esencia favorita.</p>
+</footer>
