@@ -1,0 +1,429 @@
+
+:host {
+  display: block;
+  min-height: 100vh;
+  background: #faf8f5;
+  color: #26221f;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.encabezado {
+  min-height: 76px;
+  padding: 18px 6%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  background: #fff;
+  border-bottom: 1px solid #eae4dc;
+}
+
+.logo {
+  color: #34261e;
+  font-family: Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-decoration: none;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+
+nav a {
+  color: #51453c;
+  font-size: .92rem;
+  text-decoration: none;
+}
+
+nav a:hover {
+  color: #986b45;
+}
+
+.enlace-carrito {
+  padding: 9px 15px;
+  border: 1px solid #d8c6b3;
+  border-radius: 7px;
+}
+
+.historial {
+  width: min(960px, 100%);
+  margin: 0 auto;
+  padding: 48px 24px 64px;
+}
+
+.presentacion {
+  margin-bottom: 32px;
+}
+
+.etiqueta,
+.pedido-label,
+.resumen-label,
+.dato-label {
+  display: block;
+  color: #8a725f;
+  font-size: .72rem;
+  font-weight: 700;
+  letter-spacing: 1.3px;
+}
+
+h1 {
+  margin: 10px 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 500;
+  letter-spacing: -.7px;
+}
+
+.presentacion > p {
+  max-width: 570px;
+  color: #746b63;
+  line-height: 1.7;
+}
+
+.resumen {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  margin: 26px 0 18px;
+  padding: 18px 20px;
+  background: #f0e9e1;
+  border-radius: 10px;
+}
+
+.resumen strong {
+  display: block;
+  margin-top: 5px;
+  font-family: Georgia, serif;
+  font-size: 1.7rem;
+  font-weight: 500;
+}
+
+.resumen p {
+  margin: 0;
+  color: #75685d;
+  font-size: .85rem;
+}
+
+.lista {
+  display: grid;
+  gap: 18px;
+}
+
+.pedido {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid #e8e1d9;
+  border-radius: 12px;
+  box-shadow: 0 3px 12px rgb(50 35 20 / 3%);
+}
+
+.pedido-cabecera {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 23px 24px 18px;
+}
+
+.pedido-identidad h2 {
+  overflow-wrap: anywhere;
+  margin: 8px 0;
+  font-size: .96rem;
+  font-weight: 650;
+}
+
+.fecha {
+  margin: 0;
+  color: #81776e;
+  font-size: .85rem;
+}
+
+.estado {
+  flex-shrink: 0;
+  padding: 7px 11px;
+  border-radius: 30px;
+  background: #eee8e0;
+  color: #65594e;
+  font-size: .75rem;
+  font-weight: 700;
+}
+
+.estado.pagado {
+  background: #e4f3e8;
+  color: #24653c;
+}
+
+.estado.pendiente {
+  background: #fff0d6;
+  color: #875b14;
+}
+
+.estado.rechazado {
+  background: #fbe5e3;
+  color: #a02c27;
+}
+
+.estado.cancelado {
+  background: #ece9e6;
+  color: #635b54;
+}
+
+.pedido-resumen {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 18px 24px;
+  background: #fdfbf9;
+  border-top: 1px solid #f0ebe5;
+}
+
+.dato-label {
+  margin-bottom: 6px;
+  font-size: .7rem;
+  letter-spacing: .7px;
+}
+
+.total {
+  font-family: Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.boton-detalle,
+.mensaje button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 10px 14px;
+  border: 1px solid #cdb9a5;
+  border-radius: 7px;
+  background: #fff;
+  color: #49372a;
+  font: inherit;
+  font-size: .85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.boton-detalle:hover,
+.mensaje button:hover {
+  background: #f2e9df;
+}
+
+.detalle {
+  padding: 24px;
+  border-top: 1px solid #eae3da;
+}
+
+.detalle h3,
+.detalle h4 {
+  margin: 0 0 18px;
+  font-family: Georgia, serif;
+  font-weight: 500;
+}
+
+.detalle h3 {
+  font-size: 1.35rem;
+}
+
+.detalle h4 {
+  margin-top: 26px;
+  margin-bottom: 12px;
+  font-family: inherit;
+  font-size: .95rem;
+  font-weight: 700;
+}
+
+.datos-envio {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+  padding: 18px;
+  background: #faf8f5;
+  border-radius: 8px;
+}
+
+.datos-envio p {
+  overflow-wrap: anywhere;
+  margin: 0;
+  color: #51473f;
+  line-height: 1.5;
+}
+
+.producto {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid #eee8e1;
+  font-size: .9rem;
+}
+
+.producto-info {
+  display: grid;
+  gap: 5px;
+}
+
+.producto-info span {
+  color: #81776e;
+  font-size: .82rem;
+}
+
+.producto > strong {
+  flex-shrink: 0;
+}
+
+.totales {
+  display: grid;
+  gap: 12px;
+  max-width: 360px;
+  margin: 22px 0 0 auto;
+}
+
+.totales > div {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  color: #71665c;
+  font-size: .9rem;
+}
+
+.totales .total-final {
+  margin-top: 4px;
+  padding-top: 14px;
+  border-top: 1px solid #ded4c9;
+  color: #30251e;
+  font-size: 1rem;
+}
+
+.vacio,
+.mensaje {
+  padding: 48px 24px;
+  text-align: center;
+  background: #fff;
+  border: 1px solid #e8e1d9;
+  border-radius: 12px;
+}
+
+.icono-vacio {
+  color: #a98b70;
+  font-family: Georgia, serif;
+  font-size: 3rem;
+}
+
+.vacio h2,
+.mensaje h2 {
+  font-family: Georgia, serif;
+  font-weight: 500;
+}
+
+.vacio p,
+.mensaje p {
+  margin-bottom: 24px;
+  color: #786e64;
+  line-height: 1.6;
+}
+
+.boton-principal {
+  display: inline-block;
+  padding: 12px 20px;
+  border-radius: 7px;
+  background: #35271f;
+  color: #fff;
+  text-decoration: none;
+}
+
+.boton-principal:hover {
+  background: #59402f;
+}
+
+.mensaje-error {
+  color: #9f3028;
+}
+
+.pie {
+  padding: 28px 20px;
+  border-top: 1px solid #eae4dc;
+  background: #fff;
+  text-align: center;
+}
+
+.pie > span {
+  font-family: Georgia, serif;
+  font-weight: 700;
+  letter-spacing: 2px;
+}
+
+.pie p {
+  margin-bottom: 0;
+  color: #81776e;
+  font-size: .85rem;
+}
+
+@media (max-width: 600px) {
+  .encabezado {
+    align-items: flex-start;
+    padding: 17px 20px;
+  }
+
+  .logo {
+    font-size: 1rem;
+  }
+
+  nav {
+    justify-content: flex-end;
+    gap: 12px;
+  }
+
+  nav a {
+    font-size: .8rem;
+  }
+
+  .historial {
+    padding: 34px 15px 45px;
+  }
+
+  .resumen {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pedido-cabecera {
+    align-items: flex-start;
+    flex-direction: column;
+    padding: 23px 16px 18px;
+  }
+
+  .pedido-resumen {
+    padding: 18px 16px;
+  }
+
+  .detalle {
+    padding: 20px 16px;
+  }
+
+  .datos-envio {
+    grid-template-columns: 1fr;
+  }
+
+  .producto {
+    align-items: flex-start;
+  }
+
+  .boton-detalle {
+    padding: 9px 10px;
+  }
+}

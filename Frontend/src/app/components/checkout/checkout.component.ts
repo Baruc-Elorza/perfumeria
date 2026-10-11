@@ -1,7 +1,14 @@
-import { Component, inject, OnInit } from '@angular/core';
+import {
+  Component,
+  inject,
+  OnInit,
+  ChangeDetectorRef
+} from '@angular/core';
+
 import { CommonModule, CurrencyPipe } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { FormsModule } from '@angular/forms';
+import { HttpClient } from '@angular/common/http';
 import { CarritoService } from '../../services/carrito.service';
 import { PagoComponent } from '../../pages/pago/pago.component';
 
@@ -11,6 +18,12 @@ interface DireccionEnvio {
   ciudad: string;
   codigoPostal: string;
   telefono: string;
+}
+
+interface RespuestaPedido {
+  pedidoId: string;
+  estado: string;
+  total: number;
 }
 
 @Component({
@@ -27,17 +40,22 @@ interface DireccionEnvio {
     <div class="checkout-wrapper">
       <header class="checkout-header">
         <h1 class="logo">PERFUMERÍA</h1>
-        <a routerLink="/carrito" class="btn-regresar">← Volver al carrito</a>
+
+        <a routerLink="/carrito" class="btn-regresar">
+          ← Volver al carrito
+        </a>
       </header>
 
       <main class="checkout-grid">
-        <!-- Columna Izquierda: Dirección y Método de Pago -->
         <div class="left-column">
-          <!-- 1. Dirección de Envío -->
+
           <section class="checkout-card form-section">
             <h2 class="card-title">1. Dirección de Envío</h2>
 
-            <form #direccionForm="ngForm">
+            <form
+              #direccionForm="ngForm"
+              (ngSubmit)="crearPedido()"
+            >
               <div class="form-group">
                 <label for="calle">Calle y Número</label>
                 <input
@@ -46,7 +64,8 @@ interface DireccionEnvio {
                   name="calle"
                   [(ngModel)]="direccion.calle"
                   required
-                  placeholder="Ej. Av. Hidalgo #123" />
+                  placeholder="Ej. Av. Hidalgo #123"
+                />
               </div>
 
               <div class="form-row">
@@ -58,7 +77,8 @@ interface DireccionEnvio {
                     name="colonia"
                     [(ngModel)]="direccion.colonia"
                     required
-                    placeholder="Ej. Centro" />
+                    placeholder="Ej. Centro"
+                  />
                 </div>
 
                 <div class="form-group">
@@ -69,7 +89,8 @@ interface DireccionEnvio {
                     name="codigoPostal"
                     [(ngModel)]="direccion.codigoPostal"
                     required
-                    placeholder="Ej. 68000" />
+                    placeholder="Ej. 68000"
+                  />
                 </div>
               </div>
 
@@ -82,7 +103,8 @@ interface DireccionEnvio {
                     name="ciudad"
                     [(ngModel)]="direccion.ciudad"
                     required
-                    placeholder="Ej. Oaxaca" />
+                    placeholder="Ej. Oaxaca"
+                  />
                 </div>
 
                 <div class="form-group">
@@ -93,13 +115,38 @@ interface DireccionEnvio {
                     name="telefono"
                     [(ngModel)]="direccion.telefono"
                     required
-                    placeholder="Ej. 951 123 4567" />
+                    placeholder="Ej. 951 123 4567"
+                  />
                 </div>
               </div>
+
+              <button
+                type="submit"
+                [disabled]="
+                  direccionForm.invalid ||
+                  creandoPedido ||
+                  !!pedidoId
+                "
+              >
+                {{
+                  creandoPedido
+                    ? 'Guardando pedido...'
+                    : pedidoId
+                      ? 'Pedido guardado'
+                      : 'Guardar pedido y continuar'
+                }}
+              </button>
+
+              <p
+                *ngIf="mensaje"
+                class="mensaje"
+                role="alert"
+              >
+                {{ mensaje }}
+              </p>
             </form>
           </section>
 
-          <!-- 2. Método de Pago -->
           <section class="checkout-card payment-section">
             <h2 class="card-title">2. Método de Pago</h2>
 
@@ -110,29 +157,44 @@ interface DireccionEnvio {
                   name="metodoPago"
                   value="TARJETA"
                   checked
-                  disabled />
+                  disabled
+                />
+
                 <div class="option-content">
-                  <strong>Tarjeta de Crédito / Débito (Stripe)</strong>
+                  <strong>
+                    Tarjeta de Crédito / Débito (Stripe)
+                  </strong>
                   <span>Pago seguro en línea</span>
                 </div>
               </label>
             </div>
 
-            <!-- Pasarela de Stripe pasándole el monto real -->
             <div class="stripe-container">
-              <app-pago [monto]="total"></app-pago>
+              <p *ngIf="!pedidoId">
+                Primero completa tu dirección y guarda el pedido.
+              </p>
+
+              <p *ngIf="pedidoId && total <= 0">
+                El pedido se creó, pero el total no es válido.
+              </p>
+
+              <app-pago
+                *ngIf="pedidoId && total > 0"
+                [monto]="total"
+              ></app-pago>
             </div>
           </section>
         </div>
 
-        <!-- Columna Derecha: Resumen del Pedido -->
         <section class="checkout-card summary-section">
           <h2 class="card-title">Resumen del Pedido</h2>
 
           <div class="summary-details">
             <div class="detail-row">
               <span class="label">Número de Pedido</span>
-              <span class="value">{{ pedidoId }}</span>
+              <span class="value">
+                {{ pedidoId || 'Pendiente de crear' }}
+              </span>
             </div>
 
             <div class="detail-row">
@@ -147,7 +209,9 @@ interface DireccionEnvio {
 
             <div class="detail-row total-row">
               <span class="label-total">Total a Pagar</span>
-              <span class="value-total">{{ total | currency:'MXN':'symbol':'1.2-2' }}</span>
+              <span class="value-total">
+                {{ total | currency:'MXN':'symbol':'1.2-2' }}
+              </span>
             </div>
           </div>
         </section>
@@ -237,6 +301,8 @@ interface DireccionEnvio {
       border-radius: 8px;
       font-size: 0.95rem;
       outline: none;
+      box-sizing: border-box;
+      width: 100%;
     }
 
     .form-group input:focus {
@@ -248,6 +314,13 @@ interface DireccionEnvio {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 16px;
+    }
+
+    @media (max-width: 500px) {
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+      }
     }
 
     .payment-options {
@@ -304,6 +377,7 @@ interface DireccionEnvio {
       display: flex;
       justify-content: space-between;
       align-items: center;
+      gap: 12px;
       margin-bottom: 12px;
       font-size: 0.92rem;
     }
@@ -315,6 +389,8 @@ interface DireccionEnvio {
     .value {
       font-weight: 600;
       color: #111827;
+      overflow-wrap: anywhere;
+      text-align: right;
     }
 
     .free-shipping {
@@ -337,12 +413,35 @@ interface DireccionEnvio {
       font-size: 1.25rem;
       font-weight: 800;
       color: #111827;
+      text-align: right;
+    }
+
+    button[type="submit"] {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      background: #111827;
+      color: #ffffff;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    button[type="submit"]:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .mensaje {
+      margin-top: 12px;
+      overflow-wrap: anywhere;
     }
   `]
 })
 export class CheckoutComponent implements OnInit {
-  pedidoId: string = 'PED-' + Math.floor(1000 + Math.random() * 9000);
-  total: number = 0;
+  pedidoId = '';
+  total = 0;
+  creandoPedido = false;
+  mensaje = '';
 
   direccion: DireccionEnvio = {
     calle: 'Avenida Ferrocarril',
@@ -353,48 +452,114 @@ export class CheckoutComponent implements OnInit {
   };
 
   private carritoService = inject(CarritoService);
+  private http = inject(HttpClient);
+  private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.obtenerTotalCarrito();
   }
 
   obtenerTotalCarrito(): void {
-    const serviceAny = this.carritoService as any;
+    this.total = 0;
+    this.mensaje = '';
 
-    // 1. Intentar obtener el carrito desde el servicio
-    if (serviceAny.obtenerCarrito) {
-      const resp = serviceAny.obtenerCarrito();
-      if (resp && resp.subtotal) {
-        this.total = Number(resp.subtotal) || 0;
-      } else if (Array.isArray(resp)) {
-        this.total = resp.reduce((acc: number, item: any) => acc + (item.precio * (item.cantidad || 1)), 0);
+    this.carritoService.obtenerCarrito().subscribe({
+      next: (carrito) => {
+        this.total = Number(carrito.subtotal) || 0;
+
+        if (this.total <= 0) {
+          this.mensaje =
+            'El carrito está vacío o su subtotal es cero.';
+        }
+
+        this.cdr.detectChanges();
+      },
+
+      error: (error) => {
+        console.error('Error al obtener el carrito:', error);
+
+        this.total = 0;
+        this.mensaje = 'No se pudo cargar el carrito.';
+
+        this.cdr.detectChanges();
       }
-    } else if (serviceAny.carrito$) {
-      serviceAny.carrito$.subscribe((data: any) => {
-        if (data && data.subtotal) {
-          this.total = Number(data.subtotal) || 0;
-        } else if (Array.isArray(data)) {
-          this.total = data.reduce((acc: number, item: any) => acc + (item.precio * (item.cantidad || 1)), 0);
+    });
+  }
+
+  crearPedido(): void {
+    if (this.creandoPedido || this.pedidoId) {
+      return;
+    }
+
+    if (
+      !this.direccion.calle.trim() ||
+      !this.direccion.colonia.trim() ||
+      !this.direccion.ciudad.trim() ||
+      !this.direccion.codigoPostal.trim() ||
+      !this.direccion.telefono.trim()
+    ) {
+      this.mensaje = 'Completa todos los datos de envío.';
+      return;
+    }
+
+    if (this.total <= 0) {
+      this.mensaje =
+        'Agrega productos al carrito antes de continuar.';
+      return;
+    }
+
+    this.creandoPedido = true;
+    this.mensaje = '';
+    this.cdr.detectChanges();
+
+    this.http
+      .post<RespuestaPedido>(
+        'http://localhost:8080/api/compras/pendiente',
+        this.direccion,
+        { withCredentials: true }
+      )
+      .subscribe({
+        next: (respuesta) => {
+          console.log('Respuesta del servidor:', respuesta);
+
+          if (!respuesta?.pedidoId) {
+            this.mensaje =
+              'El servidor no devolvió el identificador del pedido.';
+            this.creandoPedido = false;
+            this.cdr.detectChanges();
+            return;
+          }
+
+          this.pedidoId = respuesta.pedidoId;
+          this.total = Number(respuesta.total) || 0;
+          this.creandoPedido = false;
+
+          if (this.total <= 0) {
+            this.mensaje =
+              'El pedido se creó, pero el total recibido no es válido.';
+            this.cdr.detectChanges();
+            return;
+          }
+
+          this.mensaje = 'Pedido guardado correctamente.';
+          this.cdr.detectChanges();
+        },
+
+        error: (error) => {
+          console.error('Error al crear el pedido:', error);
+
+          this.mensaje =
+            error.error?.error ||
+            'No se pudo guardar el pedido. Verifica tu sesión y que el backend esté activo.';
+
+          this.creandoPedido = false;
+          this.cdr.detectChanges();
+        },
+
+        complete: () => {
+          this.creandoPedido = false;
+          this.cdr.detectChanges();
         }
       });
-    }
-
-    // 2. Si el servicio devolvió 0, buscar en localStorage
-    if (this.total === 0) {
-      const carritoGuardado = localStorage.getItem('carrito');
-      if (carritoGuardado) {
-        try {
-          const datos = JSON.parse(carritoGuardado);
-          this.total = Number(datos.subtotal || datos.total) || 0;
-        } catch (e) {
-          console.error('Error al leer el carrito desde localStorage:', e);
-        }
-      }
-    }
-
-    // 3. Respaldo para pruebas si el carrito está vacío
-    if (this.total <= 0) {
-      this.total = 100;
-    }
   }
 }

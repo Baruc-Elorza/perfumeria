@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.Instant;
+import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "pedidos")
@@ -14,6 +16,12 @@ public class Pedido {
 
     @Enumerated(EnumType.STRING)
     private EstadoPedido estado;
+    @Column(name = "cliente_email")
+    private String clienteEmail;
+
+    @CreationTimestamp
+    @Column(name = "fecha_creacion", nullable = false, updatable = false)
+    private Instant fechaCreacion;
 
     private String clienteNombre;
     private String destinatarioEnvio;
@@ -80,6 +88,12 @@ public class Pedido {
 
     public EstadoPedido getEstado() { return estado; }
     public void setEstado(EstadoPedido estado) { this.estado = estado; }
+
+    public String getClienteEmail() { return clienteEmail; }
+    public void setClienteEmail(String clienteEmail) { this.clienteEmail = clienteEmail; }
+
+    public Instant getFechaCreacion() { return fechaCreacion; }
+    public void setFechaCreacion(Instant fechaCreacion) { this.fechaCreacion = fechaCreacion; }
 
     public String getClienteNombre() { return clienteNombre; }
     public void setClienteNombre(String clienteNombre) { this.clienteNombre = clienteNombre; }

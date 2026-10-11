@@ -123,9 +123,14 @@ export class PagoComponent implements AfterViewInit {
           return;
         }
 
-        // Si por alguna razón el monto viene en 0, usamos 100 MXN para no fallar
-        const montoACobrar = (this.monto && this.monto > 0) ? Math.round(this.monto) : 100;
+        const montoACobrar = Math.round(Number(this.monto));
 
+        if (!Number.isFinite(montoACobrar) || montoACobrar <= 0) {
+          this.mensaje = 'El monto del carrito no es válido.';
+          this.cargando = false;
+          this.cdr.detectChanges();
+          return;
+        }
         this.pagoService.crearPago(montoACobrar).subscribe({
           next: (respuesta) => {
             this.paymentIntentId = respuesta.paymentIntentId;
