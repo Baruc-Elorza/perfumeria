@@ -1,0 +1,73 @@
+<div class="container mt-4">
+  <h2 class="mb-4">Gestión de Direcciones de Envío</h2>
+
+  <!-- Formulario para registrar nueva dirección -->
+  <form (ngSubmit)="guardarDireccion()" class="card p-4 mb-4 shadow-sm">
+    <h4 class="mb-3">Agregar Nueva Dirección</h4>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Calle *</label>
+        <input type="text" class="form-control" [(ngModel)]="nuevaDireccion.calle" name="calle" required>
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Nº Exterior</label>
+        <input type="text" class="form-control" [(ngModel)]="nuevaDireccion.numeroExterior" name="numeroExterior">
+      </div>
+
+      <div class="col-md-3 mb-3">
+        <label class="form-label">Nº Interior</label>
+        <input type="text" class="form-control" [(ngModel)]="nuevaDireccion.numeroInterior" name="numeroInterior">
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Colonia *</label>
+        <input type="text" class="form-control" [(ngModel)]="nuevaDireccion.colonia" name="colonia" required>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Ciudad *</label>
+        <input type="text" class="form-control" [(ngModel)]="nuevaDireccion.ciudad" name="ciudad" required>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Estado *</label>
+        <input type="text" class="form-control" [(ngModel)]="nuevaDireccion.estado" name="estado" required>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label class="form-label">Código Postal *</label>
+        <input type="text" class="form-control" [(ngModel)]="nuevaDireccion.codigoPostal" name="codigoPostal" required>
+      </div>
+
+      <div class="col-12 mb-3">
+        <label class="form-label">Referencias opcionales</label>
+        <textarea class="form-control" [(ngModel)]="nuevaDireccion.referencias" name="referencias" rows="2"></textarea>
+      </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary w-100 mt-2">Guardar Dirección</button>
+  </form>
+
+  <!-- Listado de direcciones registradas -->
+  <h4 class="mb-3">Tus Direcciones Registradas</h4>
+
+  <div *ngIf="direcciones.length === 0" class="alert alert-info">
+    No tienes direcciones registradas todavía.
+  </div>
+
+  <div class="list-group">
+    <div *ngFor="let dir of direcciones" class="list-group-item d-flex justify-content-between align-items-center mb-2 shadow-sm rounded">
+      <div>
+        <h5 class="mb-1">{{ dir.calle }} #{{ dir.numeroExterior }} <span *ngIf="dir.numeroInterior">Int. {{ dir.numeroInterior }}</span></h5>
+        <p class="mb-1 text-muted">Col. {{ dir.colonia }}, {{ dir.ciudad }}, {{ dir.estado }} - C.P. {{ dir.codigoPostal }}</p>
+        <small class="text-secondary" *ngIf="dir.referencias"><strong>Referencias:</strong> {{ dir.referencias }}</small>
+      </div>
+
+      <div>
+        <button class="btn btn-outline-danger btn-sm" (click)="eliminarDireccion(dir.id)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

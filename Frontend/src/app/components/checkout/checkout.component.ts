@@ -11,14 +11,8 @@ import { FormsModule } from '@angular/forms';
 import { HttpClient } from '@angular/common/http';
 import { CarritoService } from '../../services/carrito.service';
 import { PagoComponent } from '../../pages/pago/pago.component';
-
-interface DireccionEnvio {
-  calle: string;
-  colonia: string;
-  ciudad: string;
-  codigoPostal: string;
-  telefono: string;
-}
+import { Direccion } from '../../models/direccion.model';
+import { DireccionService } from '../../services/direccion.service';
 
 interface RespuestaPedido {
   pedidoId: string;
@@ -40,22 +34,40 @@ interface RespuestaPedido {
     <div class="checkout-wrapper">
       <header class="checkout-header">
         <h1 class="logo">PERFUMERÍA</h1>
-
-        <a routerLink="/carrito" class="btn-regresar">
-          ← Volver al carrito
-        </a>
+        <a routerLink="/carrito" class="btn-regresar">← Volver al carrito</a>
       </header>
 
       <main class="checkout-grid">
         <div class="left-column">
 
           <section class="checkout-card form-section">
-            <h2 class="card-title">1. Dirección de Envío</h2>
+            <div class="section-title-bar">
+              <h2 class="card-title">1. Dirección de Envío</h2>
+<a routerLink="/direcciones" class="btn-admin-dir">+ Administrar Direcciones</a>
+            </div>
 
-            <form
-              #direccionForm="ngForm"
-              (ngSubmit)="crearPedido()"
-            >
+            <!-- Selector de Direcciones Guardadas -->
+            <div class="saved-addresses-container" *ngIf="direcciones.length > 0">
+              <label class="sub-label">Selecciona una de tus direcciones guardadas:</label>
+              <div class="addresses-grid">
+                <div *ngFor="let dir of direcciones"
+                     (click)="seleccionarDireccion(dir)"
+                     [class.selected]="direccionSeleccionadaId === dir.id"
+                     class="address-card-item">
+                  <input type="radio" name="dirSeleccionada" [checked]="direccionSeleccionadaId === dir.id">
+                  <div class="address-info">
+                    <strong>{{ dir.calle }} #{{ dir.numeroExterior || 'S/N' }} <span *ngIf="dir.numeroInterior">Int. {{ dir.numeroInterior }}</span></strong>
+                    <span>Col. {{ dir.colonia }}, {{ dir.ciudad }}, {{ dir.estado }} - C.P. {{ dir.codigoPostal }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="no-addresses-notice" *ngIf="direcciones.length === 0">
+              <p>No tienes direcciones guardadas. Puedes escribirlas abajo o <a routerLink="/direcciones" class="link-inline">registrarlas aquí</a>.</p>
+            </div>
+
+            <form #direccionForm="ngForm" (ngSubmit)="crearPedido()">
               <div class="form-group">
                 <label for="calle">Calle y Número</label>
                 <input
@@ -122,11 +134,7 @@ interface RespuestaPedido {
 
               <button
                 type="submit"
-                [disabled]="
-                  direccionForm.invalid ||
-                  creandoPedido ||
-                  !!pedidoId
-                "
+                [disabled]="direccionForm.invalid || creandoPedido || !!pedidoId"
               >
                 {{
                   creandoPedido
@@ -137,11 +145,7 @@ interface RespuestaPedido {
                 }}
               </button>
 
-              <p
-                *ngIf="mensaje"
-                class="mensaje"
-                role="alert"
-              >
+              <p *ngIf="mensaje" class="mensaje" role="alert">
                 {{ mensaje }}
               </p>
             </form>
@@ -152,36 +156,22 @@ interface RespuestaPedido {
 
             <div class="payment-options">
               <label class="payment-option selected">
-                <input
-                  type="radio"
-                  name="metodoPago"
-                  value="TARJETA"
-                  checked
-                  disabled
-                />
-
+                <input type="radio" name="metodoPago" value="TARJETA" checked disabled />
                 <div class="option-content">
-                  <strong>
-                    Tarjeta de Crédito / Débito (Stripe)
-                  </strong>
+                  <strong>Tarjeta de Crédito / Débito (Stripe)</strong>
                   <span>Pago seguro en línea</span>
                 </div>
               </label>
             </div>
 
             <div class="stripe-container">
-              <p *ngIf="!pedidoId">
+              <p *ngIf="!pedidoId" class="notice-text">
                 Primero completa tu dirección y guarda el pedido.
               </p>
-
-              <p *ngIf="pedidoId && total <= 0">
+              <p *ngIf="pedidoId && total <= 0" class="notice-text">
                 El pedido se creó, pero el total no es válido.
               </p>
-
-              <app-pago
-                *ngIf="pedidoId && total > 0"
-                [monto]="total"
-              ></app-pago>
+              <app-pago *ngIf="pedidoId && total > 0" [monto]="total"></app-pago>
             </div>
           </section>
         </div>
@@ -192,9 +182,7 @@ interface RespuestaPedido {
           <div class="summary-details">
             <div class="detail-row">
               <span class="label">Número de Pedido</span>
-              <span class="value">
-                {{ pedidoId || 'Pendiente de crear' }}
-              </span>
+              <span class="value">{{ pedidoId || 'Pendiente de crear' }}</span>
             </div>
 
             <div class="detail-row">
@@ -225,6 +213,8 @@ interface RespuestaPedido {
       padding: 40px 24px;
       font-family: system-ui, -apple-system, sans-serif;
       color: #111827;
+      background-color: #fcfcfd;
+      min-height: 100vh;
     }
 
     .checkout-header {
@@ -232,6 +222,8 @@ interface RespuestaPedido {
       justify-content: space-between;
       align-items: center;
       margin-bottom: 36px;
+      border-bottom: 1px solid #e5e7eb;
+      padding-bottom: 16px;
     }
 
     .logo {
@@ -239,6 +231,7 @@ interface RespuestaPedido {
       font-weight: 800;
       letter-spacing: 2.5px;
       margin: 0;
+      color: #111827;
     }
 
     .btn-regresar {
@@ -246,6 +239,10 @@ interface RespuestaPedido {
       text-decoration: none;
       font-size: 0.95rem;
       font-weight: 500;
+      transition: color 0.2s;
+    }
+    .btn-regresar:hover {
+      color: #111827;
     }
 
     .checkout-grid {
@@ -272,14 +269,103 @@ interface RespuestaPedido {
       border-radius: 12px;
       padding: 28px;
       border: 1px solid #e5e7eb;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.02);
+    }
+
+    .section-title-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
     }
 
     .card-title {
-      margin: 0 0 20px 0;
+      margin: 0;
       font-size: 1.2rem;
       font-weight: 700;
       color: #111827;
+    }
+
+    .btn-admin-dir {
+      font-size: 0.82rem;
+      color: #2563eb;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .btn-admin-dir:hover {
+      text-decoration: underline;
+    }
+
+    .sub-label {
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #374151;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .saved-addresses-container {
+      margin-bottom: 20px;
+      background: #f9fafb;
+      padding: 14px;
+      border-radius: 8px;
+      border: 1px solid #f3f4f6;
+    }
+
+    .addresses-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+
+    .address-card-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 12px;
+      background: #ffffff;
+      border: 1px solid #d1d5db;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .address-card-item:hover {
+      border-color: #9ca3af;
+    }
+
+    .address-card-item.selected {
+      border-color: #111827;
+      background-color: #f8fafc;
+      box-shadow: 0 0 0 1px #111827;
+    }
+
+    .address-info {
+      display: flex;
+      flex-direction: column;
+      font-size: 0.85rem;
+      color: #374151;
+    }
+    .address-info strong {
+      color: #111827;
+      font-weight: 600;
+    }
+
+    .no-addresses-notice {
+      font-size: 0.88rem;
+      color: #6b7280;
+      margin-bottom: 16px;
+      background: #fdf2f2;
+      padding: 10px 12px;
+      border-radius: 6px;
+      border: 1px solid #fde8e8;
+    }
+    .link-inline {
+      color: #d97706;
+      font-weight: 600;
+      text-decoration: none;
     }
 
     .form-group {
@@ -303,11 +389,12 @@ interface RespuestaPedido {
       outline: none;
       box-sizing: border-box;
       width: 100%;
+      transition: border-color 0.2s, box-shadow 0.2s;
     }
 
     .form-group input:focus {
       border-color: #111827;
-      box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.1);
+      box-shadow: 0 0 0 3px rgba(17, 24, 39, 0.08);
     }
 
     .form-row {
@@ -367,6 +454,12 @@ interface RespuestaPedido {
       border-radius: 8px;
     }
 
+    .notice-text {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin: 0;
+    }
+
     .summary-details {
       border-top: 1px solid #f3f4f6;
       border-bottom: 1px solid #f3f4f6;
@@ -417,6 +510,8 @@ interface RespuestaPedido {
     }
 
     button[type="submit"] {
+      width: 100%;
+      margin-top: 8px;
       padding: 12px 18px;
       border: none;
       border-radius: 8px;
@@ -424,6 +519,11 @@ interface RespuestaPedido {
       color: #ffffff;
       font-weight: 600;
       cursor: pointer;
+      transition: background-color 0.2s;
+    }
+
+    button[type="submit"]:hover:not(:disabled) {
+      background: #1f2937;
     }
 
     button[type="submit"]:disabled {
@@ -433,6 +533,8 @@ interface RespuestaPedido {
 
     .mensaje {
       margin-top: 12px;
+      font-size: 0.9rem;
+      color: #dc2626;
       overflow-wrap: anywhere;
     }
   `]
@@ -443,20 +545,53 @@ export class CheckoutComponent implements OnInit {
   creandoPedido = false;
   mensaje = '';
 
-  direccion: DireccionEnvio = {
-    calle: 'Avenida Ferrocarril',
-    colonia: 'Vicente Suarez',
-    ciudad: 'Oaxaca',
-    codigoPostal: '38033',
-    telefono: '9514646455'
+  usuarioId = 1; // ID de usuario por defecto para pruebas
+  direcciones: Direccion[] = [];
+  direccionSeleccionadaId?: number;
+
+  direccion = {
+    calle: '',
+    colonia: '',
+    ciudad: '',
+    codigoPostal: '',
+    telefono: ''
   };
 
   private carritoService = inject(CarritoService);
+  private direccionService = inject(DireccionService);
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
 
   ngOnInit(): void {
     this.obtenerTotalCarrito();
+    this.cargarDirecciones();
+  }
+
+  cargarDirecciones(): void {
+    this.direccionService.obtenerDireccionesPorUsuario(this.usuarioId).subscribe({
+      next: (data) => {
+        this.direcciones = data;
+        if (this.direcciones.length > 0) {
+          this.seleccionarDireccion(this.direcciones[0]);
+        }
+        this.cdr.detectChanges();
+      },
+      error: (err) => {
+        console.error('Error al cargar direcciones en checkout:', err);
+      }
+    });
+  }
+
+seleccionarDireccion(dir: Direccion): void {
+    this.direccionSeleccionadaId = dir.id;
+    this.direccion = {
+      calle: `${dir.calle}${dir.numeroExterior ? ' #' + dir.numeroExterior : ''}`,
+      colonia: dir.colonia,
+      ciudad: dir.ciudad,
+      codigoPostal: dir.codigoPostal,
+      telefono: dir.telefono || '' // <-- Se auto-rellena con el teléfono guardado
+    };
+    this.cdr.detectChanges();
   }
 
   obtenerTotalCarrito(): void {
@@ -468,19 +603,15 @@ export class CheckoutComponent implements OnInit {
         this.total = Number(carrito.subtotal) || 0;
 
         if (this.total <= 0) {
-          this.mensaje =
-            'El carrito está vacío o su subtotal es cero.';
+          this.mensaje = 'El carrito está vacío o su subtotal es cero.';
         }
 
         this.cdr.detectChanges();
       },
-
       error: (error) => {
         console.error('Error al obtener el carrito:', error);
-
         this.total = 0;
         this.mensaje = 'No se pudo cargar el carrito.';
-
         this.cdr.detectChanges();
       }
     });
@@ -503,8 +634,7 @@ export class CheckoutComponent implements OnInit {
     }
 
     if (this.total <= 0) {
-      this.mensaje =
-        'Agrega productos al carrito antes de continuar.';
+      this.mensaje = 'Agrega productos al carrito antes de continuar.';
       return;
     }
 
@@ -523,8 +653,7 @@ export class CheckoutComponent implements OnInit {
           console.log('Respuesta del servidor:', respuesta);
 
           if (!respuesta?.pedidoId) {
-            this.mensaje =
-              'El servidor no devolvió el identificador del pedido.';
+            this.mensaje = 'El servidor no devolvió el identificador del pedido.';
             this.creandoPedido = false;
             this.cdr.detectChanges();
             return;
@@ -535,8 +664,7 @@ export class CheckoutComponent implements OnInit {
           this.creandoPedido = false;
 
           if (this.total <= 0) {
-            this.mensaje =
-              'El pedido se creó, pero el total recibido no es válido.';
+            this.mensaje = 'El pedido se creó, pero el total recibido no es válido.';
             this.cdr.detectChanges();
             return;
           }
@@ -544,18 +672,14 @@ export class CheckoutComponent implements OnInit {
           this.mensaje = 'Pedido guardado correctamente.';
           this.cdr.detectChanges();
         },
-
         error: (error) => {
           console.error('Error al crear el pedido:', error);
-
           this.mensaje =
             error.error?.error ||
             'No se pudo guardar el pedido. Verifica tu sesión y que el backend esté activo.';
-
           this.creandoPedido = false;
           this.cdr.detectChanges();
         },
-
         complete: () => {
           this.creandoPedido = false;
           this.cdr.detectChanges();
