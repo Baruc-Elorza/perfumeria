@@ -1,0 +1,52 @@
+<header class="encabezado">
+  <a routerLink="/" class="logo">PERFUMERÍA</a>
+  <nav aria-label="Administración">
+    <a routerLink="/admin/perfumes">Administrar perfumes</a>
+    <a routerLink="/mis-pedidos">Mis pedidos</a>
+  </nav>
+</header>
+
+<main class="contenido">
+  <div class="titulo">
+    <div>
+      <span class="eyebrow">OPERACIÓN DE PEDIDOS</span>
+      <h1>Guías de envío</h1>
+      <p>Registra el número de guía para avisar al cliente que su paquete fue enviado.</p>
+    </div>
+    <button type="button" class="secundario" (click)="cargarPedidos()" [disabled]="cargando">Actualizar</button>
+  </div>
+
+  @if (error) { <p class="aviso error" role="alert">{{ error }}</p> }
+  @if (mensaje) { <p class="aviso exito" role="status">{{ mensaje }}</p> }
+  @if (cargando) {
+    <p class="aviso" role="status">Cargando pedidos...</p>
+  } @else if (!pedidos.length) {
+    <section class="vacio">
+      <h2>No hay pedidos pendientes de envío</h2>
+      <p>Los pedidos pagados aparecerán aquí para que puedas registrar su guía.</p>
+    </section>
+  } @else {
+    <section class="lista" aria-label="Pedidos para envío">
+      @for (pedido of pedidos; track pedido.id) {
+        <article class="pedido">
+          <div class="pedido-info">
+            <span class="etiqueta">PEDIDO · {{ pedido.fechaCreacion | date:'d MMM y' }}</span>
+            <h2>{{ pedido.id }}</h2>
+            <p>{{ pedido.clienteEmail }}</p>
+            <p class="direccion">{{ pedido.destinatarioEnvio || pedido.clienteEmail }} · {{ pedido.direccionEnvio }}</p>
+            <strong>{{ pedido.total | currency:'MXN':'symbol':'1.2-2' }}</strong>
+          </div>
+          <form class="form-guia" (ngSubmit)="guardarGuia(pedido)">
+            <label [for]="'guia-' + pedido.id">Número de guía</label>
+            <input [id]="'guia-' + pedido.id" [name]="'guia-' + pedido.id"
+              [ngModel]="guias[pedido.id]" (ngModelChange)="guias[pedido.id] = $event"
+              maxlength="100" required placeholder="Ej. 1234567890">
+            <button type="submit" [disabled]="!guias[pedido.id]?.trim() || guardandoId !== null">
+              {{ guardandoId === pedido.id ? 'Guardando…' : (pedido.estado === 'ENVIADO' ? 'Actualizar guía' : 'Marcar enviado') }}
+            </button>
+          </form>
+        </article>
+      }
+    </section>
+  }
+</main>

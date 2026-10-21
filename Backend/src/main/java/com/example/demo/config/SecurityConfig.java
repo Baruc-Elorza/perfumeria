@@ -55,6 +55,13 @@ public class SecurityConfig {
 
                         .requestMatchers(HttpMethod.GET, "/api/perfumes/**").permitAll()
 
+                        .requestMatchers(HttpMethod.POST, "/api/perfumes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PUT, "/api/perfumes/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.DELETE, "/api/perfumes/**").hasRole("ADMIN")
+
+                        .requestMatchers(HttpMethod.GET, "/api/pedidos/admin").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/api/pedidos/*/guia").hasRole("ADMIN")
+
                         // El carrito conserva la sesión de invitado y puede sobrevivir al login.
                         .requestMatchers("/api/carrito/**").permitAll()
 

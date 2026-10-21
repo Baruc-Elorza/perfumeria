@@ -32,7 +32,7 @@ public class AuthController {
             @NotBlank String contrasenia
     ) {}
 
-    public record LoginResponse(String mensaje, String email) {}
+    public record LoginResponse(String mensaje, String email, boolean administrador) {}
 
     @PostMapping("/login")
     public ResponseEntity<?> login(
@@ -69,7 +69,8 @@ public class AuthController {
         return ResponseEntity.ok(
                 new LoginResponse(
                         "Inicio de sesión correcto",
-                        authentication.getName()
+                        authentication.getName(),
+                        esAdministrador(authentication)
                 )
         );
     }
@@ -77,7 +78,10 @@ public class AuthController {
     @GetMapping("/me")
     public ResponseEntity<LoginResponse> me(
             @AuthenticationPrincipal UserDetails usuario) {
-        return ResponseEntity.ok(new LoginResponse("Sesión activa", usuario.getUsername()));
+        return ResponseEntity.ok(new LoginResponse(
+                "Sesión activa",
+                usuario.getUsername(),
+                usuario.getAuthorities().stream().anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"))));
     }
 
     @PostMapping("/logout")
@@ -90,7 +94,12 @@ public class AuthController {
         SecurityContextHolder.clearContext();
 
         return ResponseEntity.ok(
-                new LoginResponse("Sesión cerrada", "")
+                new LoginResponse("Sesión cerrada", "", false)
         );
+    }
+
+    private boolean esAdministrador(Authentication authentication) {
+        return authentication.getAuthorities().stream()
+                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
     }
 }

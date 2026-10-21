@@ -6,6 +6,7 @@ import { Observable, catchError, map, of, tap } from 'rxjs';
 export interface SesionUsuario {
   mensaje: string;
   email: string;
+  administrador: boolean;
 }
 
 @Injectable({ providedIn: 'root' })

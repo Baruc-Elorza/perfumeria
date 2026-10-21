@@ -13,6 +13,7 @@ export interface ItemPedido {
 export interface Pedido {
   id: string;
   estado: string;
+  numeroGuia?: string | null;
   clienteEmail: string;
   fechaCreacion: string;
   clienteNombre: string;
@@ -44,6 +45,18 @@ export class PedidoService {
     return this.http.get<Pedido>(
       `${this.apiUrl}/${encodeURIComponent(id)}`,
       { withCredentials: true }
+    );
+  }
+
+  obtenerPedidosParaEnvio(): Observable<Pedido[]> {
+    return this.http.get<Pedido[]>(`${this.apiUrl}/admin`, { withCredentials: true });
+  }
+
+  actualizarGuia(id: string, numeroGuia: string): Observable<Pedido> {
+    return this.http.patch<Pedido>(
+      `${this.apiUrl}/${encodeURIComponent(id)}/guia`,
+      { numeroGuia },
+      { withCredentials: true },
     );
   }
 }

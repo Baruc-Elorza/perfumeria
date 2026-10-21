@@ -92,6 +92,8 @@ verDetalle(pedido: Pedido): void {
         return 'Pago rechazado';
       case 'CANCELADO':
         return 'Cancelado';
+      case 'ENVIADO':
+        return 'Enviado';
       default:
         return estado;
     }

@@ -6,6 +6,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Value;
 
 import com.example.demo.model.Usuario;
 import com.example.demo.repository.UsuarioRepository;
@@ -14,9 +15,13 @@ import com.example.demo.repository.UsuarioRepository;
 public class UsuarioDetailsService implements UserDetailsService {
 
     private final UsuarioRepository usuarioRepository;
+    private final String correosAdministrador;
 
-    public UsuarioDetailsService(UsuarioRepository usuarioRepository) {
+    public UsuarioDetailsService(
+            UsuarioRepository usuarioRepository,
+            @Value("${app.admin.emails:}") String correosAdministrador) {
         this.usuarioRepository = usuarioRepository;
+        this.correosAdministrador = correosAdministrador;
     }
 
     @Override
@@ -30,10 +35,15 @@ public class UsuarioDetailsService implements UserDetailsService {
                         )
                 );
 
+        boolean administrador = java.util.Arrays.stream(correosAdministrador.split(","))
+                .map(String::trim)
+                .anyMatch(adminEmail -> !adminEmail.isEmpty()
+                        && adminEmail.equalsIgnoreCase(usuario.getEmail()));
+
         return User.withUsername(usuario.getEmail())
                 .password(usuario.getContrasenia())
                 .disabled(!usuario.getActivo())
-                .roles("USER")
+                .roles(administrador ? "ADMIN" : "USER")
                 .build();
     }
 }

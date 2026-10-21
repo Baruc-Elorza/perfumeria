@@ -178,6 +178,11 @@ h1 {
   color: #635b54;
 }
 
+.estado.enviado { background: #e7efff; color: #28529b; }
+.guia-envio { margin-top: 18px; padding: 16px 18px; border: 1px solid #cbdaf5; border-radius: 8px; background: #f2f6ff; }
+.guia-envio strong { display: block; margin-top: 7px; font-size: 1.1rem; letter-spacing: .5px; overflow-wrap: anywhere; }
+.guia-envio p { margin: 7px 0 0; color: #5d6572; font-size: .88rem; line-height: 1.5; }
+
 .pedido-resumen {
   display: flex;
   align-items: center;

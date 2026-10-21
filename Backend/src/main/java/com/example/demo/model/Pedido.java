@@ -16,6 +16,8 @@ public class Pedido {
 
     @Enumerated(EnumType.STRING)
     private EstadoPedido estado;
+    @Column(name = "numero_guia", length = 100)
+    private String numeroGuia;
     @Column(name = "cliente_email")
     private String clienteEmail;
 
@@ -41,7 +43,8 @@ public class Pedido {
         PENDIENTE,
         PAGADO,
         RECHAZADO,
-        CANCELADO
+        CANCELADO,
+        ENVIADO
     }
 
     // Clase embebida para representar cada producto dentro del pedido histórico
@@ -88,6 +91,9 @@ public class Pedido {
 
     public EstadoPedido getEstado() { return estado; }
     public void setEstado(EstadoPedido estado) { this.estado = estado; }
+
+    public String getNumeroGuia() { return numeroGuia; }
+    public void setNumeroGuia(String numeroGuia) { this.numeroGuia = numeroGuia; }
 
     public String getClienteEmail() { return clienteEmail; }
     public void setClienteEmail(String clienteEmail) { this.clienteEmail = clienteEmail; }

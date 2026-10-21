@@ -24,6 +24,8 @@ cd Backend
 export DB_USERNAME=root
 read -s "DB_PASSWORD?Contraseña de MySQL: "
 export DB_PASSWORD
+# Correos de las cuentas administradoras, separados por coma.
+export ADMIN_EMAILS=admin@example.com
 sh ./mvnw spring-boot:run
 ```
 
@@ -77,6 +79,9 @@ curl -X POST http://localhost:8080/api/perfumes \
 | POST /api/carrito/items/{perfumeId} | Agregar unidades: `{"cantidad":1}` |
 | PATCH /api/carrito/items/{perfumeId} | Establecer cantidad: `{"cantidad":2}` |
 | DELETE /api/carrito/items/{perfumeId} | Quitar producto |
+| GET /api/pedidos | Historial del cliente autenticado |
+| GET /api/pedidos/admin | Pedidos pagados y enviados, solo administración |
+| PATCH /api/pedidos/{id}/guia | Guardar guía y marcar el pedido como enviado, solo administración |
 
 El carrito responde `{items: [...], subtotal: 0}`. Cada elemento contiene perfumeId, nombre, marca, imagenUrl, precio, stock y cantidad. Angular envía la cookie de sesión con `withCredentials`; usa siempre `localhost` al abrir la web.
 
@@ -84,7 +89,7 @@ Los registros del carrito se guardan en MySQL. La asociación al navegador usa u
 
 Agregar al carrito no reserva ni descuenta stock. La validación de stock también se ejecuta en backend. Pago, creación del pedido y envío quedan para sus respectivas historias; el botón de pago aparece deshabilitado.
 
-La administración está disponible en `http://localhost:4200/admin/perfumes`, también desde «Administrar perfumes» en el catálogo. Permite agregar, editar, consultar el detalle y eliminar con confirmación. El formulario incluye precio, existencias, descripción, URL de imagen y notas aromáticas. Si un perfume está en un carrito, su eliminación se rechaza con un aviso; se puede establecer su stock en cero para impedir nuevas compras. La seguridad sigue siendo la configuración local de desarrollo (API pública); la autenticación y los permisos administrativos están pendientes.
+Registra primero las cuentas desde la pantalla de acceso y define sus correos en `ADMIN_EMAILS` antes de iniciar el backend. Solo esas cuentas reciben rol de administrador; las demás cuentas registradas son clientes. La administración de perfumes está en `/admin/perfumes` y los envíos en `/admin/pedidos`. En envíos, el administrador registra la guía de un pedido pagado; el pedido queda marcado como enviado y el número aparece en «Mis pedidos» del cliente. La columna `numero_guia` se agrega automáticamente al iniciar Spring Boot porque Hibernate usa `ddl-auto=update`.
 
 ## Verificación
 

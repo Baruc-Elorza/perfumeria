@@ -7,6 +7,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
+import org.springframework.http.HttpStatus;
 
 @RestController
 @RequestMapping("/api/pedidos")
@@ -35,4 +40,30 @@ public class PedidoController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+
+    @GetMapping("/admin")
+    public List<Pedido> obtenerPedidosParaEnvio() {
+        return pedidoRepository.findByEstadoInOrderByFechaCreacionDesc(List.of(
+                Pedido.EstadoPedido.PAGADO,
+                Pedido.EstadoPedido.ENVIADO));
+    }
+
+    @PatchMapping("/{id}/guia")
+    public ResponseEntity<?> guardarGuia(
+            @PathVariable String id,
+            @Valid @RequestBody GuiaRequest request) {
+        Pedido pedido = pedidoRepository.findById(id).orElse(null);
+        if (pedido == null) return ResponseEntity.notFound().build();
+        if (pedido.getEstado() != Pedido.EstadoPedido.PAGADO
+                && pedido.getEstado() != Pedido.EstadoPedido.ENVIADO) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of("message", "Solo se puede registrar una guía para pedidos pagados."));
+        }
+
+        pedido.setNumeroGuia(request.numeroGuia().trim());
+        pedido.setEstado(Pedido.EstadoPedido.ENVIADO);
+        return ResponseEntity.ok(pedidoRepository.save(pedido));
+    }
+
+    public record GuiaRequest(@NotBlank @Size(max = 100) String numeroGuia) {}
 }
