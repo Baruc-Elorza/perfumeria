@@ -9,7 +9,6 @@ import { Pedido, PedidoService } from '../../services/pedido.service';
   standalone: true,
   imports: [CurrencyPipe, DatePipe, FormsModule, RouterLink],
   templateUrl: './admin-pedidos.component.html',
-  styleUrl: './admin-pedidos.component.css',
 })
 export class AdminPedidosComponent implements OnInit {
   private readonly pedidoService = inject(PedidoService);

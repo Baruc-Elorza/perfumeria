@@ -11,7 +11,6 @@ import { Perfume } from '../../models/perfume.model';
   standalone: true,
   imports: [CurrencyPipe, FormsModule, RouterLink],
   templateUrl: './admin-perfumes.component.html',
-  styleUrl: './admin-perfumes.component.css'
 })
 export class AdminPerfumesComponent implements OnInit {
   private readonly servicio = inject(PerfumeService);

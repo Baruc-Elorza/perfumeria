@@ -9,7 +9,6 @@ import { Pedido, PedidoService } from '../../services/pedido.service';
   standalone: true,
   imports: [CommonModule, CurrencyPipe, DatePipe, RouterLink],
   templateUrl: './historial-pedidos.html',
-  styleUrls: ['./historial-pedido.css']
 })
 export class HistorialPedidosComponent implements OnInit {
   private pedidoService = inject(PedidoService);

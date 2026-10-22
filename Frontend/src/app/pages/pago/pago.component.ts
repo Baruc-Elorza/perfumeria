@@ -38,61 +38,7 @@ import { PagoService } from '../../services/pago.service';
         </button>
       }
     </div>
-  `,
-  styles: [`
-    .stripe-pay-wrapper {
-      display: flex;
-      flex-direction: column;
-      gap: 16px;
-    }
-
-    .loading-text {
-      font-size: 0.9rem;
-      color: #6b7280;
-      margin: 0;
-    }
-
-    #payment-element {
-      min-height: 150px;
-    }
-
-    .status-message {
-      font-size: 0.88rem;
-      padding: 10px 14px;
-      border-radius: 6px;
-      margin: 0;
-    }
-
-    .status-message.error {
-      background-color: #fef2f2;
-      color: #991b1b;
-      border: 1px solid #fecaca;
-    }
-
-    .status-message.success {
-      background-color: #ecfdf5;
-      color: #065f46;
-      border: 1px solid #a7f3d0;
-    }
-
-    .btn-confirmar-pago {
-      width: 100%;
-      padding: 12px;
-      background-color: #111827;
-      color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      font-size: 0.95rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background-color 0.2s ease;
-    }
-
-    .btn-confirmar-pago:hover {
-      background-color: #1f2937;
-    }
-  `]
-})
+  `,})
 export class PagoComponent implements AfterViewInit {
 
   @Input() monto: number = 0;

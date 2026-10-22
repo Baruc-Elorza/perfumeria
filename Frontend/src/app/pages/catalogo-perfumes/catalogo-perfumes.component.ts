@@ -14,7 +14,6 @@ import { AuthService } from '../../services/auth.service';
   standalone: true,
   imports: [CurrencyPipe, FormsModule, RouterLink],
   templateUrl: './catalogo-perfumes.component.html',
-  styleUrl: './catalogo-perfumes.component.css'
 })
 export class CatalogoPerfumesComponent implements OnInit {
   readonly perfumesFiltrados = signal<Perfume[]>([]);

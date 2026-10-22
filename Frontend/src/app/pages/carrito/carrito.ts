@@ -11,7 +11,6 @@ import { CompraService } from '../../services/compra.service';
   imports: [CurrencyPipe, RouterLink],
   selector: 'app-carrito',
   standalone: true,
-  styleUrl: './carrito.css',
   templateUrl: './carrito.html',
 })
 export class Carrito implements OnInit {
