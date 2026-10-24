@@ -97,23 +97,36 @@ public class CompraController {
         return valor == null || valor.isBlank();
     }
 
+
     @PostMapping("/confirmar")
     public ResponseEntity<?> confirmarCompra(
-            @RequestBody ConfirmacionPagoRequest request) {
+            @RequestBody ConfirmacionPagoRequest request,
+            Authentication authentication) {
+
         try {
+            if (authentication == null
+                    || !authentication.isAuthenticated()) {
+                return ResponseEntity.status(401)
+                        .body(Map.of(
+                                "error",
+                                "Debes iniciar sesión."
+                        ));
+            }
+
             if (request == null
                     || esVacio(request.getPedidoId())
                     || esVacio(request.getReferenciaPagoProveedor())) {
                 return ResponseEntity.badRequest()
                         .body(Map.of(
-                            "error",
-                            "Faltan los datos de confirmación."
+                                "error",
+                                "Faltan los datos de confirmación."
                         ));
             }
 
             compraService.confirmarCompraYPago(
                     request.getPedidoId(),
-                    request.getReferenciaPagoProveedor()
+                    request.getReferenciaPagoProveedor(),
+                    authentication.getName()
             );
 
             return ResponseEntity.ok(Map.of(
@@ -125,14 +138,20 @@ public class CompraController {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", e.getMessage()));
 
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(409)
+                    .body(Map.of("error", e.getMessage()));
+
         } catch (Exception e) {
+            e.printStackTrace();
             return ResponseEntity.internalServerError()
                     .body(Map.of(
-                        "error",
-                        "Error al procesar la compra"
+                            "error",
+                            "Error al verificar y confirmar el pago."
                     ));
         }
     }
+
 
     public static class CrearPedidoRequest {
         private String calle;
