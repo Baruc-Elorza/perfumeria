@@ -44,7 +44,8 @@ public class Pedido {
         PAGADO,
         RECHAZADO,
         CANCELADO,
-        ENVIADO
+        ENVIADO,
+        ENTREGADO
     }
 
     // Clase embebida para representar cada producto dentro del pedido histórico

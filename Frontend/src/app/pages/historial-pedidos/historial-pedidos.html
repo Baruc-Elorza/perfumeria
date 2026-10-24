@@ -9,6 +9,11 @@
   </nav>
 </header>
 <main class="historial">
+  @if (mensajeEntrega) {
+  <p class="mensaje-entrega" role="status">
+    {{ mensajeEntrega }}
+  </p>
+}
   <section class="presentacion">
     <span class="etiqueta">TU ESPACIO PERSONAL</span>
     <h1>Mis pedidos</h1>
@@ -66,7 +71,8 @@
               [class.pendiente]="pedido.estado === 'PENDIENTE'"
               [class.rechazado]="pedido.estado === 'RECHAZADO'"
               [class.cancelado]="pedido.estado === 'CANCELADO'"
-              [class.enviado]="pedido.estado === 'ENVIADO'">
+              [class.enviado]="pedido.estado === 'ENVIADO'"
+              [class.entregado]="pedido.estado === 'ENTREGADO'">
               {{ textoEstado(pedido.estado) }}
             </span>
           </div>
@@ -118,6 +124,29 @@
                   <strong>{{ pedido.numeroGuia }}</strong>
                   <p>Tu paquete ya fue enviado. Usa este número en el sitio de la paquetería para seguirlo.</p>
                 </section>
+              }
+              @if (pedido.estado === 'ENVIADO') {
+                <section class="confirmacion-entrega">
+                  <h4>¿Ya recibiste tu pedido?</h4>
+                  <p>
+                    Confirma únicamente si recibiste el paquete y los productos
+                    están en buenas condiciones.
+                  </p>
+
+                  <button
+                    type="button"
+                    class="boton-confirmar-entrega"
+                    [disabled]="confirmandoEntrega"
+                    (click)="confirmarRecepcion(pedido)">
+                    {{ confirmandoEntrega ? 'Confirmando...' : 'Confirmar recepción' }}
+                  </button>
+                </section>
+              }
+
+              @if (pedido.estado === 'ENTREGADO') {
+                <p class="mensaje-entrega">
+                  ✓ Recepción confirmada. Tu pedido está entregado.
+                </p>
               }
 
               <h4>Productos</h4>

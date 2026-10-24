@@ -42,6 +42,7 @@ import { PagoService } from '../../services/pago.service';
 export class PagoComponent implements AfterViewInit {
 
   @Input() monto: number = 0;
+  @Input() pedidoId = '';
 
   private stripe: Stripe | null = null;
   private elements: StripeElements | null = null;
@@ -69,15 +70,14 @@ export class PagoComponent implements AfterViewInit {
           return;
         }
 
-        const montoACobrar = Math.round(Number(this.monto));
+       if (!this.pedidoId) {
+         this.mensaje = 'No se recibió el identificador del pedido.';
+         this.cargando = false;
+         this.cdr.detectChanges();
+         return;
+       }
 
-        if (!Number.isFinite(montoACobrar) || montoACobrar <= 0) {
-          this.mensaje = 'El monto del carrito no es válido.';
-          this.cargando = false;
-          this.cdr.detectChanges();
-          return;
-        }
-        this.pagoService.crearPago(montoACobrar).subscribe({
+       this.pagoService.crearPago(this.pedidoId).subscribe({
           next: (respuesta) => {
             this.paymentIntentId = respuesta.paymentIntentId;
 
@@ -137,17 +137,22 @@ export class PagoComponent implements AfterViewInit {
       return;
     }
 
-    this.pagoService.obtenerEstado(this.paymentIntentId).subscribe({
+        this.pagoService.confirmarCompra(
+      this.pedidoId,
+      this.paymentIntentId
+    ).subscribe({
       next: (respuesta) => {
-        this.mensaje = `${respuesta.estado}: ${respuesta.mensaje}`;
-        if (respuesta.estado === 'PAGADO') {
-          this.pagoExitoso = true;
-        }
+        this.mensaje = respuesta.mensaje;
+        this.pagoExitoso = true;
         this.cdr.detectChanges();
       },
       error: (error) => {
-        console.error('Error al verificar estado del pago:', error);
-        this.mensaje = 'El pago fue procesado, pero no se pudo verificar su estado.';
+        console.error('Error al confirmar la compra:', error);
+
+        this.mensaje =
+          'Stripe procesó el pago, pero no se pudo confirmar el pedido. ' +
+          'No vuelvas a pagar; verifica el pedido antes de intentarlo de nuevo.';
+
         this.cdr.detectChanges();
       }
     });

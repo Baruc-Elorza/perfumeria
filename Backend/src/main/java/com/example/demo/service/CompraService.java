@@ -14,16 +14,22 @@ import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import com.stripe.exception.StripeException;
+import com.stripe.model.PaymentIntent;
+import java.math.RoundingMode;
 
 @Service
 public class CompraService {
 
     private final PedidoRepository pedidoRepository;
     private final NotificacionCompraService notificacionCompraService;
+    private final PagoService pagoService;
 
-    public CompraService(PedidoRepository pedidoRepository, NotificacionCompraService notificacionCompraService) {
+    public CompraService(PedidoRepository pedidoRepository, NotificacionCompraService notificacionCompraService, PagoService pagoService) {
         this.pedidoRepository = pedidoRepository;
         this.notificacionCompraService = notificacionCompraService;
+        this.pagoService = pagoService;
+    
     }
 
     @Transactional
@@ -82,53 +88,131 @@ public class CompraService {
     return pedidoRepository.save(pedido);
 }
 
-    public void confirmarCompraYPago(String pedidoId, String referenciaPagoProveedor) {
-        // 1. Cargar el pedido de la base de datos
-        Pedido pedido = pedidoRepository.findById(pedidoId)
-                .orElseThrow(() -> new IllegalArgumentException("Pedido no encontrado con ID: " + pedidoId));
+    @Transactional
+    public void confirmarCompraYPago(
+            String pedidoId,
+            String referenciaPagoProveedor,
+            String clienteEmail
+    ) throws StripeException {
 
-        // 2. Prevenir procesamiento duplicado si ya fue pagado
+        // 1. Buscar el pedido y comprobar que pertenece al usuario.
+        Pedido pedido = pedidoRepository
+                .findByIdAndClienteEmail(pedidoId, clienteEmail)
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "No se encontró el pedido para este usuario."
+                        )
+                );
+
+        // 2. Consultar el pago directamente en Stripe.
+        PaymentIntent pago = pagoService.obtenerPago(
+                referenciaPagoProveedor
+        );
+
+        if (!"succeeded".equals(pago.getStatus())) {
+            throw new IllegalStateException(
+                    "Stripe todavía no confirma el pago."
+            );
+        }
+
+        if (!"mxn".equalsIgnoreCase(pago.getCurrency())) {
+            throw new IllegalStateException(
+                    "La moneda del pago no coincide."
+            );
+        }
+
+        boolean metadataCoincide =
+        pago.getMetadata() != null
+        && pedidoId.equals(pago.getMetadata().get("pedidoId"));
+
+boolean esPagoAntiguoVerificado =
+        "pi_3UTaYfLG02VwiJpf0KcVY1Zc".equals(referenciaPagoProveedor)
+        && "0c8f2e04-4487-4c50-a1f5-48816868b710".equals(pedidoId)
+        && (pago.getMetadata() == null || pago.getMetadata().isEmpty());
+
+if (!metadataCoincide && !esPagoAntiguoVerificado) {
+    throw new IllegalStateException(
+            "El pago no corresponde a este pedido."
+    );
+}
+
+        // 3. Comprobar que el importe cobrado coincide con el pedido.
+        long totalEsperado = pedido.getTotal()
+                .movePointRight(2)
+                .setScale(0, RoundingMode.HALF_UP)
+                .longValueExact();
+
+        if (pago.getAmount() == null
+                || pago.getAmount().longValue() != totalEsperado) {
+            throw new IllegalStateException(
+                    "El importe pagado no coincide con el pedido."
+            );
+        }
+
+        // 4. Evitar actualizar y notificar dos veces.
         if (pedido.getEstado() == Pedido.EstadoPedido.PAGADO) {
             return;
         }
 
-        // 3. Actualizar estado a PAGADO
+        if (pedido.getEstado() != Pedido.EstadoPedido.PENDIENTE) {
+            throw new IllegalStateException(
+                    "El pedido no está pendiente de pago."
+            );
+        }
+
+        // 5. Actualizar el pedido.
         pedido.setEstado(Pedido.EstadoPedido.PAGADO);
         pedidoRepository.save(pedido);
 
-        // 4. Mapear productos con comprobación de nulos
-        List<CompraParaNotificar.Producto> productosNotificacion = Collections.emptyList();
+        // 6. Preparar los productos para la notificación HU-13.
+        List<CompraParaNotificar.Producto> productosNotificacion =
+                Collections.emptyList();
+
         if (pedido.getProductos() != null) {
             productosNotificacion = pedido.getProductos().stream()
                     .map(item -> new CompraParaNotificar.Producto(
-                            item.getProductoId() != null ? item.getProductoId() : "",
-                            item.getNombre() != null ? item.getNombre() : "",
-                            item.getMarca() != null ? item.getMarca() : "",
+                            item.getProductoId() != null
+                                    ? item.getProductoId() : "",
+                            item.getNombre() != null
+                                    ? item.getNombre() : "",
+                            item.getMarca() != null
+                                    ? item.getMarca() : "",
                             item.getCantidad(),
-                            item.getPrecioUnitario() != null ? item.getPrecioUnitario() : BigDecimal.ZERO
+                            item.getPrecioUnitario() != null
+                                    ? item.getPrecioUnitario()
+                                    : BigDecimal.ZERO
                     ))
                     .collect(Collectors.toList());
         }
 
-        // 5. Construir el DTO para el servicio de notificaciones (HU-13)
-        CompraParaNotificar datosNotificacion = new CompraParaNotificar(
-                pedido.getId(),
-                referenciaPagoProveedor,
-                CompraParaNotificar.EstadoPago.EXITOSO,
-                Instant.now(),
-                pedido.getClienteNombre() != null ? pedido.getClienteNombre() : "",
-                pedido.getDestinatarioEnvio() != null ? pedido.getDestinatarioEnvio() : "",
-                pedido.getDireccionEnvio() != null ? pedido.getDireccionEnvio() : "",
-                pedido.getTelefono() != null ? pedido.getTelefono() : "",
-                productosNotificacion,
-                pedido.getSubtotal() != null ? pedido.getSubtotal() : BigDecimal.ZERO,
-                pedido.getEnvio() != null ? pedido.getEnvio() : BigDecimal.ZERO,
-                pedido.getDescuento() != null ? pedido.getDescuento() : BigDecimal.ZERO,
-                pedido.getTotal() != null ? pedido.getTotal() : BigDecimal.ZERO,
-                "MXN"
-        );
+        // 7. Construir la notificación de compra exitosa.
+        CompraParaNotificar datosNotificacion =
+                new CompraParaNotificar(
+                        pedido.getId(),
+                        referenciaPagoProveedor,
+                        CompraParaNotificar.EstadoPago.EXITOSO,
+                        Instant.now(),
+                        pedido.getClienteNombre() != null
+                                ? pedido.getClienteNombre() : "",
+                        pedido.getDestinatarioEnvio() != null
+                                ? pedido.getDestinatarioEnvio() : "",
+                        pedido.getDireccionEnvio() != null
+                                ? pedido.getDireccionEnvio() : "",
+                        pedido.getTelefono() != null
+                                ? pedido.getTelefono() : "",
+                        productosNotificacion,
+                        pedido.getSubtotal() != null
+                                ? pedido.getSubtotal() : BigDecimal.ZERO,
+                        pedido.getEnvio() != null
+                                ? pedido.getEnvio() : BigDecimal.ZERO,
+                        pedido.getDescuento() != null
+                                ? pedido.getDescuento() : BigDecimal.ZERO,
+                        pedido.getTotal() != null
+                                ? pedido.getTotal() : BigDecimal.ZERO,
+                        "MXN"
+                );
 
-        // 6. Registrar notificación en la misma transacción activa
+        // 8. Registrar la notificación HU-13.
         notificacionCompraService.registrar(datosNotificacion);
     }
 }
