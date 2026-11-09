@@ -1,3 +1,29 @@
+/* HU-15: administración de usuarios */
+.page-admin-usuarios main { max-width: 1200px; margin: 32px auto; padding: 0 24px; }
+.page-admin-usuarios header { display: flex; gap: 24px; justify-content: space-between; align-items: center; flex-wrap: wrap; padding: 24px; background: var(--color-white); border-bottom: 1px solid var(--color-border); }
+.page-admin-usuarios nav, .page-admin-usuarios .usuarios-acciones { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
+.page-admin-usuarios a { color: var(--color-gold-dark); }
+.page-admin-usuarios .usuarios-titulo { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.page-admin-usuarios .usuarios-filtros { display: flex; align-items: end; gap: 16px; flex-wrap: wrap; margin-bottom: 24px; }
+.page-admin-usuarios label { display: flex; flex-direction: column; gap: 8px; }
+.page-admin-usuarios input, .page-admin-usuarios select { padding: 10px; border: 1px solid var(--color-border); border-radius: 6px; font: inherit; max-width: 100%; }
+.page-admin-usuarios button { padding: 10px 16px; background: var(--color-gold-pale); color: var(--color-black); border: 1px solid var(--color-gold); border-radius: 6px; cursor: pointer; }
+.page-admin-usuarios button:disabled { opacity: .5; cursor: not-allowed; }
+.page-admin-usuarios .usuarios-panel, .page-admin-usuarios .usuarios-aviso { padding: 20px; background: var(--color-white); border: 1px solid var(--color-border); border-radius: 8px; margin: 16px 0; }
+.page-admin-usuarios .usuarios-confirmacion { border-color: var(--color-gold); }
+.page-admin-usuarios .usuarios-error, .page-admin-usuarios .usuarios-bloqueado { color: var(--color-danger); }
+.page-admin-usuarios .usuarios-exito { color: var(--color-success); }
+.page-admin-usuarios dl { display: grid; grid-template-columns: auto 1fr; gap: 8px 20px; margin: 16px 0; overflow-wrap: anywhere; }
+.page-admin-usuarios dt { font-weight: 600; }
+.page-admin-usuarios dd { margin: 0; }
+.page-admin-usuarios .usuarios-tabla { overflow-x: auto; margin-top: 16px; }
+.page-admin-usuarios table { width: 100%; border-collapse: collapse; background: var(--color-white); }
+.page-admin-usuarios th, .page-admin-usuarios td { padding: 14px; text-align: left; border-bottom: 1px solid var(--color-border); overflow-wrap: anywhere; }
+.page-admin-usuarios caption { text-align: left; padding: 12px 0; }
+.page-admin-usuarios th { background: var(--color-gold-pale); }
+.page-admin-usuarios :focus-visible { outline: 3px solid var(--color-gold-dark); outline-offset: 3px; }
+@media (max-width: 600px) { .page-admin-usuarios main { padding: 0 12px; } .page-admin-usuarios .usuarios-filtros label { width: 100%; } }
+
 /* =========================================================
    PERFUMERÍA — ESTILOS GLOBALES
    Identidad institucional: Blanco, Negro y Dorado

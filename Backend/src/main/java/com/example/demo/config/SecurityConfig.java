@@ -24,12 +24,14 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(
-            HttpSecurity http) throws Exception {
+            HttpSecurity http, com.example.demo.repository.UsuarioRepository usuarios) throws Exception {
 
         return http
                 .cors(Customizer.withDefaults())
 
                 .csrf(csrf -> csrf.disable())
+                .addFilterBefore(new UsuarioActivoFilter(usuarios),
+                        org.springframework.security.web.access.intercept.AuthorizationFilter.class)
 
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(
@@ -54,6 +56,7 @@ public class SecurityConfig {
                         ).permitAll()
 
                         .requestMatchers(HttpMethod.GET, "/api/perfumes/**").permitAll()
+                        .requestMatchers("/api/admin/usuarios/**", "/api/usuarios", "/api/usuarios/*").hasRole("ADMIN")
 
                         .requestMatchers(HttpMethod.POST, "/api/perfumes/**").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/perfumes/**").hasRole("ADMIN")

@@ -61,7 +61,7 @@ export class LoginComponent {
   private mostrarError(err: any): void {
     this.cargando.set(false);
     const status = err.status;
-    this.error.set(status === 401 ? 'Correo o contraseña incorrectos.'
+    this.error.set(status === 401 ? (err.error?.message || 'Correo o contraseña incorrectos.')
       : status === 409 ? 'Ese correo ya tiene una cuenta.'
       : err.error?.message || err.error || 'No se pudo conectar. Revisa que el servidor esté disponible e inténtalo de nuevo.');
   }

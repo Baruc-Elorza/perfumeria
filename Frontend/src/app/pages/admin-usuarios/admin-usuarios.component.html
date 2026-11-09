@@ -1,0 +1,93 @@
+<div class="page-admin-usuarios">
+  <header>
+    <a routerLink="/" class="logo">PERFUMERÍA</a>
+    <nav aria-label="Administración">
+      <a routerLink="/admin/perfumes">Perfumes</a>
+      <a routerLink="/admin/pedidos">Envíos</a>
+      <a routerLink="/">Catálogo</a>
+    </nav>
+  </header>
+  <main>
+    <div class="usuarios-titulo">
+      <div><h1>Administrar usuarios</h1><p>Consulta los datos de tus clientes y administra su acceso.</p></div>
+      <button type="button" (click)="cargar()" [disabled]="cargando() || guardando() || cargandoDetalle()">Actualizar lista</button>
+    </div>
+
+    @if (error()) { <p class="usuarios-aviso usuarios-error" role="alert">{{ error() }}</p> }
+    @if (mensaje()) { <p class="usuarios-aviso usuarios-exito" role="status">{{ mensaje() }}</p> }
+
+    <section class="usuarios-filtros" aria-label="Filtrar usuarios">
+      <label for="buscar-usuario">Nombre o correo
+        <input id="buscar-usuario" type="search" [ngModel]="busqueda()" (ngModelChange)="busqueda.set($event)" placeholder="Buscar usuario">
+      </label>
+      <label for="estado-usuario">Estado
+        <select id="estado-usuario" [ngModel]="estado()" (ngModelChange)="estado.set($event)">
+          <option value="todos">Todos</option>
+          <option value="activos">Activos</option>
+          <option value="bloqueados">Bloqueados</option>
+        </select>
+      </label>
+      <button type="button" (click)="busqueda.set(''); estado.set('todos')">Limpiar filtros</button>
+    </section>
+
+    @if (pendiente(); as usuario) {
+      <section class="usuarios-panel usuarios-confirmacion" aria-labelledby="confirmar-estado" role="region">
+        <h2 id="confirmar-estado">{{ usuario.activo ? 'Bloquear' : 'Desbloquear' }} a {{ usuario.nombre }}</h2>
+        <p>{{ usuario.email }}</p>
+        <p>{{ usuario.activo
+          ? 'Se impedirá su acceso y sus sesiones actuales serán rechazadas en la siguiente petición. Se conservarán sus datos y pedidos.'
+          : 'Podrá volver a iniciar sesión. Sus sesiones anteriores no se reactivarán.' }}</p>
+        <div class="usuarios-acciones">
+          <button type="button" (click)="confirmar()" [disabled]="guardando()">{{ guardando() ? 'Guardando…' : 'Confirmar' }}</button>
+          <button type="button" (click)="pendiente.set(null)" [disabled]="guardando()">Cancelar</button>
+        </div>
+      </section>
+    }
+
+    @if (cargandoDetalle()) { <p role="status">Cargando detalle…</p> }
+    @if (seleccionado(); as usuario) {
+      <section class="usuarios-panel" aria-labelledby="detalle-usuario">
+        <h2 id="detalle-usuario">Detalle del usuario</h2>
+        <dl>
+          <dt>ID</dt><dd>{{ usuario.id }}</dd>
+          <dt>Nombre</dt><dd>{{ usuario.nombre }}</dd>
+          <dt>Correo</dt><dd>{{ usuario.email }}</dd>
+          <dt>Estado</dt><dd>{{ usuario.activo ? 'Activo' : 'Bloqueado' }}</dd>
+          <dt>Tipo de cuenta</dt><dd>{{ usuario.administrador ? 'Administrador' : 'Cliente' }}</dd>
+        </dl>
+        <button type="button" (click)="seleccionado.set(null)">Cerrar detalle</button>
+      </section>
+    }
+
+    @if (cargando()) {
+      <p class="usuarios-aviso" role="status">Cargando usuarios…</p>
+    } @else if (!error() || usuarios().length) {
+      <p aria-live="polite">{{ filtrados().length }} usuarios encontrados</p>
+      @if (!filtrados().length) {
+        <p class="usuarios-panel">{{ usuarios().length ? 'No hay usuarios que coincidan con los filtros.' : 'No hay usuarios registrados.' }}</p>
+      } @else {
+        <div class="usuarios-tabla">
+          <table>
+            <caption>Usuarios registrados. Las cuentas de administrador están protegidas.</caption>
+            <thead><tr><th scope="col">Nombre</th><th scope="col">Correo</th><th scope="col">Tipo</th><th scope="col">Estado</th><th scope="col">Acciones</th></tr></thead>
+            <tbody>
+              @for (usuario of filtrados(); track usuario.id) {
+                <tr>
+                  <td>{{ usuario.nombre }}</td><td>{{ usuario.email }}</td>
+                  <td>{{ usuario.administrador ? 'Administrador' : 'Cliente' }}</td>
+                  <td><span [class.usuarios-bloqueado]="!usuario.activo">{{ usuario.activo ? 'Activo' : 'Bloqueado' }}</span></td>
+                  <td><div class="usuarios-acciones">
+                    <button type="button" (click)="verDetalle(usuario)" [disabled]="guardando() || cargandoDetalle()" [attr.aria-label]="'Ver detalle de ' + usuario.nombre">Ver detalle</button>
+                    @if (usuario.puedeCambiarEstado) {
+                      <button type="button" (click)="solicitarCambio(usuario)" [disabled]="guardando() || cargandoDetalle()" [attr.aria-label]="(usuario.activo ? 'Bloquear a ' : 'Desbloquear a ') + usuario.nombre">{{ usuario.activo ? 'Bloquear' : 'Desbloquear' }}</button>
+                    } @else { <span>Cuenta protegida</span> }
+                  </div></td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    }
+  </main>
+</div>

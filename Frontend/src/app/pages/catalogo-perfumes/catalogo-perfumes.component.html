@@ -1,6 +1,9 @@
 <div class="page-catalogo">
 <header>
   <div class="logo">PERFUMERÍA</div>
+  @if (auth.usuario()?.administrador) {
+    <a routerLink="/admin/usuarios" class="back-link">Administrar usuarios</a>
+  }
   <a routerLink="/admin/perfumes" class="back-link">Administrar perfumes</a>
   <a routerLink="/carrito" class="back-link">Ver carrito</a>
   <a routerLink="/mis-pedidos" class="back-link">Mis pedidos</a>

@@ -23,6 +23,12 @@ public class Usuario {
 
     private boolean activo;
 
+    @Column(nullable = false, columnDefinition = "bigint default 0")
+    private long versionSesion;
+
+    public long getVersionSesion() { return versionSesion; }
+    public void revocarSesiones() { versionSesion++; }
+
     public Usuario(){}
 
     public Usuario(String nombre, String email, String contrasenia){
