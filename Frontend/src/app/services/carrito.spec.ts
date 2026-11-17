@@ -1,7 +1,7 @@
 import { TestBed } from '@angular/core/testing';
 import { provideHttpClient } from '@angular/common/http';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
-import { CarritoService } from './carrito';
+import { CarritoService } from './carrito.service';
 
 describe('CarritoService', () => {
   it('envía la cantidad con la sesión del navegador al agregar un perfume', () => {

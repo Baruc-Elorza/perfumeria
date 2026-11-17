@@ -18,6 +18,8 @@ export class HistorialPedidosComponent implements OnInit {
   pedidoSeleccionado: Pedido | null = null;
   cargando = true;
   error = '';
+  confirmandoEntrega = false;
+  mensajeEntrega = '';
 
   ngOnInit(): void {
     this.cargarHistorial();
@@ -80,6 +82,46 @@ verDetalle(pedido: Pedido): void {
   });
 }
 
+confirmarRecepcion(pedido: Pedido): void {
+  const confirmar = window.confirm(
+    `¿Confirmas que recibiste el pedido ${pedido.id} en buenas condiciones?`
+  );
+
+  if (!confirmar) {
+    return;
+  }
+
+  this.confirmandoEntrega = true;
+  this.mensajeEntrega = '';
+  this.error = '';
+
+  this.pedidoService.confirmarEntrega(pedido.id).subscribe({
+    next: pedidoActualizado => {
+      this.pedidos = this.pedidos.map(p =>
+        p.id === pedidoActualizado.id ? pedidoActualizado : p
+      );
+
+      if (this.pedidoSeleccionado?.id === pedidoActualizado.id) {
+        this.pedidoSeleccionado = pedidoActualizado;
+      }
+
+      this.confirmandoEntrega = false;
+      this.mensajeEntrega = '¡Recepción confirmada! El pedido aparece como entregado.';
+      this.cdr.detectChanges();
+    },
+    error: err => {
+      console.error('Error al confirmar la recepción:', err);
+
+      this.confirmandoEntrega = false;
+      this.error = err.status === 409
+        ? 'Este pedido ya no está disponible para confirmar la recepción.'
+        : 'No se pudo confirmar la recepción. Inténtalo de nuevo.';
+
+      this.cdr.detectChanges();
+    }
+  });
+}
+
 
   textoEstado(estado: string): string {
     switch (estado) {
@@ -93,6 +135,8 @@ verDetalle(pedido: Pedido): void {
         return 'Cancelado';
       case 'ENVIADO':
         return 'Enviado';
+      case 'ENTREGADO':
+        return 'Entregado';
       default:
         return estado;
     }

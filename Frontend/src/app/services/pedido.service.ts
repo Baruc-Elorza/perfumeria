@@ -59,4 +59,12 @@ export class PedidoService {
       { withCredentials: true },
     );
   }
+  confirmarEntrega(id: string): Observable<Pedido> {
+    return this.http.patch<Pedido>(
+      `${this.apiUrl}/${encodeURIComponent(id)}/confirmar-entrega`,
+      {},
+      { withCredentials: true },
+    );
+  }
 }
+

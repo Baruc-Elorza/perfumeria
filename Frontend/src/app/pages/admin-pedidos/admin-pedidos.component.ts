@@ -1,5 +1,5 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
-import { Component, OnInit, inject } from '@angular/core';
+import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { Pedido, PedidoService } from '../../services/pedido.service';
@@ -12,6 +12,7 @@ import { Pedido, PedidoService } from '../../services/pedido.service';
 })
 export class AdminPedidosComponent implements OnInit {
   private readonly pedidoService = inject(PedidoService);
+  private readonly cdr = inject(ChangeDetectorRef);
 
   pedidos: Pedido[] = [];
   guias: Record<string, string> = {};
@@ -32,6 +33,9 @@ export class AdminPedidosComponent implements OnInit {
         this.pedidos = pedidos;
         this.guias = Object.fromEntries(pedidos.map(pedido => [pedido.id, pedido.numeroGuia ?? '']));
         this.cargando = false;
+        this.cdr.detectChanges();
+        
+
       },
       error: () => {
         this.error = 'No se pudieron cargar los pedidos pagados.';

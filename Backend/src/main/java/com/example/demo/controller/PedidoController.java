@@ -40,6 +40,32 @@ public class PedidoController {
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
+    
+    @PatchMapping("/{id}/confirmar-entrega")
+    public ResponseEntity<?> confirmarEntrega(
+            @PathVariable String id,
+            Authentication authentication) {
+
+        Pedido pedido = pedidoRepository
+                .findByIdAndClienteEmail(id, authentication.getName())
+                .orElse(null);
+
+        if (pedido == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        if (pedido.getEstado() != Pedido.EstadoPedido.ENVIADO) {
+            return ResponseEntity.status(HttpStatus.CONFLICT)
+                    .body(Map.of(
+                        "message",
+                        "Solo puedes confirmar la recepción de un pedido enviado."
+                ));
+        }
+
+        pedido.setEstado(Pedido.EstadoPedido.ENTREGADO);
+
+        return ResponseEntity.ok(pedidoRepository.save(pedido));
+    }
 
     @GetMapping("/admin")
     public List<Pedido> obtenerPedidosParaEnvio() {

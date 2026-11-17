@@ -35,15 +35,19 @@ public class UsuarioDetailsService implements UserDetailsService {
                         )
                 );
 
-        boolean administrador = java.util.Arrays.stream(correosAdministrador.split(","))
-                .map(String::trim)
-                .anyMatch(adminEmail -> !adminEmail.isEmpty()
-                        && adminEmail.equalsIgnoreCase(usuario.getEmail()));
+        boolean administrador = esAdministrador(usuario.getEmail());
 
         return User.withUsername(usuario.getEmail())
                 .password(usuario.getContrasenia())
                 .disabled(!usuario.getActivo())
                 .roles(administrador ? "ADMIN" : "USER")
                 .build();
+    }
+
+    public boolean esAdministrador(String email) {
+        return java.util.Arrays.stream(correosAdministrador.split(","))
+                .map(String::trim)
+                .anyMatch(adminEmail -> !adminEmail.isEmpty()
+                        && adminEmail.equalsIgnoreCase(email));
     }
 }

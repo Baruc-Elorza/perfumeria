@@ -171,7 +171,11 @@ interface RespuestaPedido {
               <p *ngIf="pedidoId && total <= 0" class="notice-text">
                 El pedido se creó, pero el total no es válido.
               </p>
-              <app-pago *ngIf="pedidoId && total > 0" [monto]="total"></app-pago>
+              <app-pago
+                *ngIf="pedidoId && total > 0"
+                [monto]="total"
+                [pedidoId]="pedidoId">
+              </app-pago>
             </div>
           </section>
         </div>

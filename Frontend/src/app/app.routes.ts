@@ -9,6 +9,7 @@ import { HistorialPedidosComponent } from './pages/historial-pedidos/historial-p
 import { DireccionesComponent } from './components/direcciones/direcciones.component';
 import { AdminPedidosComponent } from './pages/admin-pedidos/admin-pedidos.component';
 import { adminGuard } from './services/admin.guard';
+import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.component';
 
 export const routes: Routes = [
     { path: '', component: CatalogoPerfumesComponent, pathMatch: 'full' },
@@ -18,6 +19,7 @@ export const routes: Routes = [
     { path: 'direcciones', component: DireccionesComponent, canActivate: [authGuard] },
     { path: 'admin/perfumes', component: AdminPerfumesComponent, canActivate: [adminGuard] },
     { path: 'admin/pedidos', component: AdminPedidosComponent, canActivate: [adminGuard] },
+    { path: 'admin/usuarios', component: AdminUsuariosComponent, canActivate: [adminGuard] },
     { path: 'mis-pedidos', component: HistorialPedidosComponent, canActivate: [authGuard] },
     { path: '**', redirectTo: '' } // Siempre debe ir al final
 ];

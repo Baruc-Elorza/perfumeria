@@ -249,3 +249,11 @@ CorreoCompraWorker (envío) y CorreoCompraScheduler (procesamiento periódico).
 
 Referencia de configuración:
 [Correo en Spring Boot](https://docs.spring.io/spring-boot/reference/io/email.html).
+
+
+## La HU-13 ya tiene el módulo para enviar al administrador un correo con los detalles de una compra pagada.
+## HU-16 debe proporcionar: ID del pedido, cliente, destinatario, dirección, productos, cantidades, precios de compra, subtotal, envío, descuento y total.
+## HU-05 debe proporcionar: confirmación del pago verificada desde el backend, referencia del proveedor, fecha, importe y moneda.
+## Al confirmar el pedido pagado, deben llamar a NotificacionCompraService.registrar(datos) dentro de la misma transacción. Debemos acordar quién hará esa llamada para integrarlo en un único punto.
+## El correo se procesa después de guardar la compra y tiene reintentos si falla SMTP. No debe activarse desde el botón de Angular ni confiar en un estado de pago enviado por el navegador.
+## Falta configurar el servidor SMTP, el remitente y el correo del administrador, y probar juntos el flujo completo.

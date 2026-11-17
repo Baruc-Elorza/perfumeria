@@ -22,9 +22,11 @@ import org.springframework.web.bind.annotation.*;
 public class AuthController {
 
     private final AuthenticationManager authenticationManager;
+    private final com.example.demo.repository.UsuarioRepository usuarios;
 
-    public AuthController(AuthenticationManager authenticationManager) {
+    public AuthController(AuthenticationManager authenticationManager, com.example.demo.repository.UsuarioRepository usuarios) {
         this.authenticationManager = authenticationManager;
+        this.usuarios = usuarios;
     }
 
     public record LoginRequest(
@@ -39,6 +41,8 @@ public class AuthController {
             @Valid @RequestBody LoginRequest datos,
             HttpServletRequest request) {
 
+        long versionSesion = usuarios.findByEmail(datos.email())
+                .map(com.example.demo.model.Usuario::getVersionSesion).orElse(-1L);
         Authentication authentication =
                 authenticationManager.authenticate(
                         new UsernamePasswordAuthenticationToken(
@@ -65,6 +69,7 @@ public class AuthController {
                         .SPRING_SECURITY_CONTEXT_KEY,
                 context
         );
+        session.setAttribute("versionSesion", versionSesion);
 
         return ResponseEntity.ok(
                 new LoginResponse(

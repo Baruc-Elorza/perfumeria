@@ -1,20 +1,49 @@
 <div class="page-catalogo">
-<header>
-  <div class="logo">PERFUMERÍA</div>
-  <a routerLink="/admin/perfumes" class="back-link">Administrar perfumes</a>
-  <a routerLink="/carrito" class="back-link">Ver carrito</a>
-  <a routerLink="/mis-pedidos" class="back-link">Mis pedidos</a>
-
+<header class="catalogo-header">
+  <a routerLink="/" class="logo">PERFUMERÍA</a>
+  <nav class="catalogo-nav" aria-label="Mi cuenta y compras">
+    <a routerLink="/carrito" class="back-link">Mi carrito</a>
+    @if (auth.usuario()) {
+      <a routerLink="/mis-pedidos" class="back-link">Mis pedidos</a>
+      <a routerLink="/direcciones" class="back-link">Mis direcciones</a>
+    }
+  </nav>
+  <div class="catalogo-cuenta">
   @if (auth.usuario(); as usuario) {
-    <span class="back-link">{{ usuario.email }}</span>
+    <span class="cuenta-email" [title]="usuario.email">{{ usuario.email }}</span>
     <button type="button" class="back-link auth-button" (click)="cerrarSesion()">Cerrar sesión</button>
   } @else {
-    <a routerLink="/login" class="back-link">Iniciar sesión</a>
+    <a routerLink="/login" class="back-link acceso-cuenta">Iniciar sesión</a>
   }
+  </div>
 </header>
+  @if (auth.usuario()?.administrador) {
+    <nav class="catalogo-admin" aria-label="Administración">
+      <span>ADMINISTRACIÓN</span>
+      <a routerLink="/admin/perfumes">Perfumes</a>
+      <a routerLink="/admin/pedidos">Envíos</a>
+      <a routerLink="/admin/usuarios">Usuarios</a>
+    </nav>
+  }
 <main class="container">
-  <h1>Catálogo de fragancias</h1>
-  <p class="introduccion">Encuentra tu próxima fragancia y consulta su disponibilidad.</p>
+  <section class="catalogo-presentacion" aria-labelledby="titulo-catalogo">
+    <div>
+      <p class="catalogo-etiqueta">EL ARTE DE ELEGIR TU FRAGANCIA</p>
+      <h1 id="titulo-catalogo">Un aroma.<br>Tu propia esencia.</h1>
+      <p class="introduccion">Explora el catálogo y encuentra las notas que van contigo.</p>
+      <a href="#coleccion" class="explorar-coleccion">Explorar fragancias <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="catalogo-ornamento" aria-hidden="true">
+      <span class="frasco-tapa"></span>
+      <span class="frasco-cuerpo"><span>PERFUMERÍA<br><small>EAU DE PARFUM</small></span></span>
+    </div>
+  </section>
+  <div class="coleccion-titulo" id="coleccion">
+    <div><p class="catalogo-etiqueta">DESCUBRE EL CATÁLOGO</p><h2>Nuestras fragancias</h2></div>
+    @if (!cargando() && !errorCarga()) {
+      <span>{{ perfumesFiltrados().length }} {{ perfumesFiltrados().length === 1 ? 'fragancia' : 'fragancias' }}</span>
+    }
+  </div>
 
   <section class="buscador" aria-label="Búsqueda de perfumes">
     <label for="busqueda">Buscar por nombre</label>
@@ -44,7 +73,7 @@
               <div class="imagen-catalogo sin-imagen" aria-hidden="true">{{ perfume.nombre.charAt(0) }}</div>
             }
             <div class="product-info">
-              <p>{{ perfume.marca }}</p>
+              <p class="perfume-marca">{{ perfume.marca }}</p>
               <h2>{{ perfume.nombre }}</h2>
               @if (perfume.descripcion) { <p>{{ perfume.descripcion }}</p> }
               @if (perfume.notasTop) { <p><strong>Aroma inicial:</strong> {{ perfume.notasTop }}</p> }
