@@ -30,6 +30,13 @@ public class Cliente extends Usuario {
     @OneToOne
     private BigInteger idHistorial;
 
+    @OneToOne(mappedBy = "cliente") //un cliente tiene un solo carrito
+    private Carrito carrito;
+
+    @OneToMany(mappedBy = "cliente") //Indica que la relación está definida y administrada por el atributo de la otra entidad.
+    // lo utilizas en el lado inverso de una relación bidireccional.
+    private List<Pedido> historialPedidos;
+
     public Cliente() {
         super();
     }

@@ -12,21 +12,20 @@ import org.hibernate.annotations.CreationTimestamp;
 public class Pedido {
 
     @Id
+    @GeneratedValue (strategy = GenerationType.IDENTITY)
     private String id;
+
+    @ManyToOne 
+    @JoinColumn(name = "cliente_id")
+    private Cliente cliente;
 
     @Enumerated(EnumType.STRING)
     private EstadoPedido estado;
-    @Column(name = "numero_guia", length = 100)
-    private String numeroGuia;
-    @Column(name = "cliente_email")
-    private String clienteEmail;
 
     @CreationTimestamp
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private Instant fechaCreacion;
 
-    private String clienteNombre;
-    private String destinatarioEnvio;
     private String direccionEnvio;
     private String telefono;
 
@@ -93,20 +92,8 @@ public class Pedido {
     public EstadoPedido getEstado() { return estado; }
     public void setEstado(EstadoPedido estado) { this.estado = estado; }
 
-    public String getNumeroGuia() { return numeroGuia; }
-    public void setNumeroGuia(String numeroGuia) { this.numeroGuia = numeroGuia; }
-
-    public String getClienteEmail() { return clienteEmail; }
-    public void setClienteEmail(String clienteEmail) { this.clienteEmail = clienteEmail; }
-
     public Instant getFechaCreacion() { return fechaCreacion; }
     public void setFechaCreacion(Instant fechaCreacion) { this.fechaCreacion = fechaCreacion; }
-
-    public String getClienteNombre() { return clienteNombre; }
-    public void setClienteNombre(String clienteNombre) { this.clienteNombre = clienteNombre; }
-
-    public String getDestinatarioEnvio() { return destinatarioEnvio; }
-    public void setDestinatarioEnvio(String destinatarioEnvio) { this.destinatarioEnvio = destinatarioEnvio; }
 
     public String getDireccionEnvio() { return direccionEnvio; }
     public void setDireccionEnvio(String direccionEnvio) { this.direccionEnvio = direccionEnvio; }

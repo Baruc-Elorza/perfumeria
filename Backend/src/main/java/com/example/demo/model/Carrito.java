@@ -12,6 +12,10 @@ public class Carrito {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne
+    @JoinColumn(name = "cliente_id", unique = true) //un carrito corresponde a un solo cliente
+    private Cliente cliente;
+
     @Column(nullable = false)
     private double subtotal;
 
