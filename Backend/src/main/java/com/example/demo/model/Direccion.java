@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import java.math.BigInteger;
+
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 
@@ -9,9 +11,8 @@ public class Direccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private BigInteger id;
 
-    private Long usuarioId; // Relación con el cliente/usuario
 
     @NotBlank(message = "La calle es obligatoria")
     private String calle;
@@ -31,18 +32,13 @@ public class Direccion {
     @NotBlank(message = "El código postal es obligatorio")
     private String codigoPostal;
 
-    private String telefono; // <-- Agregado aquí
-
     private String referencias;
 
     private Boolean esPrincipal = false;
 
     // Getters y Setters
-    public Long getId() { return id; }
-    public void setId(Long id) { this.id = id; }
-
-    public Long getUsuarioId() { return usuarioId; }
-    public void setUsuarioId(Long usuarioId) { this.usuarioId = usuarioId; }
+    public BigInteger getId() { return id; }
+    public void setId(BigInteger id) { this.id = id; }
 
     public String getCalle() { return calle; }
     public void setCalle(String calle) { this.calle = calle; }
@@ -64,9 +60,6 @@ public class Direccion {
 
     public String getCodigoPostal() { return codigoPostal; }
     public void setCodigoPostal(String codigoPostal) { this.codigoPostal = codigoPostal; }
-
-    public String getTelefono() { return telefono; } // <-- Agregado aquí
-    public void setTelefono(String telefono) { this.telefono = telefono; } // <-- Agregado aquí
 
     public String getReferencias() { return referencias; }
     public void setReferencias(String referencias) { this.referencias = referencias; }

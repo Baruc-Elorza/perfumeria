@@ -16,6 +16,8 @@ import jakarta.persistence.PrimaryKeyJoinColumn;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.*;
 
+import java.util.List;
+
 @Entity
 @Table(name="Cliente")
 @PrimaryKeyJoinColumn(name="Usuario_id")
@@ -23,7 +25,7 @@ public class Cliente extends Usuario {
     private String telefono;
 
     @OneToMany
-    private BigInteger idDireccion;
+    private List<Direccion> direcciones;
 
     @OneToOne
     private BigInteger idHistorial;
