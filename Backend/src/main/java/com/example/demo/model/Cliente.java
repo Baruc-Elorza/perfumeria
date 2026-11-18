@@ -25,7 +25,7 @@ public class Cliente extends Usuario {
     private String telefono;
 
     @OneToMany
-    private List<Direccion> direcciones;
+    private List<Direccion> direcciones; //despliega las direcciones en la pagina web
 
     @OneToOne
     private BigInteger idHistorial;

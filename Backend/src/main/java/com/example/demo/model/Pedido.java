@@ -25,14 +25,16 @@ public class Pedido {
     @CreationTimestamp
     @Column(name = "fecha_creacion", nullable = false, updatable = false)
     private Instant fechaCreacion;
-
-    private String direccionEnvio;
+    
+    private String direccionEnvio; //se obtiene con el constructor cliente.getDireccion();
     private String telefono;
-
     private BigDecimal subtotal;
-    private BigDecimal envio;
     private BigDecimal descuento;
     private BigDecimal total;
+
+    @OneToOne
+    @JoinColumn(name= "id_envio", nullable = true)
+    private BigDecimal envio;
 
     @ElementCollection
     @CollectionTable(name = "pedido_productos", joinColumns = @JoinColumn(name = "pedido_id"))
