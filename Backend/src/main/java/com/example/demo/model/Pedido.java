@@ -34,7 +34,7 @@ public class Pedido {
 
     @OneToOne
     @JoinColumn(name= "id_envio", nullable = true)
-    private BigDecimal envio;
+    private Envio envio;
 
     @ElementCollection
     @CollectionTable(name = "pedido_productos", joinColumns = @JoinColumn(name = "pedido_id"))
@@ -106,8 +106,8 @@ public class Pedido {
     public BigDecimal getSubtotal() { return subtotal; }
     public void setSubtotal(BigDecimal subtotal) { this.subtotal = subtotal; }
 
-    public BigDecimal getEnvio() { return envio; }
-    public void setEnvio(BigDecimal envio) { this.envio = envio; }
+    public Envio getEnvio() { return envio; }
+    public void setEnvio(Envio envio) { this.envio = envio; }
 
     public BigDecimal getDescuento() { return descuento; }
     public void setDescuento(BigDecimal descuento) { this.descuento = descuento; }

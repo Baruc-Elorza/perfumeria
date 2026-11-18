@@ -1,5 +1,7 @@
 package com.example.demo.model;
 
+import java.math.BigInteger;
+
 import jakarta.persistence.*;
 
 @Entity 
@@ -7,7 +9,7 @@ import jakarta.persistence.*;
 public class CarritoPerfume {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private BigInteger id;
 
     @ManyToOne 
     @JoinColumn(name = "carrito_id", nullable = false)
@@ -23,7 +25,7 @@ public class CarritoPerfume {
     public CarritoPerfume() {
     }
 
-    public Long getId() {
+    public BigInteger getId() {
         return id;
     }
 
