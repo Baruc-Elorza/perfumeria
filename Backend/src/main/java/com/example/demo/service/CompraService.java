@@ -4,12 +4,13 @@ import com.example.demo.model.Pedido;
 import com.example.demo.notificaciones.CompraParaNotificar;
 import com.example.demo.notificaciones.NotificacionCompraService;
 import com.example.demo.repository.PedidoRepository;
+import com.example.demo.repository.UsuarioRepository;
+import com.example.demo.model.Usuario;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.dto.CarritoRespuesta;
-import java.util.UUID;
-
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -24,11 +25,13 @@ public class CompraService {
     private final PedidoRepository pedidoRepository;
     private final NotificacionCompraService notificacionCompraService;
     private final PagoService pagoService;
+    private final UsuarioRepository usuarioRepository;
 
-    public CompraService(PedidoRepository pedidoRepository, NotificacionCompraService notificacionCompraService, PagoService pagoService) {
+    public CompraService(PedidoRepository pedidoRepository, NotificacionCompraService notificacionCompraService, PagoService pagoService, UsuarioRepository usuarioRepository) {
         this.pedidoRepository = pedidoRepository;
         this.notificacionCompraService = notificacionCompraService;
         this.pagoService = pagoService;
+        this.usuarioRepository = usuarioRepository;
     
     }
 
@@ -57,17 +60,18 @@ public class CompraService {
     }
 
     Pedido pedido = new Pedido();
-    pedido.setId(UUID.randomUUID().toString());
-    pedido.setClienteEmail(clienteEmail);
-    pedido.setClienteNombre(clienteEmail);
-    pedido.setDestinatarioEnvio(clienteEmail);
+    Usuario cliente = usuarioRepository.findByEmail(clienteEmail)
+            .orElseThrow(() -> new IllegalArgumentException("No se encontró el usuario."));
+    pedido.setCliente(cliente);
+    pedido.setClienteNombre(cliente.getNombre());
+    pedido.setDestinatarioEnvio(cliente.getNombre());
     pedido.setDireccionEnvio(
         calle + ", " + colonia + ", " + ciudad + ", C.P. " + codigoPostal
     );
     pedido.setTelefono(telefono);
     pedido.setEstado(Pedido.EstadoPedido.PENDIENTE);
     pedido.setSubtotal(subtotal);
-    pedido.setEnvio(BigDecimal.ZERO);
+    pedido.setCostoEnvio(BigDecimal.ZERO);
     pedido.setDescuento(BigDecimal.ZERO);
     pedido.setTotal(subtotal);
 
@@ -75,7 +79,7 @@ public class CompraService {
     pedido.setProductos(
         carrito.items().stream()
             .map(item -> new Pedido.ItemProducto(
-                String.valueOf(item.perfumeId()),
+                item.perfumeId(),
                 item.nombre(),
                 item.marca(),
                 item.cantidad(),
@@ -90,7 +94,7 @@ public class CompraService {
 
     @Transactional
     public void confirmarCompraYPago(
-            String pedidoId,
+            BigInteger pedidoId,
             String referenciaPagoProveedor,
             String clienteEmail
     ) throws StripeException {
@@ -123,11 +127,11 @@ public class CompraService {
 
         boolean metadataCoincide =
         pago.getMetadata() != null
-        && pedidoId.equals(pago.getMetadata().get("pedidoId"));
+        && pedidoId.toString().equals(pago.getMetadata().get("pedidoId"));
 
 boolean esPagoAntiguoVerificado =
         "pi_3UTaYfLG02VwiJpf0KcVY1Zc".equals(referenciaPagoProveedor)
-        && "0c8f2e04-4487-4c50-a1f5-48816868b710".equals(pedidoId)
+        && "0c8f2e04-4487-4c50-a1f5-48816868b710".equals(pedidoId.toString())
         && (pago.getMetadata() == null || pago.getMetadata().isEmpty());
 
 if (!metadataCoincide && !esPagoAntiguoVerificado) {
@@ -171,8 +175,7 @@ if (!metadataCoincide && !esPagoAntiguoVerificado) {
         if (pedido.getProductos() != null) {
             productosNotificacion = pedido.getProductos().stream()
                     .map(item -> new CompraParaNotificar.Producto(
-                            item.getProductoId() != null
-                                    ? item.getProductoId() : "",
+                            item.getProductoId(),
                             item.getNombre() != null
                                     ? item.getNombre() : "",
                             item.getMarca() != null
@@ -203,8 +206,8 @@ if (!metadataCoincide && !esPagoAntiguoVerificado) {
                         productosNotificacion,
                         pedido.getSubtotal() != null
                                 ? pedido.getSubtotal() : BigDecimal.ZERO,
-                        pedido.getEnvio() != null
-                                ? pedido.getEnvio() : BigDecimal.ZERO,
+                pedido.getCostoEnvio() != null
+                                ? pedido.getCostoEnvio() : BigDecimal.ZERO,
                         pedido.getDescuento() != null
                                 ? pedido.getDescuento() : BigDecimal.ZERO,
                         pedido.getTotal() != null

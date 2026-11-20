@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.math.BigInteger;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -32,7 +33,7 @@ public class PedidoController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Pedido> obtenerDetalle(
-            @PathVariable String id,
+            @PathVariable BigInteger id,
             Authentication authentication) {
 
         return pedidoRepository
@@ -43,7 +44,7 @@ public class PedidoController {
     
     @PatchMapping("/{id}/confirmar-entrega")
     public ResponseEntity<?> confirmarEntrega(
-            @PathVariable String id,
+            @PathVariable BigInteger id,
             Authentication authentication) {
 
         Pedido pedido = pedidoRepository
@@ -76,7 +77,7 @@ public class PedidoController {
 
     @PatchMapping("/{id}/guia")
     public ResponseEntity<?> guardarGuia(
-            @PathVariable String id,
+            @PathVariable BigInteger id,
             @Valid @RequestBody GuiaRequest request) {
         Pedido pedido = pedidoRepository.findById(id).orElse(null);
         if (pedido == null) return ResponseEntity.notFound().build();
@@ -85,8 +86,6 @@ public class PedidoController {
             return ResponseEntity.status(HttpStatus.CONFLICT)
                     .body(Map.of("message", "Solo se puede registrar una guía para pedidos pagados."));
         }
-
-        pedido.setNumeroGuia(request.numeroGuia().trim());
         pedido.setEstado(Pedido.EstadoPedido.ENVIADO);
         return ResponseEntity.ok(pedidoRepository.save(pedido));
     }

@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.math.BigInteger;
 
 @RestController
 @RequestMapping("/api/direcciones")
@@ -19,7 +20,7 @@ public class DireccionController {
     private DireccionService direccionService;
 
     @GetMapping("/usuario/{usuarioId}")
-    public ResponseEntity<List<Direccion>> listarPorUsuario(@PathVariable Long usuarioId) {
+    public ResponseEntity<List<Direccion>> listarPorUsuario(@PathVariable BigInteger usuarioId) {
         List<Direccion> direcciones = direccionService.obtenerDireccionesPorUsuario(usuarioId);
         return ResponseEntity.ok(direcciones);
     }
@@ -31,7 +32,7 @@ public class DireccionController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
+    public ResponseEntity<Void> eliminar(@PathVariable BigInteger id) {
         direccionService.eliminarDireccion(id);
         return ResponseEntity.noContent().build();
     }

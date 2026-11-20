@@ -12,6 +12,7 @@ import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.time.Instant;
+import java.math.BigInteger;
 
 @Service
 @ConditionalOnProperty(name = "notificaciones.compra.habilitadas", havingValue = "true")
@@ -45,7 +46,7 @@ public class CorreoCompraWorker {
     }
 
     @Transactional
-    public void enviar(Long id) {
+    public void enviar(BigInteger id) {
         var n = repository.bloquear(id).orElse(null);
         if (n == null || !"PENDIENTE".equals(n.estado) || n.proximoIntento.isAfter(Instant.now())) return;
         if (n.destinatario == null) n.destinatario = destinatario;

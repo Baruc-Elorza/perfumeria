@@ -2,6 +2,7 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.time.Instant;
@@ -13,11 +14,17 @@ public class Pedido {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private String id;
+    private BigInteger id;
 
-    @ManyToOne 
+    @ManyToOne
     @JoinColumn(name = "cliente_id")
-    private Cliente cliente;
+    private Usuario cliente;
+
+    @Column(nullable = false)
+    private String clienteNombre;
+
+    @Column(nullable = false)
+    private String destinatarioEnvio;
 
     @Enumerated(EnumType.STRING)
     private EstadoPedido estado;
@@ -31,6 +38,7 @@ public class Pedido {
     private BigDecimal subtotal;
     private BigDecimal descuento;
     private BigDecimal total;
+    private BigDecimal costoEnvio = BigDecimal.ZERO;
 
     @OneToOne
     @JoinColumn(name= "id_envio", nullable = true)
@@ -52,7 +60,7 @@ public class Pedido {
     // Clase embebida para representar cada producto dentro del pedido histórico
     @Embeddable
     public static class ItemProducto {
-        private String productoId;
+        private BigInteger productoId;
         private String nombre;
         private String marca;
         private Integer cantidad;
@@ -60,7 +68,7 @@ public class Pedido {
 
         public ItemProducto() {}
 
-        public ItemProducto(String productoId, String nombre, String marca, Integer cantidad, BigDecimal precioUnitario) {
+        public ItemProducto(BigInteger productoId, String nombre, String marca, Integer cantidad, BigDecimal precioUnitario) {
             this.productoId = productoId;
             this.nombre = nombre;
             this.marca = marca;
@@ -68,8 +76,8 @@ public class Pedido {
             this.precioUnitario = precioUnitario;
         }
 
-        public String getProductoId() { return productoId; }
-        public void setProductoId(String productoId) { this.productoId = productoId; }
+        public BigInteger getProductoId() { return productoId; }
+        public void setProductoId(BigInteger productoId) { this.productoId = productoId; }
 
         public String getNombre() { return nombre; }
         public void setNombre(String nombre) { this.nombre = nombre; }
@@ -88,8 +96,8 @@ public class Pedido {
     public Pedido() {}
 
     // Getters y Setters
-    public String getId() { return id; }
-    public void setId(String id) { this.id = id; }
+    public BigInteger getId() { return id; }
+    public void setId(BigInteger id) { this.id = id; }
 
     public EstadoPedido getEstado() { return estado; }
     public void setEstado(EstadoPedido estado) { this.estado = estado; }
@@ -111,6 +119,18 @@ public class Pedido {
 
     public BigDecimal getDescuento() { return descuento; }
     public void setDescuento(BigDecimal descuento) { this.descuento = descuento; }
+
+    public Usuario getCliente() { return cliente; }
+    public void setCliente(Usuario cliente) { this.cliente = cliente; }
+
+    public String getClienteNombre() { return clienteNombre; }
+    public void setClienteNombre(String clienteNombre) { this.clienteNombre = clienteNombre; }
+
+    public String getDestinatarioEnvio() { return destinatarioEnvio; }
+    public void setDestinatarioEnvio(String destinatarioEnvio) { this.destinatarioEnvio = destinatarioEnvio; }
+
+    public BigDecimal getCostoEnvio() { return costoEnvio; }
+    public void setCostoEnvio(BigDecimal costoEnvio) { this.costoEnvio = costoEnvio; }
 
     public BigDecimal getTotal() { return total; }
     public void setTotal(BigDecimal total) { this.total = total; }

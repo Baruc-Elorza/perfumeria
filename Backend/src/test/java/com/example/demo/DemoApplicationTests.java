@@ -1,8 +1,10 @@
 package com.example.demo;
 
 import com.example.demo.model.Perfume;
+import com.example.demo.model.Marca;
 import com.example.demo.repository.CarritoPerfumeRepository;
 import com.example.demo.repository.CarritoRepository;
+import com.example.demo.repository.MarcaRepository;
 import com.example.demo.repository.PerfumeRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.math.BigInteger;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -29,29 +32,29 @@ class DemoApplicationTests {
     @Autowired PerfumeRepository perfumes;
     @Autowired CarritoRepository carritos;
     @Autowired CarritoPerfumeRepository lineas;
+    @Autowired MarcaRepository marcas;
     private final JsonMapper json = JsonMapper.builder().build();
     private HttpClient cliente;
-    private Long disponible;
-    private Long agotado;
+    private BigInteger disponible;
+    private BigInteger agotado;
 
   @BeforeEach
     void preparar() {
         lineas.deleteAll();
         carritos.deleteAll();
         perfumes.deleteAll();
+        marcas.deleteAll();
 
         Perfume perfume1 = new Perfume();
         perfume1.setNombre("Sauvage");
-        perfume1.setMarca("Dior");
-        perfume1.setDescripcion("Descripcion Sauvage");
+        perfume1.setMarca(marcas.save(new Marca("Dior")));
         perfume1.setPrecio(2450.50);
         perfume1.setStock(3);
         disponible = perfumes.save(perfume1).getId();
 
         Perfume perfume2 = new Perfume();
         perfume2.setNombre("Eros");
-        perfume2.setMarca("Versace");
-        perfume2.setDescripcion("Descripcion Eros");
+        perfume2.setMarca(marcas.save(new Marca("Versace")));
         perfume2.setPrecio(2100.0);
         perfume2.setStock(0);
         agotado = perfumes.save(perfume2).getId();

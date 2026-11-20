@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.math.BigInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
@@ -31,7 +32,7 @@ public class UsuarioServicio {
         return usuarioRepository.findAll();
     }
 
-    public Optional<Usuario> getUsuario(Long id){
+    public Optional<Usuario> getUsuario(BigInteger id){
         return usuarioRepository.findById(id);
     }
 

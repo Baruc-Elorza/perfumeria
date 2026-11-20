@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import java.time.Instant;
+import java.math.BigInteger;
 
 @Configuration
 @EnableScheduling
@@ -24,7 +25,7 @@ public class CorreoCompraScheduler {
 
     @Scheduled(fixedDelayString = "${notificaciones.compra.intervalo-ms:30000}")
     public void procesar() {
-        for (Long id : repository.pendientes(Instant.now(), PageRequest.of(0, 10))) {
+        for (BigInteger id : repository.pendientes(Instant.now(), PageRequest.of(0, 10))) {
             try {
                 worker.enviar(id);
             } catch (RuntimeException ex) {

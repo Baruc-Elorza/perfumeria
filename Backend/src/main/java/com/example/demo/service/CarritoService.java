@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.math.RoundingMode;
 import java.util.List;
 
@@ -30,26 +31,26 @@ public class CarritoService {
     }
 
     @Transactional
-    public Long crear() {
+    public BigInteger crear() {
         return carritos.save(new Carrito(0)).getId();
     }
 
     @Transactional(readOnly = true)
-    public CarritoRespuesta obtenerCarrito(Long id) {
+    public CarritoRespuesta obtenerCarrito(BigInteger id) {
         return respuesta(id == null ? List.of() : lineas.findByCarritoIdOrderByIdAsc(id));
     }
 
     @Transactional
-    public CarritoRespuesta agregar(Long id, Long perfumeId, Integer cantidad) {
+    public CarritoRespuesta agregar(BigInteger id, BigInteger perfumeId, Integer cantidad) {
         return actualizar(id, perfumeId, cantidad, true);
     }
 
     @Transactional
-    public CarritoRespuesta cambiarCantidad(Long id, Long perfumeId, Integer cantidad) {
+    public CarritoRespuesta cambiarCantidad(BigInteger id, BigInteger perfumeId, Integer cantidad) {
         return actualizar(id, perfumeId, cantidad, false);
     }
 
-    private CarritoRespuesta actualizar(Long id, Long perfumeId, Integer cantidad, boolean sumar) {
+    private CarritoRespuesta actualizar(BigInteger id, BigInteger perfumeId, Integer cantidad, boolean sumar) {
         if (cantidad == null || cantidad < 1) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "La cantidad debe ser mayor que cero.");
         }
@@ -81,7 +82,7 @@ public class CarritoService {
     }
 
     @Transactional
-    public CarritoRespuesta eliminar(Long id, Long perfumeId) {
+    public CarritoRespuesta eliminar(BigInteger id, BigInteger perfumeId) {
         if (id == null) return respuesta(List.of());
         Carrito carrito = bloquear(id);
         List<CarritoPerfume> productos = lineas.findByCarritoIdOrderByIdAsc(id);
@@ -93,7 +94,7 @@ public class CarritoService {
         return actualizarSubtotal(carrito, productos);
     }
 
-    private Carrito bloquear(Long id) {
+    private Carrito bloquear(BigInteger id) {
         if (id == null) throw new ResponseStatusException(HttpStatus.NOT_FOUND, "El carrito está vacío.");
         return carritos.buscarParaActualizar(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "El carrito ya no existe."));
@@ -110,7 +111,7 @@ public class CarritoService {
             Perfume p = linea.getPerfume();
             BigDecimal precio = BigDecimal.valueOf(p.getPrecio() == null ? 0 : p.getPrecio())
                     .setScale(2, RoundingMode.HALF_UP);
-            return new CarritoRespuesta.Linea(p.getId(), p.getNombre(), p.getMarca(), p.getImagenUrl(),
+            return new CarritoRespuesta.Linea(p.getId(), p.getNombre(), p.getMarca().getNombre(), p.getImagenUrl(),
                     precio, p.getStock() == null ? 0 : p.getStock(), linea.getCantidad());
         }).toList();
         BigDecimal subtotal = items.stream().map(p -> p.precio().multiply(BigDecimal.valueOf(p.cantidad())))

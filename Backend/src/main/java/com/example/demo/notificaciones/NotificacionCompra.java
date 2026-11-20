@@ -1,5 +1,7 @@
 package com.example.demo.notificaciones;
 
+import java.math.BigInteger;
+
 import jakarta.persistence.*;
 import java.time.Instant;
 
@@ -8,9 +10,9 @@ import java.time.Instant;
         indexes = @Index(name = "idx_notificacion_pendiente", columnList = "estado,proximoIntento"))
 public class NotificacionCompra {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long id;
+    BigInteger id;
     @Column(nullable = false, unique = true, length = 100)
-    String pedidoId;
+    BigInteger pedidoId;
     @Column(nullable = false, length = 150)
     String referenciaPago;
     @Column(nullable = false)
@@ -32,7 +34,7 @@ public class NotificacionCompra {
 
     protected NotificacionCompra() {}
 
-    NotificacionCompra(String pedidoId, String referenciaPago, String asunto, String cuerpo) {
+    NotificacionCompra(BigInteger pedidoId, String referenciaPago, String asunto, String cuerpo) {
         this.pedidoId = pedidoId;
         this.referenciaPago = referenciaPago;
         this.asunto = asunto;

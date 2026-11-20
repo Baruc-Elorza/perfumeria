@@ -5,6 +5,7 @@ import com.example.demo.model.Usuario;
 import com.example.demo.repository.UsuarioRepository;
 import java.util.Comparator;
 import java.util.List;
+import java.math.BigInteger;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,13 +28,13 @@ public class AdministracionUsuariosService {
     }
 
     @Transactional(readOnly = true)
-    public UsuarioAdminRespuesta detalle(Long id, String actor) {
+    public UsuarioAdminRespuesta detalle(BigInteger id, String actor) {
         return respuesta(usuarios.findById(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario no existe.")), actor);
     }
 
     @Transactional
-    public UsuarioAdminRespuesta cambiarEstado(Long id, boolean activo, String actor) {
+    public UsuarioAdminRespuesta cambiarEstado(BigInteger id, boolean activo, String actor) {
         Usuario u = usuarios.bloquearPorId(id).orElseThrow(() ->
                 new ResponseStatusException(HttpStatus.NOT_FOUND, "El usuario no existe."));
         if (u.getEmail().equalsIgnoreCase(actor)) {
