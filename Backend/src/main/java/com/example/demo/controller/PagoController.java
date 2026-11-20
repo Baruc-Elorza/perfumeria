@@ -1,6 +1,7 @@
 
 package com.example.demo.controller;
 
+
 import com.example.demo.model.Pedido;
 import com.example.demo.repository.PedidoRepository;
 import com.example.demo.service.PagoService;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.math.BigInteger;
 
 @RestController
 @RequestMapping("/api/pagos")
@@ -27,16 +29,15 @@ public class PagoController {
 
     @Autowired
     private PagoService pagoService;
-
     @Autowired
-    private PedidoRepository pedidoRepository;
+        private PedidoRepository pedidoRepository;
 
     @Value("${stripe.public.key}")
     private String publicKey;
 
     @PostMapping("/crear")
     public ResponseEntity<?> crearPago(
-            @RequestParam String pedidoId,
+            @RequestParam BigInteger pedidoId,
             Authentication authentication
     ) throws StripeException {
 
@@ -71,7 +72,7 @@ public class PagoController {
 
         PaymentIntent intent = pagoService.crearPago(
                 pedido.getTotal(),
-                pedido.getId()
+                pedido.getId().toString()
         );
 
         Map<String, String> response = new HashMap<>();
