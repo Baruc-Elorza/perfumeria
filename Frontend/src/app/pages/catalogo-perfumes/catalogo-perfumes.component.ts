@@ -65,9 +65,22 @@ export class CatalogoPerfumesComponent implements OnInit {
 
   comprar(perfume: Perfume): void {
     if (perfume.id == null || !(perfume.stock > 0) || this.agregando() !== null) return;
-    this.agregando.set(perfume.id);
+    const perfumeId = perfume.id;
+    this.agregando.set(perfumeId);
     this.errorCompra.set('');
-    this.carrito.agregar(perfume.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
+    // Consultar al servidor evita redirigir al login si el estado local aún carga.
+    this.auth.sesionActual().pipe(takeUntilDestroyed(this.destroyRef)).subscribe(usuario => {
+      if (!usuario) {
+        this.agregando.set(null);
+        void this.router.navigate(['/login'], { queryParams: { perfumeId } });
+        return;
+      }
+      this.agregarAlCarrito(perfumeId);
+    });
+  }
+
+  private agregarAlCarrito(perfumeId: number): void {
+    this.carrito.agregar(perfumeId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.agregando.set(null);
         void this.router.navigate(['/carrito']);

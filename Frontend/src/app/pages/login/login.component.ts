@@ -2,6 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../services/auth.service';
+import { CarritoService } from '../../services/carrito.service';
 
 @Component({
   selector: 'app-login',
@@ -13,6 +14,7 @@ export class LoginComponent {
   private readonly auth = inject(AuthService);
   private readonly router = inject(Router);
   private readonly route = inject(ActivatedRoute);
+  private readonly carrito = inject(CarritoService);
 
   readonly registrando = signal(false);
   readonly cargando = signal(false);
@@ -51,6 +53,17 @@ export class LoginComponent {
   }
 
   private irADestino(): void {
+    const perfumeId = Number(this.route.snapshot.queryParamMap.get('perfumeId'));
+    if (Number.isSafeInteger(perfumeId) && perfumeId > 0) {
+      this.carrito.agregar(perfumeId).subscribe({
+        next: () => {
+          this.cargando.set(false);
+          void this.router.navigate(['/carrito']);
+        },
+        error: err => this.mostrarError(err),
+      });
+      return;
+    }
     this.cargando.set(false);
     const returnUrl = this.route.snapshot.queryParamMap.get('returnUrl');
     const rutaInterna = returnUrl && returnUrl.startsWith('/') && !returnUrl.startsWith('//')
