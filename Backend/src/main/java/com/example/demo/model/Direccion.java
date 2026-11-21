@@ -13,6 +13,9 @@ public class Direccion {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private BigInteger id;
 
+    @ManyToOne
+    @JoinColumn(name = "usuario_id", nullable = false)
+    private Usuario usuario;
 
     @NotBlank(message = "La calle es obligatoria")
     private String calle;
@@ -39,6 +42,9 @@ public class Direccion {
     // Getters y Setters
     public BigInteger getId() { return id; }
     public void setId(BigInteger id) { this.id = id; }
+
+    public Usuario getUsuario() { return usuario; }
+    public void setUsuario(Usuario usuario) { this.usuario = usuario; }
 
     public String getCalle() { return calle; }
     public void setCalle(String calle) { this.calle = calle; }

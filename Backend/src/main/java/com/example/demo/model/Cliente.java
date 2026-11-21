@@ -24,11 +24,11 @@ import java.util.List;
 public class Cliente extends Usuario {
     private String telefono;
 
-    @OneToMany
+    @OneToMany(mappedBy = "usuario")
     private List<Direccion> direcciones; //despliega las direcciones en la pagina web
 
-    @OneToOne
-    private BigInteger idHistorial;
+//    @OneToOne
+  //  private BigInteger idHistorial;
 
     @OneToOne(mappedBy = "cliente") //un cliente tiene un solo carrito
     private Carrito carrito;

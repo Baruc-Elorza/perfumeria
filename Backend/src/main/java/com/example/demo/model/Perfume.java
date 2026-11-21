@@ -17,8 +17,7 @@ public class Perfume {
     @Column(nullable = false)
     private String nombre;
 
-    @Column(nullable = false)
-    @OneToOne
+    @ManyToOne
     @JoinColumn(name = "id_marca")
     private Marca marca;
 
