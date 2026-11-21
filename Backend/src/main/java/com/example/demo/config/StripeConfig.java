@@ -13,6 +13,10 @@ public class StripeConfig {
 
     @PostConstruct
     public void init() {
+        if (secretKey != null && !secretKey.isBlank()
+                && !secretKey.startsWith("sk_test_") && !secretKey.startsWith("rk_test_")) {
+            throw new IllegalArgumentException("Esta aplicación requiere claves de prueba de Stripe.");
+        }
         Stripe.apiKey = secretKey;
     }
 }

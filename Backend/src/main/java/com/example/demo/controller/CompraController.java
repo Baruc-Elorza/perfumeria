@@ -203,14 +203,14 @@ public class CompraController {
     }
 
     public static class ConfirmacionPagoRequest {
-        private BigInteger pedidoId;
+        private String pedidoId;
         private String referenciaPagoProveedor;
 
-        public BigInteger getPedidoId() {
+        public String getPedidoId() {
             return pedidoId;
         }
 
-        public void setPedidoId(BigInteger pedidoId) {
+        public void setPedidoId(String pedidoId) {
             this.pedidoId = pedidoId;
         }
 

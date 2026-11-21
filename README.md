@@ -111,7 +111,9 @@ Se cubren búsqueda, cancelación de respuestas antiguas, recuperación ante err
 
 ## HU-13: notificación de compra
 
-El módulo `com.example.demo.notificaciones` registra correos pendientes para pedidos con pago exitoso y los procesa mediante SMTP con reintentos. El envío está desactivado por defecto. Falta conectar la confirmación real de pedidos/pagos (HU-16/HU-05) y configurar SMTP; todavía no tiene tests automatizados propios ni verificación de entrega de correo.
+El módulo `com.example.demo.notificaciones` registra dos correos separados al confirmar un pago de prueba verificado con Stripe: confirmación para el comprador y resumen para administración. Incluyen productos, cantidades, importes, nombre y correo del cliente, dirección y teléfono. Cada correo tiene reintentos independientes y protección contra registros duplicados. El envío está desactivado hasta configurar SMTP; las pruebas de integración verifican el flujo con pagos y remitente simulados, sin entrega a buzones reales.
+
+En bases existentes, respaldar y ejecutar `docs/migrar-notificaciones-dos-correos.sql` con el backend detenido. Configurar el remitente y sus credenciales siguiendo `Backend/application-mail.example.properties`, copiando los valores reales a `Backend/application-local.properties`, ignorado por Git. No usar la contraseña de acceso de la aplicación como credencial SMTP.
 
 Contrato Java, responsabilidades por historia, ejemplo de integración, variables de entorno y comprobaciones pendientes: [Guía de integración HU-13](docs/HU-13-integracion.md).
 

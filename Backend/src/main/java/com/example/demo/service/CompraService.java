@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.dto.CarritoRespuesta;
 import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -94,14 +93,14 @@ public class CompraService {
 
     @Transactional
     public void confirmarCompraYPago(
-            BigInteger pedidoId,
+            String pedidoId,
             String referenciaPagoProveedor,
             String clienteEmail
     ) throws StripeException {
 
         // 1. Buscar el pedido y comprobar que pertenece al usuario.
         Pedido pedido = pedidoRepository
-                .findByIdAndClienteEmail(pedidoId, clienteEmail)
+                .bloquearPorIdYClienteEmail(pedidoId, clienteEmail)
                 .orElseThrow(() ->
                         new IllegalArgumentException(
                                 "No se encontró el pedido para este usuario."
@@ -129,16 +128,12 @@ public class CompraService {
         pago.getMetadata() != null
         && pedidoId.toString().equals(pago.getMetadata().get("pedidoId"));
 
-boolean esPagoAntiguoVerificado =
-        "pi_3UTaYfLG02VwiJpf0KcVY1Zc".equals(referenciaPagoProveedor)
-        && "0c8f2e04-4487-4c50-a1f5-48816868b710".equals(pedidoId.toString())
-        && (pago.getMetadata() == null || pago.getMetadata().isEmpty());
-
-if (!metadataCoincide && !esPagoAntiguoVerificado) {
-    throw new IllegalStateException(
-            "El pago no corresponde a este pedido."
-    );
+if (!metadataCoincide) {
+    throw new IllegalStateException("El pago no corresponde a este pedido.");
 }
+        if (!Boolean.FALSE.equals(pago.getLivemode())) {
+            throw new IllegalStateException("Esta aplicación solo admite pagos de prueba.");
+        }
 
         // 3. Comprobar que el importe cobrado coincide con el pedido.
         long totalEsperado = pedido.getTotal()
@@ -197,6 +192,7 @@ if (!metadataCoincide && !esPagoAntiguoVerificado) {
                         Instant.now(),
                         pedido.getClienteNombre() != null
                                 ? pedido.getClienteNombre() : "",
+                        pedido.getCliente().getEmail(),
                         pedido.getDestinatarioEnvio() != null
                                 ? pedido.getDestinatarioEnvio() : "",
                         pedido.getDireccionEnvio() != null

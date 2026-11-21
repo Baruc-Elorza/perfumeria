@@ -9,11 +9,12 @@ import java.util.List;
 
 /** Datos históricos del pedido pagado, obtenidos del backend, nunca del navegador. */
 public record CompraParaNotificar(
-        @NotNull BigInteger pedidoId,
+        @NotBlank @Size(max = 100) String pedidoId,
         @NotBlank @Size(max = 150) String referenciaPago,
         @NotNull EstadoPago estadoPago,
         @NotNull Instant pagadoEn,
         @NotBlank @Size(max = 200) String cliente,
+        @NotBlank @Email @Size(max = 254) String clienteEmail,
         @NotBlank @Size(max = 200) String destinatarioEnvio,
         @NotBlank @Size(max = 1000) String direccionEnvio,
         @Size(max = 50) String telefono,

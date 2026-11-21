@@ -11,8 +11,10 @@ public class Direccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.BIGINT)
     private BigInteger id;
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private Usuario usuario;
@@ -34,6 +36,8 @@ public class Direccion {
 
     @NotBlank(message = "El código postal es obligatorio")
     private String codigoPostal;
+
+    private String telefono;
 
     private String referencias;
 
@@ -66,6 +70,9 @@ public class Direccion {
 
     public String getCodigoPostal() { return codigoPostal; }
     public void setCodigoPostal(String codigoPostal) { this.codigoPostal = codigoPostal; }
+
+    public String getTelefono() { return telefono; }
+    public void setTelefono(String telefono) { this.telefono = telefono; }
 
     public String getReferencias() { return referencias; }
     public void setReferencias(String referencias) { this.referencias = referencias; }

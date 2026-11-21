@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
-import java.math.BigInteger;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -28,27 +27,27 @@ public class PedidoController {
     @GetMapping
     public List<Pedido> obtenerHistorial(Authentication authentication) {
         return pedidoRepository
-                .findByClienteEmailOrderByFechaCreacionDesc(authentication.getName());
+                .findByCliente_EmailOrderByFechaCreacionDesc(authentication.getName());
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<Pedido> obtenerDetalle(
-            @PathVariable BigInteger id,
+            @PathVariable String id,
             Authentication authentication) {
 
         return pedidoRepository
-                .findByIdAndClienteEmail(id, authentication.getName())
+                .findByIdAndCliente_Email(id, authentication.getName())
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
     
     @PatchMapping("/{id}/confirmar-entrega")
     public ResponseEntity<?> confirmarEntrega(
-            @PathVariable BigInteger id,
+            @PathVariable String id,
             Authentication authentication) {
 
         Pedido pedido = pedidoRepository
-                .findByIdAndClienteEmail(id, authentication.getName())
+                .findByIdAndCliente_Email(id, authentication.getName())
                 .orElse(null);
 
         if (pedido == null) {
@@ -77,7 +76,7 @@ public class PedidoController {
 
     @PatchMapping("/{id}/guia")
     public ResponseEntity<?> guardarGuia(
-            @PathVariable BigInteger id,
+            @PathVariable String id,
             @Valid @RequestBody GuiaRequest request) {
         Pedido pedido = pedidoRepository.findById(id).orElse(null);
         if (pedido == null) return ResponseEntity.notFound().build();

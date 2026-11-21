@@ -1,9 +1,9 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Subject, catchError, map, of, startWith, switchMap, timer } from 'rxjs';
+import { EMPTY, Subject, catchError, map, of, startWith, switchMap, timer } from 'rxjs';
 import { Perfume } from '../../models/perfume.model';
 import { PerfumeService } from '../../services/perfume.service';
 import { CarritoService } from '../../services/carrito.service';
@@ -21,6 +21,11 @@ export class CatalogoPerfumesComponent implements OnInit {
   readonly errorCarga = signal(false);
   readonly agregando = signal<number | null>(null);
   readonly errorCompra = signal('');
+  readonly detalle = signal<Perfume | null>(null);
+  readonly cargandoDetalle = signal(false);
+  readonly errorDetalle = signal('');
+  @ViewChild('ventanaDetalle', { static: true }) ventanaDetalle!: ElementRef<HTMLDialogElement>;
+  private readonly seleccion = new Subject<Perfume | null>();
   textoBusqueda = '';
   private readonly cambios = new Subject<string>();
   private readonly perfumes = inject(PerfumeService);
@@ -30,6 +35,17 @@ export class CatalogoPerfumesComponent implements OnInit {
   private readonly destroyRef = inject(DestroyRef);
 
   ngOnInit(): void {
+    this.seleccion.pipe(
+      switchMap(perfume => perfume?.id == null ? EMPTY : this.perfumes.getPerfumePorId(perfume.id).pipe(
+        map(producto => ({ producto, error: false })),
+        catchError(() => of({ producto: perfume, error: true }))
+      )),
+      takeUntilDestroyed(this.destroyRef)
+    ).subscribe(({ producto, error }) => {
+      this.detalle.set(producto);
+      this.cargandoDetalle.set(false);
+      this.errorDetalle.set(error ? 'No se pudieron cargar los detalles del perfume.' : '');
+    });
     this.auth.sesionActual().pipe(takeUntilDestroyed(this.destroyRef)).subscribe();
     this.cambios.pipe(
       startWith(''),
@@ -51,6 +67,37 @@ export class CatalogoPerfumesComponent implements OnInit {
     });
   }
 
+  abrirDetalle(perfume: Perfume): void {
+    this.detalle.set(perfume);
+    this.errorDetalle.set('');
+    this.errorCompra.set('');
+    this.cargandoDetalle.set(true);
+    if (!this.ventanaDetalle.nativeElement.open) this.ventanaDetalle.nativeElement.showModal();
+    this.seleccion.next(perfume);
+  }
+
+  cerrarDetalle(): void {
+    this.seleccion.next(null);
+    this.ventanaDetalle.nativeElement.close();
+    this.detalle.set(null);
+    this.cargandoDetalle.set(false);
+    this.errorDetalle.set('');
+  }
+
+  cerrarAlFondo(evento: MouseEvent): void {
+    const ventana = this.ventanaDetalle.nativeElement;
+    const limites = ventana.getBoundingClientRect();
+    if (evento.target === ventana && (evento.clientX < limites.left || evento.clientX > limites.right
+        || evento.clientY < limites.top || evento.clientY > limites.bottom)) this.cerrarDetalle();
+  }
+
+  moverZoom(evento: MouseEvent): void {
+    const marco = evento.currentTarget as HTMLElement;
+    const limites = marco.getBoundingClientRect();
+    marco.style.setProperty('--zoom-x', `${(evento.clientX - limites.left) / limites.width * 100}%`);
+    marco.style.setProperty('--zoom-y', `${(evento.clientY - limites.top) / limites.height * 100}%`);
+  }
+
   cerrarSesion(): void {
     this.auth.cerrarSesion().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => void this.router.navigate(['/']),
@@ -70,6 +117,7 @@ export class CatalogoPerfumesComponent implements OnInit {
     this.carrito.agregar(perfume.id).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: () => {
         this.agregando.set(null);
+        this.cerrarDetalle();
         void this.router.navigate(['/carrito']);
       },
       error: err => {

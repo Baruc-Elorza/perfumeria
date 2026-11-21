@@ -7,12 +7,16 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "notificacion_compra",
+        uniqueConstraints = @UniqueConstraint(name = "uk_compra_tipo", columnNames = {"pedidoId", "tipo"}),
         indexes = @Index(name = "idx_notificacion_pendiente", columnList = "estado,proximoIntento"))
 public class NotificacionCompra {
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.BIGINT)
     BigInteger id;
-    @Column(nullable = false, unique = true, length = 100)
-    BigInteger pedidoId;
+    @Column(nullable = false, length = 100)
+    String pedidoId;
+    @Column(nullable = false, length = 20, columnDefinition = "varchar(20) default 'ADMIN'")
+    String tipo = "ADMIN";
     @Column(nullable = false, length = 150)
     String referenciaPago;
     @Column(nullable = false)
@@ -34,7 +38,9 @@ public class NotificacionCompra {
 
     protected NotificacionCompra() {}
 
-    NotificacionCompra(BigInteger pedidoId, String referenciaPago, String asunto, String cuerpo) {
+    NotificacionCompra(String pedidoId, String referenciaPago, String asunto, String cuerpo, String tipo, String destinatario) {
+        this.tipo = tipo;
+        this.destinatario = destinatario;
         this.pedidoId = pedidoId;
         this.referenciaPago = referenciaPago;
         this.asunto = asunto;

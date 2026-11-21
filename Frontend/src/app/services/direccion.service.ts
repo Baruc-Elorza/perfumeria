@@ -12,12 +12,14 @@ export class DireccionService {
 
   constructor(private http: HttpClient) { }
 
-  obtenerDireccionesPorUsuario(usuarioId: number): Observable<Direccion[]> {
-    return this.http.get<Direccion[]>(`${this.apiUrl}/usuario/${usuarioId}`);
+  obtenerMisDirecciones(): Observable<Direccion[]> {
+    return this.http.get<Direccion[]>(this.apiUrl);
   }
 
   guardarDireccion(direccion: Direccion): Observable<Direccion> {
-    return this.http.post<Direccion>(this.apiUrl, direccion);
+    return direccion.id == null
+      ? this.http.post<Direccion>(this.apiUrl, direccion)
+      : this.http.put<Direccion>(`${this.apiUrl}/${direccion.id}`, direccion);
   }
 
   eliminarDireccion(id: number): Observable<void> {

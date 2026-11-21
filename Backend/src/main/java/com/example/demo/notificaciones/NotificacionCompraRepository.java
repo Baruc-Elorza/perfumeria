@@ -10,7 +10,7 @@ import java.util.Optional;
 import java.math.BigInteger;
 
 public interface NotificacionCompraRepository extends JpaRepository<NotificacionCompra, BigInteger> {
-    Optional<NotificacionCompra> findByPedidoId(BigInteger pedidoId);
+    List<NotificacionCompra> findAllByPedidoId(String pedidoId);
 
     @Query("select n.id from NotificacionCompra n where n.estado = 'PENDIENTE' and n.proximoIntento <= :ahora order by n.id")
     List<BigInteger> pendientes(@Param("ahora") Instant ahora, Pageable pagina);

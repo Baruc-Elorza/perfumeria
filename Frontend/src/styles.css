@@ -3840,3 +3840,44 @@ input[type="file"] {
 @media (prefers-reduced-motion: reduce) {
   .page-catalogo .tarjeta { transition: none; }
 }
+
+/* Detalle de fragancia y ampliación de fotografía. */
+.page-catalogo .tarjeta { cursor: pointer; }
+.page-catalogo .abrir-perfume,
+.page-catalogo .nombre-perfume { border: 0; padding: 0; background: transparent; color: inherit; font: inherit; text-align: inherit; cursor: pointer; }
+.page-catalogo .abrir-perfume { display: block; width: 100%; }
+.page-catalogo .nombre-perfume:hover { text-decoration: underline; text-underline-offset: .2em; }
+.page-catalogo :is(.abrir-perfume, .nombre-perfume):focus-visible { outline: 2px solid #8b681f; outline-offset: 5px; border-radius: 4px; }
+html:has(.detalle-perfume[open]) { overflow: hidden; }
+.page-catalogo .detalle-perfume { width: min(1050px, calc(100% - 32px)); max-height: calc(100dvh - 40px); margin: auto; padding: 0; border: 1px solid #ded8cc; border-radius: 14px; color: #191916; background: #fff; box-shadow: 0 30px 100px #0004; overscroll-behavior: contain; }
+.detalle-perfume::backdrop { background: #131713b8; backdrop-filter: blur(5px); }
+.page-catalogo .detalle-cerrar { position: sticky; display: block; top: 16px; margin: 16px 16px -58px auto; z-index: 2; width: 42px; height: 42px; border: 1px solid #ded8cc; border-radius: 50%; background: #fff; color: #191916; font-size: 28px; line-height: 1; cursor: pointer; }
+.page-catalogo .detalle-cerrar:hover { background: #f0ede6; }
+.page-catalogo .detalle-contenido { display: grid; grid-template-columns: 1fr 1fr; gap: 38px; padding: 64px 38px 38px; }
+.page-catalogo .detalle-galeria { min-width: 0; align-self: start; }
+.page-catalogo .detalle-imagen { height: clamp(280px, 45vw, 520px); overflow: hidden; border-radius: 8px; background: #f5f3ee; --zoom-x: 50%; --zoom-y: 50%; }
+.page-catalogo .detalle-imagen img { display: block; width: 100%; height: 100%; object-fit: contain; padding: 24px; transform: scale(1); transform-origin: var(--zoom-x) var(--zoom-y); transition: transform .3s ease; }
+@media (hover: hover) and (pointer: fine) {
+  .page-catalogo .detalle-imagen:has(img) { cursor: zoom-in; }
+  .page-catalogo .detalle-imagen:hover img { transform: scale(1.85); }
+}
+.page-catalogo .detalle-imagen:focus-visible { outline: 2px solid #8b681f; outline-offset: 4px; }
+.page-catalogo .detalle-imagen:focus-visible img { transform: scale(1.85); }
+.page-catalogo .detalle-sin-imagen { display: grid; place-items: center; color: #6e685c; }
+.page-catalogo .detalle-ayuda { margin-top: 14px; color: #716b5f; font-size: .875rem; text-align: center; }
+.page-catalogo .detalle-informacion { min-width: 0; overflow-wrap: anywhere; }
+.page-catalogo .detalle-informacion h2 { font: 400 clamp(2rem, 4vw, 3rem)/1.1 var(--font-elegant, Georgia, serif); margin: 12px 0 24px; }
+.page-catalogo .detalle-descripcion { line-height: 1.7; color: #59564d; white-space: pre-line; }
+.page-catalogo .detalle-ficha { margin: 28px 0; }
+.page-catalogo .detalle-ficha > div { padding: 13px 0; border-bottom: 1px solid #e9e5dc; }
+.page-catalogo .detalle-ficha dt { font-weight: 600; margin-bottom: 4px; }
+.page-catalogo .detalle-ficha dd { margin: 0; color: #6d6658; white-space: pre-line; }
+.page-catalogo .detalle-compra .price { margin-bottom: 10px; font-size: 1.65rem; font-weight: 700; }
+.page-catalogo .detalle-compra .checkout { width: 100%; margin-top: 22px; }
+@media (max-width: 680px) {
+  .page-catalogo .detalle-contenido { grid-template-columns: 1fr; gap: 24px; padding: 64px 24px 24px; }
+  .page-catalogo .detalle-imagen { height: 300px; }
+  .page-catalogo .detalle-perfume { max-height: calc(100dvh - 24px); }
+}
+@media (hover: none) { .page-catalogo .detalle-ayuda { display: none; } }
+@media (prefers-reduced-motion: reduce) { .page-catalogo .detalle-imagen img { transition: none; } }

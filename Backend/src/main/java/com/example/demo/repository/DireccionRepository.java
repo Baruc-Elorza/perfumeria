@@ -11,5 +11,7 @@ import java.math.BigInteger;
 public interface DireccionRepository extends JpaRepository<Direccion, BigInteger> {
     
     // Método para buscar todas las direcciones registradas de un usuario específico
+    java.util.Optional<Direccion> findByIdAndUsuarioId(BigInteger id, BigInteger usuarioId);
+
     List<Direccion> findByUsuarioId(BigInteger usuarioId);
 }

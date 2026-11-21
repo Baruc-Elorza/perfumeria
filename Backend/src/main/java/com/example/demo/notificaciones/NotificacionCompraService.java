@@ -11,10 +11,13 @@ import java.math.RoundingMode;
 public class NotificacionCompraService {
     private final NotificacionCompraRepository repository;
     private final Validator validator;
+    private final String administrador;
 
-    public NotificacionCompraService(NotificacionCompraRepository repository, Validator validator) {
+    public NotificacionCompraService(NotificacionCompraRepository repository, Validator validator,
+            @org.springframework.beans.factory.annotation.Value("${notificaciones.compra.destinatario:}") String administrador) {
         this.repository = repository;
         this.validator = validator;
+        this.administrador = administrador;
     }
 
     /**
@@ -37,15 +40,25 @@ public class NotificacionCompraService {
                 || compra.subtotal().add(compra.envio()).subtract(compra.descuento()).compareTo(compra.total()) != 0) {
             throw new IllegalArgumentException("Los importes del pedido no coinciden.");
         }
-        var existente = repository.findByPedidoId(compra.pedidoId());
-        if (existente.isPresent()) {
-            if (!existente.get().referenciaPago.equals(compra.referenciaPago())) {
-                throw new IllegalArgumentException("El pedido ya tiene otra referencia de pago notificada.");
-            }
-            return;
+        var existentes = repository.findAllByPedidoId(compra.pedidoId());
+        if (existentes.stream().anyMatch(n -> !n.referenciaPago.equals(compra.referenciaPago()))) {
+            throw new IllegalArgumentException("El pedido ya tiene otra referencia de pago notificada.");
         }
-        repository.save(new NotificacionCompra(compra.pedidoId(), compra.referenciaPago(),
-                "Compra confirmada - Pedido " + compra.pedidoId(), redactar(compra)));
+        String detalle = redactar(compra);
+        if (existentes.stream().noneMatch(n -> "COMPRADOR".equals(n.tipo))) {
+            repository.save(new NotificacionCompra(compra.pedidoId(), compra.referenciaPago(),
+                    "[PRUEBA] Confirmación de tu compra - Pedido " + compra.pedidoId(),
+                    "Hola " + compra.cliente() + ", gracias por tu compra de prueba.\n"
+                            + "No se ha realizado ningún cargo real.\n\n" + detalle,
+                    "COMPRADOR", compra.clienteEmail()));
+        }
+        if (existentes.stream().noneMatch(n -> "ADMIN".equals(n.tipo))) {
+            repository.save(new NotificacionCompra(compra.pedidoId(), compra.referenciaPago(),
+                    "[PRUEBA] Nueva compra - Pedido " + compra.pedidoId(),
+                    "Nueva compra simulada. No se ha realizado ningún cargo real.\n\n" + detalle
+                            + "\nResumen de prueba para administración; no realizar un envío real.\n",
+                    "ADMIN", administrador == null || administrador.isBlank() ? null : administrador.trim()));
+        }
     }
 
     private String redactar(CompraParaNotificar c) {
@@ -54,6 +67,7 @@ public class NotificacionCompraService {
                 .append("\nPago: EXITOSO\nReferencia: ").append(c.referenciaPago())
                 .append("\nFecha de pago (UTC): ").append(c.pagadoEn())
                 .append("\nCliente: ").append(c.cliente())
+                .append("\nCorreo del comprador: ").append(c.clienteEmail())
                 .append("\nRecibe: ").append(c.destinatarioEnvio())
                 .append("\nDirección de envío: ").append(c.direccionEnvio())
                 .append("\nTeléfono: ").append(c.telefono() == null || c.telefono().isBlank() ? "No proporcionado" : c.telefono())
@@ -70,7 +84,7 @@ public class NotificacionCompraService {
                 .append("\nEnvío: ").append(dinero(c.envio()))
                 .append("\nDescuento: ").append(dinero(c.descuento()))
                 .append("\nTotal pagado: ").append(dinero(c.total()))
-                .append("\n\nPreparar y etiquetar los productos para su envío.\n").toString();
+                .append("\n").toString();
     }
 
     private String dinero(BigDecimal valor) {

@@ -11,6 +11,7 @@ import java.util.List;
 public class Carrito {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.BIGINT)
     private BigInteger id;
 
     @OneToOne

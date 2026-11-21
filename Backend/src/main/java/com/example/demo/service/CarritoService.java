@@ -111,7 +111,7 @@ public class CarritoService {
             Perfume p = linea.getPerfume();
             BigDecimal precio = BigDecimal.valueOf(p.getPrecio() == null ? 0 : p.getPrecio())
                     .setScale(2, RoundingMode.HALF_UP);
-            return new CarritoRespuesta.Linea(p.getId(), p.getNombre(), p.getMarca().getNombre(), p.getImagenUrl(),
+            return new CarritoRespuesta.Linea(p.getId(), p.getNombre(), p.getMarca(), p.getImagenUrl(),
                     precio, p.getStock() == null ? 0 : p.getStock(), linea.getCantidad());
         }).toList();
         BigDecimal subtotal = items.stream().map(p -> p.precio().multiply(BigDecimal.valueOf(p.cantidad())))

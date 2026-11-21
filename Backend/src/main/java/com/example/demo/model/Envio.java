@@ -11,6 +11,7 @@ public class Envio {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.BIGINT)
     private BigInteger id;
 //no registramos paquetería porque solo usa DHL siempre
     private String numeroGuia;

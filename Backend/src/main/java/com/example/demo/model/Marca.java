@@ -1,7 +1,6 @@
 package com.example.demo.model;
 
 import java.math.BigInteger;
-import java.util.List;
 
 import jakarta.persistence.*;
 
@@ -11,12 +10,11 @@ public class Marca {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.BIGINT)
     private BigInteger id;
 
     private String nombre;
 
-    @OneToMany(mappedBy = "marca")
-    private List<Perfume>perfumes;
 
     public Marca(){}
     public Marca(String n){

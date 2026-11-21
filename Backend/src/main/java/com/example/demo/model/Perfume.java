@@ -11,15 +11,16 @@ public class Perfume {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.BIGINT)
     private BigInteger id;
 
     @NotBlank(message = "El nombre es obligatorio") 
     @Column(nullable = false)
     private String nombre;
 
-    @ManyToOne
-    @JoinColumn(name = "id_marca")
-    private Marca marca;
+    @NotBlank(message = "La marca es obligatoria")
+    @Column(nullable = false)
+    private String marca;
 
     public enum concentracionEnum{
         EDF,
@@ -41,7 +42,7 @@ public class Perfume {
     private String notasBase;
 
     @Column(length = 3)
-    private int ml;
+    private Integer ml;
 
     @NotNull(message = "El precio es obligatorio") 
     @DecimalMin(value = "0.01", message = "El precio mínimo es $0.01 MXN")
@@ -53,9 +54,12 @@ public class Perfume {
 
     private String imagenUrl;
 
+    @Column(length = 500)
+    private String descripcion;
+
     public Perfume() {}
 
-    public Perfume(String nombre, Marca marca, int ml, concentracionEnum concentracion, String notasTop, String notasMiddle,
+    public Perfume(String nombre, String marca, Integer ml, concentracionEnum concentracion, String notasTop, String notasMiddle,
         String notasBase, Double precio, Integer stock, String imagenUrl) {
         this.nombre = nombre;
         this.marca = marca;
@@ -75,8 +79,15 @@ public class Perfume {
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public Marca getMarca() { return marca; }
-    public void setMarca(Marca marca) { this.marca = marca; }
+    public String getMarca() { return marca; }
+    public void setMarca(String marca) { this.marca = marca; }
+
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+    public Integer getMl() { return ml; }
+    public void setMl(Integer ml) { this.ml = ml; }
+    public concentracionEnum getConcentracion() { return concentracion; }
+    public void setConcentracion(concentracionEnum concentracion) { this.concentracion = concentracion; }
 
     public String getNotasTop() { return notasTop; }
     public void setNotasTop(String notasTop) { this.notasTop = notasTop; }

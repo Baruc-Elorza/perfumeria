@@ -13,8 +13,8 @@ import org.hibernate.annotations.CreationTimestamp;
 public class Pedido {
 
     @Id
-    @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
@@ -96,8 +96,8 @@ public class Pedido {
     public Pedido() {}
 
     // Getters y Setters
-    public BigInteger getId() { return id; }
-    public void setId(BigInteger id) { this.id = id; }
+    public String getId() { return id; }
+    public void setId(String id) { this.id = id; }
 
     public EstadoPedido getEstado() { return estado; }
     public void setEstado(EstadoPedido estado) { this.estado = estado; }
@@ -120,8 +120,11 @@ public class Pedido {
     public BigDecimal getDescuento() { return descuento; }
     public void setDescuento(BigDecimal descuento) { this.descuento = descuento; }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public Usuario getCliente() { return cliente; }
     public void setCliente(Usuario cliente) { this.cliente = cliente; }
+
+    public String getClienteEmail() { return cliente == null ? null : cliente.getEmail(); }
 
     public String getClienteNombre() { return clienteNombre; }
     public void setClienteNombre(String clienteNombre) { this.clienteNombre = clienteNombre; }

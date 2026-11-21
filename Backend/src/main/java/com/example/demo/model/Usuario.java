@@ -11,6 +11,7 @@ import jakarta.validation.constraints.*;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @org.hibernate.annotations.JdbcTypeCode(org.hibernate.type.SqlTypes.BIGINT)
     private BigInteger id;
 
     @NotBlank(message = "El nombre es obligatorio") 

@@ -24,6 +24,7 @@ import { DireccionService } from '../../services/direccion.service';
             <button *ngIf="modoEdicion" type="button" class="btn-cancelar-edicion" (click)="cancelarEdicion(dirForm)">Cancelar</button>
           </div>
 
+          <p *ngIf="mensajeError" role="alert" class="error-msg">{{ mensajeError }}</p>
           <form (ngSubmit)="guardarDireccion(dirForm)" #dirForm="ngForm" class="dir-form">
 
             <!-- Calle -->
@@ -210,14 +211,13 @@ import { DireccionService } from '../../services/direccion.service';
   `,})
 export class DireccionesComponent implements OnInit {
   direcciones: Direccion[] = [];
-  usuarioId: number = 1;
   intentoEnvio = false;
+  mensajeError = '';
   mensajeExito = '';
   modoEdicion = false;
   direccionIdEnEdicion?: number;
 
   nuevaDireccion: Direccion = {
-    usuarioId: this.usuarioId,
     calle: '',
     colonia: '',
     ciudad: '',
@@ -244,13 +244,15 @@ export class DireccionesComponent implements OnInit {
   }
 
   cargarDirecciones(): void {
-    this.direccionService.obtenerDireccionesPorUsuario(this.usuarioId).subscribe({
+    this.direccionService.obtenerMisDirecciones().subscribe({
       next: (data) => {
         this.direcciones = data;
         this.cdr.detectChanges();
       },
       error: (err) => {
-        console.error('Error al cargar las direcciones:', err);
+        this.direcciones = [];
+        this.mensajeError = 'No se pudieron cargar tus direcciones.';
+        this.cdr.detectChanges();
       }
     });
   }
@@ -270,6 +272,7 @@ export class DireccionesComponent implements OnInit {
   }
 
   guardarDireccion(form: NgForm): void {
+    this.mensajeError = '';
     this.intentoEnvio = true;
 
     const regexCalle = /^[a-zA-Z0-9áéíóúÁÉÍÓÚñÑüÜ\s.,#-]+$/;
@@ -286,7 +289,6 @@ export class DireccionesComponent implements OnInit {
       return;
     }
 
-    this.nuevaDireccion.usuarioId = this.usuarioId;
 
     if (this.modoEdicion && this.direccionIdEnEdicion) {
       this.nuevaDireccion.id = this.direccionIdEnEdicion;
@@ -301,7 +303,8 @@ export class DireccionesComponent implements OnInit {
           }, 3000);
         },
         error: (err) => {
-          console.error('Error al actualizar la dirección:', err);
+          this.mensajeError = err.error?.message || 'No se pudo actualizar la dirección.';
+          this.cdr.detectChanges();
         }
       });
     } else {
@@ -316,7 +319,8 @@ export class DireccionesComponent implements OnInit {
           }, 3000);
         },
         error: (err) => {
-          console.error('Error al guardar la dirección:', err);
+          this.mensajeError = err.error?.message || 'No se pudo guardar la dirección.';
+          this.cdr.detectChanges();
         }
       });
     }
@@ -329,7 +333,8 @@ export class DireccionesComponent implements OnInit {
           this.cargarDirecciones();
         },
         error: (err) => {
-          console.error('Error al eliminar la dirección:', err);
+          this.mensajeError = err.error?.message || 'No se pudo eliminar la dirección.';
+          this.cdr.detectChanges();
         }
       });
     }
@@ -339,8 +344,7 @@ export class DireccionesComponent implements OnInit {
     this.intentoEnvio = false;
     form.resetForm();
     this.nuevaDireccion = {
-      usuarioId: this.usuarioId,
-      calle: '',
+        calle: '',
       numeroExterior: '',
       numeroInterior: '',
       colonia: '',
