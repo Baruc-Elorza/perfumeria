@@ -8,10 +8,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.Optional;
-import java.math.BigInteger;
 
-public interface CarritoRepository extends JpaRepository<Carrito, BigInteger> {
+
+public interface CarritoRepository extends JpaRepository<Carrito, Long> {
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select c from Carrito c where c.id = :id")
-    Optional<Carrito> buscarParaActualizar(@Param("id") BigInteger id);
+    Optional<Carrito> buscarParaActualizar(@Param("id") Long id);
 }

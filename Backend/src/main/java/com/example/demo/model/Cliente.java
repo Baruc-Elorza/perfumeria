@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-import java.math.BigInteger;
+
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,7 +28,7 @@ public class Cliente extends Usuario {
     private List<Direccion> direcciones; //despliega las direcciones en la pagina web
 
 //    @OneToOne
-  //  private BigInteger idHistorial;
+  //  private Long idHistorial;
 
     @OneToOne(mappedBy = "cliente") //un cliente tiene un solo carrito
     private Carrito carrito;

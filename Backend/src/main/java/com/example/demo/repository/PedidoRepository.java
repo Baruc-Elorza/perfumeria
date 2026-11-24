@@ -7,14 +7,14 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 import java.util.Collection;
-import java.math.BigInteger;
+
 
 @Repository
-public interface PedidoRepository extends JpaRepository<Pedido, BigInteger> {
+public interface PedidoRepository extends JpaRepository<Pedido, Long> {
 
     List<Pedido> findByClienteEmailOrderByFechaCreacionDesc(String clienteEmail);
 
-    Optional<Pedido> findByIdAndClienteEmail(BigInteger id, String clienteEmail);
+    Optional<Pedido> findByIdAndClienteEmail(Long id, String clienteEmail);
 
     List<Pedido> findByEstadoInOrderByFechaCreacionDesc(Collection<Pedido.EstadoPedido> estados);
 }

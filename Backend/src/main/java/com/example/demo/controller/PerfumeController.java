@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.math.BigInteger;
+
 
 @RestController
 @RequestMapping("/api/perfumes")
@@ -27,7 +27,7 @@ public class PerfumeController {
 
     // GET: Obtener el detalle de un perfume por ID (H.U.-09)
     @GetMapping("/{id}")
-    public ResponseEntity<Perfume> obtenerDetalle(@PathVariable BigInteger id) {
+    public ResponseEntity<Perfume> obtenerDetalle(@PathVariable Long id) {
         return perfumeService.obtenerPorId(id)
                 .map(perfume -> ResponseEntity.ok(perfume))
                 .orElse(ResponseEntity.notFound().build());
@@ -42,12 +42,12 @@ public class PerfumeController {
 
     // PUT: Actualizar un perfume existente
     @PutMapping("/{id}")
-    public ResponseEntity<Perfume> actualizar(@PathVariable BigInteger id, @RequestBody Perfume perfume) {
+    public ResponseEntity<Perfume> actualizar(@PathVariable Long id, @RequestBody Perfume perfume) {
         return ResponseEntity.ok(perfumeService.actualizar(id, perfume));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(@PathVariable BigInteger id) {
+    public ResponseEntity<Void> eliminar(@PathVariable Long id) {
         perfumeService.eliminar(id);
         return ResponseEntity.noContent().build();
     }

@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-import java.math.BigInteger;
+
 import java.util.List;
 
 import jakarta.persistence.*;
@@ -11,7 +11,7 @@ public class Marca {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
 
     private String nombre;
 
@@ -23,8 +23,8 @@ public class Marca {
         nombre=n;
     }
 
-    public BigInteger getId(){return id;}
-    public void setId(BigInteger id){this.id=id;}
+    public Long getId(){return id;}
+    public void setId(Long id){this.id=id;}
 
     public String getNombre(){return nombre;}
     public void setNombre(String nombre){this.nombre=nombre;}

@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-import java.math.BigInteger;
+
 import java.sql.Date;
 
 import jakarta.persistence.*;
@@ -11,7 +11,7 @@ public class Envio {
     
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
 //no registramos paquetería porque solo usa DHL siempre
     private String numeroGuia;
     private Date fechaEnvio;
@@ -24,7 +24,7 @@ public class Envio {
         costoEnvio=c;
     }
 
-    public BigInteger getId(){return id;}
+    public Long getId(){return id;}
 
     public String getNumeroGuia(){return numeroGuia;}
     public void setNumeroGuia(String n){numeroGuia=n;}

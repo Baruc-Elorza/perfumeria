@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import com.example.demo.dto.CarritoRespuesta;
 import java.math.BigDecimal;
-import java.math.BigInteger;
+
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;
@@ -94,7 +94,7 @@ public class CompraService {
 
     @Transactional
     public void confirmarCompraYPago(
-            BigInteger pedidoId,
+            Long pedidoId,
             String referenciaPagoProveedor,
             String clienteEmail
     ) throws StripeException {

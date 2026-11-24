@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-import java.math.BigInteger;
+
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -11,7 +11,7 @@ import jakarta.validation.constraints.*;
 public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
 
     @NotBlank(message = "El nombre es obligatorio") 
     @Column(nullable = false)
@@ -41,8 +41,8 @@ public class Usuario {
         this.activo = true;
     }
 
-    public BigInteger getId() { return id; }
-    public void setId(BigInteger id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }

@@ -3,13 +3,13 @@ package com.example.demo.notificaciones;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import java.math.BigDecimal;
-import java.math.BigInteger;
+
 import java.time.Instant;
 import java.util.List;
 
 /** Datos históricos del pedido pagado, obtenidos del backend, nunca del navegador. */
 public record CompraParaNotificar(
-        @NotNull BigInteger pedidoId,
+        @NotNull Long pedidoId,
         @NotBlank @Size(max = 150) String referenciaPago,
         @NotNull EstadoPago estadoPago,
         @NotNull Instant pagadoEn,
@@ -27,7 +27,7 @@ public record CompraParaNotificar(
     public enum EstadoPago { PENDIENTE, EXITOSO, RECHAZADO, CANCELADO }
 
     public record Producto(
-            @NotNull BigInteger productoId,
+            @NotNull Long productoId,
             @NotBlank @Size(max = 255) String nombre,
             @NotBlank @Size(max = 255) String marca,
             @Min(1) int cantidad,

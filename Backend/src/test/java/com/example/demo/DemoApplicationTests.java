@@ -21,7 +21,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.math.BigInteger;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,8 +35,8 @@ class DemoApplicationTests {
     @Autowired MarcaRepository marcas;
     private final JsonMapper json = JsonMapper.builder().build();
     private HttpClient cliente;
-    private BigInteger disponible;
-    private BigInteger agotado;
+    private Long disponible;
+    private Long agotado;
 
   @BeforeEach
     void preparar() {

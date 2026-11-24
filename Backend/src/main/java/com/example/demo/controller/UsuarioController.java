@@ -2,7 +2,7 @@
 package com.example.demo.controller;
 
 import java.util.List;
-import java.math.BigInteger;
+
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,7 +48,7 @@ public class UsuarioController {
     // Obtener usuario por ID
     @GetMapping("/{id}")
     public ResponseEntity<UsuarioRespuestaDTO> getUsuario(
-            @PathVariable BigInteger id) {
+            @PathVariable Long id) {
 
         return usuarioServicio.getUsuario(id)
                 .map(this::convertirDTO)

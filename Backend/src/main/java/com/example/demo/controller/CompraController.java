@@ -10,7 +10,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
-import java.math.BigInteger;
+
 
 @RestController
 @RequestMapping("/api/compras")
@@ -59,8 +59,8 @@ public class CompraController {
                         ));
             }
 
-            BigInteger carritoId =
-                    (BigInteger) session.getAttribute("carritoId");
+            Long carritoId =
+                    (Long) session.getAttribute("carritoId");
 
             CarritoRespuesta carrito =
                     carritoService.obtenerCarrito(carritoId);
@@ -203,14 +203,14 @@ public class CompraController {
     }
 
     public static class ConfirmacionPagoRequest {
-        private BigInteger pedidoId;
+        private Long pedidoId;
         private String referenciaPagoProveedor;
 
-        public BigInteger getPedidoId() {
+        public Long getPedidoId() {
             return pedidoId;
         }
 
-        public void setPedidoId(BigInteger pedidoId) {
+        public void setPedidoId(Long pedidoId) {
             this.pedidoId = pedidoId;
         }
 

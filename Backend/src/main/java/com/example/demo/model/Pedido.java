@@ -2,7 +2,7 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 import java.math.BigDecimal;
-import java.math.BigInteger;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.time.Instant;
@@ -14,7 +14,7 @@ public class Pedido {
 
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "cliente_id")
@@ -60,7 +60,7 @@ public class Pedido {
     // Clase embebida para representar cada producto dentro del pedido histórico
     @Embeddable
     public static class ItemProducto {
-        private BigInteger productoId;
+        private Long productoId;
         private String nombre;
         private String marca;
         private Integer cantidad;
@@ -68,7 +68,7 @@ public class Pedido {
 
         public ItemProducto() {}
 
-        public ItemProducto(BigInteger productoId, String nombre, String marca, Integer cantidad, BigDecimal precioUnitario) {
+        public ItemProducto(Long productoId, String nombre, String marca, Integer cantidad, BigDecimal precioUnitario) {
             this.productoId = productoId;
             this.nombre = nombre;
             this.marca = marca;
@@ -76,8 +76,8 @@ public class Pedido {
             this.precioUnitario = precioUnitario;
         }
 
-        public BigInteger getProductoId() { return productoId; }
-        public void setProductoId(BigInteger productoId) { this.productoId = productoId; }
+        public Long getProductoId() { return productoId; }
+        public void setProductoId(Long productoId) { this.productoId = productoId; }
 
         public String getNombre() { return nombre; }
         public void setNombre(String nombre) { this.nombre = nombre; }
@@ -96,8 +96,8 @@ public class Pedido {
     public Pedido() {}
 
     // Getters y Setters
-    public BigInteger getId() { return id; }
-    public void setId(BigInteger id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public EstadoPedido getEstado() { return estado; }
     public void setEstado(EstadoPedido estado) { this.estado = estado; }

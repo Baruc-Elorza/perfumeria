@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
-import java.math.BigInteger;
+
 
 @RestController
 @RequestMapping("/api/pagos")
@@ -37,7 +37,7 @@ public class PagoController {
 
     @PostMapping("/crear")
     public ResponseEntity<?> crearPago(
-            @RequestParam BigInteger pedidoId,
+            @RequestParam Long pedidoId,
             Authentication authentication
     ) throws StripeException {
 

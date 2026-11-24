@@ -2,7 +2,7 @@ package com.example.demo.model;
 
 import jakarta.persistence.*;
 
-import java.math.BigInteger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +11,7 @@ import java.util.List;
 public class Carrito {
     @Id 
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
 
     @OneToOne
     @JoinColumn(name = "cliente_id", unique = true) //un carrito corresponde a un solo cliente
@@ -29,7 +29,7 @@ public class Carrito {
         this.subtotal=subtotal;
     }
 
-    public BigInteger getId(){return id;}
+    public Long getId(){return id;}
     
     public double getSubtotal(){return subtotal;}
     public void setSubtotal(double subtotal){this.subtotal=subtotal;}

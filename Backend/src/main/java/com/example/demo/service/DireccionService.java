@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.math.BigInteger;
+
 
 @Service
 public class DireccionService {
@@ -14,7 +14,7 @@ public class DireccionService {
     @Autowired
     private DireccionRepository direccionRepository;
 
-    public List<Direccion> obtenerDireccionesPorUsuario(BigInteger usuarioId) {
+    public List<Direccion> obtenerDireccionesPorUsuario(Long usuarioId) {
         return direccionRepository.findByUsuarioId(usuarioId);
     }
 
@@ -23,7 +23,7 @@ public class DireccionService {
         return direccionRepository.save(direccion);
     }
 
-    public void eliminarDireccion(BigInteger id) {
+    public void eliminarDireccion(Long id) {
         direccionRepository.deleteById(id);
     }
 }

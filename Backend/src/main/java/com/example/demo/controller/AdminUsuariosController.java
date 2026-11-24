@@ -5,7 +5,7 @@ import com.example.demo.service.AdministracionUsuariosService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
-import java.math.BigInteger;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,12 +21,12 @@ public class AdminUsuariosController {
     }
 
     @GetMapping("/{id}")
-    public UsuarioAdminRespuesta detalle(@PathVariable BigInteger id, Authentication auth) {
+    public UsuarioAdminRespuesta detalle(@PathVariable Long id, Authentication auth) {
         return servicio.detalle(id, auth.getName());
     }
 
     @PatchMapping("/{id}/estado")
-    public UsuarioAdminRespuesta estado(@PathVariable BigInteger id, @Valid @RequestBody Estado datos,
+    public UsuarioAdminRespuesta estado(@PathVariable Long id, @Valid @RequestBody Estado datos,
                                        Authentication auth) {
         return servicio.cambiarEstado(id, datos.activo(), auth.getName());
     }

@@ -10,7 +10,7 @@ import com.example.demo.repository.CarritoPerfumeRepository;
 
 import java.util.List;
 import java.util.Optional;
-import java.math.BigInteger;
+
 
 @Service
 public class PerfumeService {
@@ -31,7 +31,7 @@ public class PerfumeService {
         return perfumeRepository.findByNombreContainingIgnoreCase(nombre.trim());
     }
 
-    public Optional<Perfume> obtenerPorId(BigInteger id) {
+    public Optional<Perfume> obtenerPorId(Long id) {
         return perfumeRepository.findById(id);
     }
 
@@ -43,7 +43,7 @@ public class PerfumeService {
     }
 
     @Transactional
-    public Perfume actualizar(BigInteger id, Perfume datos) {
+    public Perfume actualizar(Long id, Perfume datos) {
         Perfume existente = perfumeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El perfume ya no existe."));
         copiar(datos, existente);
@@ -82,12 +82,12 @@ public class PerfumeService {
         }
     }
 
-    public boolean existe(BigInteger id) {
+    public boolean existe(Long id) {
         return perfumeRepository.existsById(id);
     }
 
     @Transactional
-    public void eliminar(BigInteger id) {
+    public void eliminar(Long id) {
         Perfume perfume = perfumeRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "El perfume ya no existe."));
         if (carritoPerfumeRepository.existsByPerfumeId(id)) {

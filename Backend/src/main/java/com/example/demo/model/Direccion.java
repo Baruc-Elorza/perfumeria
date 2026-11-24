@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-import java.math.BigInteger;
+
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -11,7 +11,7 @@ public class Direccion {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private BigInteger id;
+    private Long id;
 
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
@@ -40,8 +40,8 @@ public class Direccion {
     private Boolean esPrincipal = false;
 
     // Getters y Setters
-    public BigInteger getId() { return id; }
-    public void setId(BigInteger id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
 
     public Usuario getUsuario() { return usuario; }
     public void setUsuario(Usuario usuario) { this.usuario = usuario; }
