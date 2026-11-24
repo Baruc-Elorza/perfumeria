@@ -23,7 +23,8 @@ public class CorreoCompraScheduler {
         this.worker = worker;
     }
 
-    @Scheduled(fixedDelayString = "${notificaciones.compra.intervalo-ms:30000}")
+    @Scheduled(fixedDelayString = "${notificaciones.compra.intervalo-ms:30000}",
+            initialDelayString = "${notificaciones.compra.espera-inicial-ms:30000}")
     public void procesar() {
         for (Long id : repository.pendientes(Instant.now(), PageRequest.of(0, 10))) {
             try {

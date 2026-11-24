@@ -66,15 +66,17 @@
       }
       <div class="rejilla">
         @for (perfume of perfumesFiltrados(); track perfume.id) {
-          <article class="tarjeta cart-products">
+          <article class="tarjeta cart-products" (click)="abrirDetalle(perfume)">
+            <button type="button" class="abrir-perfume" [attr.aria-label]="'Ver detalles de ' + perfume.nombre">
             @if (perfume.imagenUrl) {
               <img class="imagen-catalogo" [src]="perfume.imagenUrl" [alt]="'Frasco de ' + perfume.nombre">
             } @else {
               <div class="imagen-catalogo sin-imagen" aria-hidden="true">{{ perfume.nombre.charAt(0) }}</div>
             }
+            </button>
             <div class="product-info">
               <p class="perfume-marca">{{ perfume.marca }}</p>
-              <h2>{{ perfume.nombre }}</h2>
+              <h2><button type="button" class="nombre-perfume">{{ perfume.nombre }}</button></h2>
               @if (perfume.descripcion) { <p>{{ perfume.descripcion }}</p> }
               @if (perfume.notasTop) { <p><strong>Aroma inicial:</strong> {{ perfume.notasTop }}</p> }
               @if (perfume.notasMiddle) { <p><strong>Aroma de cuerpo:</strong> {{ perfume.notasMiddle }}</p> }
@@ -84,7 +86,7 @@
                 {{ perfume.stock > 0 ? 'Disponible: ' + perfume.stock + ' unidades' : 'Agotado' }}
               </p>
             </div>
-            <button class="checkout" type="button" (click)="comprar(perfume)"
+            <button class="checkout" type="button" (click)="$event.stopPropagation(); comprar(perfume)"
               [disabled]="!(perfume.stock > 0) || perfume.id == null || agregando() !== null">
               {{ agregando() === perfume.id ? 'Agregando...' : (perfume.stock > 0 ? 'Comprar' : 'Sin existencia') }}
             </button>
@@ -94,4 +96,59 @@
     </section>
   }
 </main>
+<dialog #ventanaDetalle class="detalle-perfume" aria-labelledby="nombre-detalle"
+  (cancel)="$event.preventDefault(); cerrarDetalle()" (click)="cerrarAlFondo($event)">
+  <button type="button" class="detalle-cerrar" aria-label="Cerrar detalles" autofocus (click)="cerrarDetalle()">×</button>
+  @if (detalle(); as perfume) {
+    <div class="detalle-contenido" [attr.aria-busy]="cargandoDetalle()">
+      <section class="detalle-galeria" aria-label="Fotografía del perfume">
+        @if (perfume.imagenUrl) {
+          <div class="detalle-imagen" tabindex="0" aria-label="Imagen del perfume. Pasa el cursor para ampliar."
+            (mousemove)="moverZoom($event)">
+            <img [src]="perfume.imagenUrl" [alt]="'Frasco de ' + perfume.nombre">
+          </div>
+          <p class="detalle-ayuda">Pasa el cursor sobre la imagen para verla más de cerca.</p>
+        } @else {
+          <div class="detalle-imagen detalle-sin-imagen">Imagen no disponible</div>
+        }
+      </section>
+      <section class="detalle-informacion">
+        <p class="perfume-marca">{{ perfume.marca }}</p>
+        <h2 id="nombre-detalle">{{ perfume.nombre }}</h2>
+        @if (cargandoDetalle()) {
+          <p role="status">Cargando detalles...</p>
+        } @else if (errorDetalle()) {
+          <div role="alert" class="estado error">
+            <p>{{ errorDetalle() }}</p>
+            <button type="button" (click)="abrirDetalle(perfume)">Reintentar</button>
+          </div>
+        } @else {
+          @if (perfume.descripcion?.trim()) {
+            <p class="detalle-descripcion">{{ perfume.descripcion }}</p>
+          }
+          @if (perfume.ml || perfume.concentracion || perfume.notasTop?.trim() || perfume.notasMiddle?.trim() || perfume.notasBase?.trim()) {
+            <dl class="detalle-ficha">
+              @if (perfume.ml) { <div><dt>Presentación</dt><dd>{{ perfume.ml }} ml</dd></div> }
+              @if (perfume.concentracion) { <div><dt>Concentración</dt><dd>{{ perfume.concentracion }}</dd></div> }
+              @if (perfume.notasTop?.trim()) { <div><dt>Aroma inicial</dt><dd>{{ perfume.notasTop }}</dd></div> }
+              @if (perfume.notasMiddle?.trim()) { <div><dt>Aroma de cuerpo</dt><dd>{{ perfume.notasMiddle }}</dd></div> }
+              @if (perfume.notasBase?.trim()) { <div><dt>Aroma final</dt><dd>{{ perfume.notasBase }}</dd></div> }
+            </dl>
+          }
+        }
+        <div class="detalle-compra">
+          <p class="price">{{ perfume.precio | currency:'MXN':'symbol-narrow' }} MXN</p>
+          <p [class.shipping]="perfume.stock > 0" [class.error]="!(perfume.stock > 0)">
+            {{ perfume.stock > 0 ? 'Disponible: ' + perfume.stock + ' unidades' : 'Agotado' }}
+          </p>
+          @if (errorCompra()) { <p class="error" role="alert">{{ errorCompra() }}</p> }
+          <button type="button" class="checkout" (click)="comprar(perfume)"
+            [disabled]="cargandoDetalle() || !!errorDetalle() || !(perfume.stock > 0) || perfume.id == null || agregando() !== null">
+            {{ agregando() === perfume.id ? 'Agregando...' : (perfume.stock > 0 ? 'Comprar' : 'Sin existencia') }}
+          </button>
+        </div>
+      </section>
+    </div>
+  }
+</dialog>
 </div>

@@ -33,8 +33,8 @@ import { PagoService } from '../../services/pago.service';
       }
 
       @if (!cargando && !pagoExitoso) {
-        <button class="btn-confirmar-pago" (click)="pagar()">
-          Confirmar y Pagar
+        <button type="button" class="btn-confirmar-pago" [disabled]="!listo || procesando" (click)="pagar()">
+          {{ procesando ? 'Procesando...' : 'Confirmar y Pagar' }}
         </button>
       }
     </div>
@@ -52,6 +52,8 @@ export class PagoComponent implements AfterViewInit {
   mensaje = '';
   cargando = true;
   pagoExitoso = false;
+  listo = false;
+  procesando = false;
 
   constructor(
     private pagoService: PagoService,
@@ -61,7 +63,14 @@ export class PagoComponent implements AfterViewInit {
   ngAfterViewInit(): void {
     this.pagoService.obtenerConfiguracion().subscribe({
       next: async (config) => {
-        this.stripe = await loadStripe(config.publicKey);
+        try {
+          this.stripe = await loadStripe(config.publicKey);
+        } catch {
+          this.mensaje = 'No se pudo cargar el formulario de pago. Recarga la página e inténtalo de nuevo.';
+          this.cargando = false;
+          this.cdr.detectChanges();
+          return;
+        }
 
         if (!this.stripe) {
           this.mensaje = 'No se pudo cargar Stripe.';
@@ -86,6 +95,10 @@ export class PagoComponent implements AfterViewInit {
             });
 
             this.paymentElement = this.elements.create('payment');
+            this.paymentElement.on('ready', () => {
+              this.listo = true;
+              this.cdr.detectChanges();
+            });
             this.paymentElement.mount('#payment-element');
 
             this.cargando = false;
@@ -110,21 +123,33 @@ export class PagoComponent implements AfterViewInit {
   }
 
   async pagar(): Promise<void> {
-    if (!this.stripe || !this.elements) {
+    if (this.procesando || this.pagoExitoso) return;
+    if (!this.listo || !this.stripe || !this.elements) {
       this.mensaje = 'El sistema de pago todavía no está listo.';
       this.cdr.detectChanges();
       return;
     }
 
+    this.procesando = true;
     this.mensaje = 'Procesando pago...';
     this.cdr.detectChanges();
 
-    const resultado = await this.stripe.confirmPayment({
-      elements: this.elements,
-      redirect: 'if_required'
-    });
+    let resultado;
+    try {
+      resultado = await this.stripe.confirmPayment({
+        elements: this.elements,
+        redirect: 'if_required'
+      });
+    } catch {
+      this.procesando = false;
+      this.listo = false;
+      this.mensaje = 'No se pudo verificar el pago. Revisa el pedido antes de volver a intentarlo.';
+      this.cdr.detectChanges();
+      return;
+    }
 
     if (resultado.error) {
+      this.procesando = false;
       console.error('Error en el pago:', resultado.error);
       this.mensaje = resultado.error.message || 'No se pudo procesar el pago. Intente nuevamente.';
       this.cdr.detectChanges();
@@ -132,6 +157,7 @@ export class PagoComponent implements AfterViewInit {
     }
 
     if (!this.paymentIntentId) {
+      this.procesando = false;
       this.mensaje = 'No se pudo identificar el pago.';
       this.cdr.detectChanges();
       return;
@@ -144,10 +170,13 @@ export class PagoComponent implements AfterViewInit {
       next: (respuesta) => {
         this.mensaje = respuesta.mensaje;
         this.pagoExitoso = true;
+        this.procesando = false;
         this.cdr.detectChanges();
       },
       error: (error) => {
         console.error('Error al confirmar la compra:', error);
+        this.procesando = false;
+        this.listo = false;
 
         this.mensaje =
           'Stripe procesó el pago, pero no se pudo confirmar el pedido. ' +

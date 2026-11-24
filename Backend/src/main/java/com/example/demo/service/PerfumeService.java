@@ -52,22 +52,25 @@ public class PerfumeService {
 
     private void copiar(Perfume datos, Perfume destino) {
         if (datos.getNombre() == null || datos.getNombre().isBlank()
-                || datos.getMarca() == null || datos.getMarca().getNombre() == null
-                || datos.getMarca().getNombre().isBlank()) {
+                || datos.getMarca() == null || datos.getMarca().isBlank()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Nombre y marca son obligatorios.");
         }
         if (datos.getPrecio() == null || !Double.isFinite(datos.getPrecio()) || datos.getPrecio() < 0.01
                 || datos.getStock() == null || datos.getStock() < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El precio mínimo es $0.01 MXN y las existencias deben ser no negativas.");
         }
+        validarLongitud(datos.getDescripcion(), 500);
         validarLongitud(datos.getNombre(), 255);
-        validarLongitud(datos.getMarca().getNombre(), 255);
+        validarLongitud(datos.getMarca(), 255);
         validarLongitud(datos.getNotasTop(), 500);
         validarLongitud(datos.getNotasMiddle(), 255);
         validarLongitud(datos.getNotasBase(), 255);
         validarLongitud(datos.getImagenUrl(), 255);
+        destino.setDescripcion(datos.getDescripcion());
+        destino.setMl(datos.getMl());
+        destino.setConcentracion(datos.getConcentracion());
         destino.setNombre(datos.getNombre().trim());
-        destino.setMarca(datos.getMarca());
+        destino.setMarca(datos.getMarca().trim());
         destino.setNotasTop(datos.getNotasTop());
         destino.setNotasMiddle(datos.getNotasMiddle());
         destino.setNotasBase(datos.getNotasBase());

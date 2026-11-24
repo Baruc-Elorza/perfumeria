@@ -216,7 +216,6 @@ export class CheckoutComponent implements OnInit {
   creandoPedido = false;
   mensaje = '';
 
-  usuarioId = 1; // ID de usuario por defecto para pruebas
   direcciones: Direccion[] = [];
   direccionSeleccionadaId?: number;
 
@@ -239,7 +238,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   cargarDirecciones(): void {
-    this.direccionService.obtenerDireccionesPorUsuario(this.usuarioId).subscribe({
+    this.direccionService.obtenerMisDirecciones().subscribe({
       next: (data) => {
         this.direcciones = data;
         if (this.direcciones.length > 0) {

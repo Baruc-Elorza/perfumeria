@@ -1,6 +1,5 @@
 export interface Direccion {
   id?: number;
-  usuarioId: number;
   calle: string;
   numeroExterior?: string;
   numeroInterior?: string;

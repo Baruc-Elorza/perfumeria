@@ -3,6 +3,8 @@ export interface Perfume {
   nombre: string;
   marca: string;
   descripcion?: string;
+  ml?: number | null;
+  concentracion?: 'EDF' | 'EDT' | 'EDP' | 'PARFUM' | null;
   notasTop?: string;
   notasMiddle?: string;
   notasBase?: string;

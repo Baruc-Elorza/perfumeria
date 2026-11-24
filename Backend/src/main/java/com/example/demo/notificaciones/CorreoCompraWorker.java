@@ -49,7 +49,11 @@ public class CorreoCompraWorker {
     public void enviar(Long id) {
         var n = repository.bloquear(id).orElse(null);
         if (n == null || !"PENDIENTE".equals(n.estado) || n.proximoIntento.isAfter(Instant.now())) return;
-        if (n.destinatario == null) n.destinatario = destinatario;
+        if (n.destinatario == null) {
+            if (!"ADMIN".equals(n.tipo)) throw new IllegalStateException("La compra no tiene correo del comprador.");
+            n.destinatario = destinatario;
+        }
+        direccion(n.destinatario);
         SimpleMailMessage mensaje = new SimpleMailMessage();
         mensaje.setFrom(remitente);
         mensaje.setTo(n.destinatario);
