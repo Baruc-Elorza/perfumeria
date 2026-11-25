@@ -10,7 +10,7 @@ import java.util.Optional;
 
 
 public interface NotificacionCompraRepository extends JpaRepository<NotificacionCompra, Long> {
-    Optional<NotificacionCompra> findByPedidoId(Long pedidoId);
+    List<NotificacionCompra> findAllByPedidoId(Long pedidoId);
 
     @Query("select n.id from NotificacionCompra n where n.estado = 'PENDIENTE' and n.proximoIntento <= :ahora order by n.id")
     List<Long> pendientes(@Param("ahora") Instant ahora, Pageable pagina);

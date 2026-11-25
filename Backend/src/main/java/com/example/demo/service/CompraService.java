@@ -197,6 +197,7 @@ if (!metadataCoincide && !esPagoAntiguoVerificado) {
                         Instant.now(),
                         pedido.getClienteNombre() != null
                                 ? pedido.getClienteNombre() : "",
+                        pedido.getCliente().getEmail(),
                         pedido.getDestinatarioEnvio() != null
                                 ? pedido.getDestinatarioEnvio() : "",
                         pedido.getDireccionEnvio() != null

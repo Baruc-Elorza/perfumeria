@@ -18,9 +18,11 @@ public class Perfume {
     @Column(nullable = false)
     private String nombre;
 
-    @ManyToOne
-    @JoinColumn(name = "id_marca", columnDefinition = "BIGINT")
-    private Marca marca;
+    @Column(length = 500)
+    private String descripcion;
+
+    @Column(nullable = false, length = 255)
+    private String marca;
 
     public enum concentracionEnum{
         EDF,
@@ -56,7 +58,7 @@ public class Perfume {
 
     public Perfume() {}
 
-    public Perfume(String nombre, Marca marca, int ml, concentracionEnum concentracion, String notasTop, String notasMiddle,
+    public Perfume(String nombre, String marca, int ml, concentracionEnum concentracion, String notasTop, String notasMiddle,
         String notasBase, Double precio, Integer stock, String imagenUrl) {
         this.nombre = nombre;
         this.marca = marca;
@@ -76,8 +78,17 @@ public class Perfume {
     public String getNombre() { return nombre; }
     public void setNombre(String nombre) { this.nombre = nombre; }
 
-    public Marca getMarca() { return marca; }
-    public void setMarca(Marca marca) { this.marca = marca; }
+    public String getDescripcion() { return descripcion; }
+    public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
+
+    public int getMl() { return ml; }
+    public void setMl(int ml) { this.ml = ml; }
+
+    public concentracionEnum getConcentracion() { return concentracion; }
+    public void setConcentracion(concentracionEnum concentracion) { this.concentracion = concentracion; }
+
+    public String getMarca() { return marca; }
+    public void setMarca(String marca) { this.marca = marca; }
 
     public String getNotasTop() { return notasTop; }
     public void setNotasTop(String notasTop) { this.notasTop = notasTop; }

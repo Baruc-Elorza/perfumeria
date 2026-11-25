@@ -50,10 +50,19 @@ public class CorreoCompraWorker {
         var n = repository.bloquear(id).orElse(null);
         if (n == null || !"PENDIENTE".equals(n.estado) || n.proximoIntento.isAfter(Instant.now())) return;
         if (n.destinatario == null) {
-            if (!"ADMIN".equals(n.tipo)) throw new IllegalStateException("La compra no tiene correo del comprador.");
-            n.destinatario = destinatario;
+            if ("ADMIN".equals(n.tipo)) {
+                n.destinatario = destinatario;
+            } else {
+                marcarDestinatarioInvalido(n);
+                return;
+            }
         }
-        direccion(n.destinatario);
+        try {
+            n.destinatario = direccion(n.destinatario);
+        } catch (IllegalArgumentException ex) {
+            marcarDestinatarioInvalido(n);
+            return;
+        }
         SimpleMailMessage mensaje = new SimpleMailMessage();
         mensaje.setFrom(remitente);
         mensaje.setTo(n.destinatario);
@@ -73,5 +82,11 @@ public class CorreoCompraWorker {
             n.proximoIntento = Instant.now().plusSeconds(60L * n.intentos);
             log.warn("Notificación de compra {}: intento {} falló ({}).", n.id, n.intentos, n.ultimoError);
         }
+    }
+
+    private void marcarDestinatarioInvalido(NotificacionCompra notificacion) {
+        notificacion.estado = "FALLIDA";
+        notificacion.ultimoError = "DESTINATARIO_INVALIDO";
+        log.warn("Notificación de compra {} marcada como fallida por destinatario inválido.", notificacion.id);
     }
 }

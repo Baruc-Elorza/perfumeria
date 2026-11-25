@@ -14,6 +14,7 @@ public record CompraParaNotificar(
         @NotNull EstadoPago estadoPago,
         @NotNull Instant pagadoEn,
         @NotBlank @Size(max = 200) String cliente,
+        @NotBlank @Email @Size(max = 254) String clienteEmail,
         @NotBlank @Size(max = 200) String destinatarioEnvio,
         @NotBlank @Size(max = 1000) String direccionEnvio,
         @Size(max = 50) String telefono,

@@ -111,8 +111,8 @@ public class CarritoService {
             Perfume p = linea.getPerfume();
             BigDecimal precio = BigDecimal.valueOf(p.getPrecio() == null ? 0 : p.getPrecio())
                     .setScale(2, RoundingMode.HALF_UP);
-            String marca = p.getMarca() == null || p.getMarca().getNombre() == null
-                    ? "Sin marca" : p.getMarca().getNombre();
+            String marca = p.getMarca() == null || p.getMarca().isBlank()
+                    ? "Sin marca" : p.getMarca();
             return new CarritoRespuesta.Linea(p.getId(), p.getNombre(), marca, p.getImagenUrl(),
                     precio, p.getStock() == null ? 0 : p.getStock(), linea.getCantidad());
         }).toList();
