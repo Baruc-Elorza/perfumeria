@@ -8,15 +8,16 @@ import jakarta.persistence.*;
 @Table(name = "carrito_perfume")
 public class CarritoPerfume {
     @Id
+    @Column(columnDefinition = "BIGINT")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne 
-    @JoinColumn(name = "carrito_id", nullable = false)
+    @JoinColumn(name = "carrito_id", nullable = false, columnDefinition = "BIGINT")
     private Carrito carrito;
 
     @ManyToOne
-    @JoinColumn(name = "perfume_id", nullable = false)
+    @JoinColumn(name = "perfume_id", nullable = false, columnDefinition = "BIGINT")
     private Perfume perfume;
 
     @Column(nullable = false)

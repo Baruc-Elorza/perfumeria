@@ -9,12 +9,13 @@ import java.util.List;
 @Entity 
 @Table(name = "carrito")
 public class Carrito {
-    @Id 
+    @Id
+    @Column(columnDefinition = "BIGINT")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @OneToOne
-    @JoinColumn(name = "cliente_id", unique = true) //un carrito corresponde a un solo cliente
+    @JoinColumn(name = "cliente_id", unique = true, columnDefinition = "BIGINT") //un carrito corresponde a un solo cliente
     private Cliente cliente;
 
     @Column(nullable = false)

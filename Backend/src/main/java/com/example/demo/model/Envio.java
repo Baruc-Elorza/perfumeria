@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 public class Envio {
     
     @Id
+    @Column(columnDefinition = "BIGINT")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 //no registramos paquetería porque solo usa DHL siempre

@@ -10,6 +10,7 @@ import jakarta.validation.constraints.*;
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Usuario {
     @Id
+    @Column(columnDefinition = "BIGINT")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

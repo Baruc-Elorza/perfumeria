@@ -10,6 +10,7 @@ import jakarta.persistence.*;
 public class Marca {
 
     @Id
+    @Column(columnDefinition = "BIGINT")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 

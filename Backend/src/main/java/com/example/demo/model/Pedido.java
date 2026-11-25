@@ -13,11 +13,12 @@ import org.hibernate.annotations.CreationTimestamp;
 public class Pedido {
 
     @Id
+    @Column(columnDefinition = "BIGINT")
     @GeneratedValue (strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "cliente_id", columnDefinition = "BIGINT")
     private Usuario cliente;
 
     @Column(nullable = false)
@@ -41,11 +42,11 @@ public class Pedido {
     private BigDecimal costoEnvio = BigDecimal.ZERO;
 
     @OneToOne
-    @JoinColumn(name= "id_envio", nullable = true)
+    @JoinColumn(name= "id_envio", nullable = true, columnDefinition = "BIGINT")
     private Envio envio;
 
     @ElementCollection
-    @CollectionTable(name = "pedido_productos", joinColumns = @JoinColumn(name = "pedido_id"))
+    @CollectionTable(name = "pedido_productos", joinColumns = @JoinColumn(name = "pedido_id", columnDefinition = "BIGINT"))
     private List<ItemProducto> productos = new ArrayList<>();
 
     public enum EstadoPedido {

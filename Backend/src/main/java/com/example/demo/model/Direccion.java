@@ -10,11 +10,12 @@ import jakarta.validation.constraints.NotBlank;
 public class Direccion {
 
     @Id
+    @Column(columnDefinition = "BIGINT")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "usuario_id", nullable = false)
+    @JoinColumn(name = "usuario_id", nullable = false, columnDefinition = "BIGINT")
     private Usuario usuario;
 
     @NotBlank(message = "La calle es obligatoria")

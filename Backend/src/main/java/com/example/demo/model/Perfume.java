@@ -10,6 +10,7 @@ import jakarta.validation.constraints.*; //Para validaciones de H.U.-02
 public class Perfume {
 
     @Id
+    @Column(columnDefinition = "BIGINT")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
@@ -18,7 +19,7 @@ public class Perfume {
     private String nombre;
 
     @ManyToOne
-    @JoinColumn(name = "id_marca")
+    @JoinColumn(name = "id_marca", columnDefinition = "BIGINT")
     private Marca marca;
 
     public enum concentracionEnum{
