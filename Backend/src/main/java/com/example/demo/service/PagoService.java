@@ -47,7 +47,8 @@ public class PagoService {
                         )
                         .build();
 
-        return PaymentIntent.create(params);
+        return PaymentIntent.create(params, com.stripe.net.RequestOptions.builder()
+                .setIdempotencyKey("perfumeria-pedido-" + pedidoId).build());
     }
 
     public PaymentIntent obtenerPago(String paymentIntentId)
@@ -60,6 +61,10 @@ public class PagoService {
         }
 
         return PaymentIntent.retrieve(paymentIntentId);
+    }
+
+    public void cancelarPago(String paymentIntentId) throws StripeException {
+        obtenerPago(paymentIntentId).cancel();
     }
 
     public String verificarPago(String paymentIntentId)

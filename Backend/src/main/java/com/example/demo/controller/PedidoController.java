@@ -20,9 +20,11 @@ import org.springframework.http.HttpStatus;
 public class PedidoController {
 
     private final PedidoRepository pedidoRepository;
+    private final com.example.demo.service.GestionPedidoService gestionPedidos;
 
-    public PedidoController(PedidoRepository pedidoRepository) {
+    public PedidoController(PedidoRepository pedidoRepository, com.example.demo.service.GestionPedidoService gestionPedidos) {
         this.pedidoRepository = pedidoRepository;
+        this.gestionPedidos = gestionPedidos;
     }
 
     @GetMapping
@@ -42,6 +44,13 @@ public class PedidoController {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
     
+    @PatchMapping("/{id}/cancelar")
+    public ResponseEntity<?> cancelar(@PathVariable Long id, Authentication authentication)
+            throws com.stripe.exception.StripeException {
+        gestionPedidos.cancelar(id, authentication.getName());
+        return ResponseEntity.ok(Map.of("id", id, "estado", "CANCELADO"));
+    }
+
     @PatchMapping("/{id}/confirmar-entrega")
     public ResponseEntity<?> confirmarEntrega(
             @PathVariable Long id,

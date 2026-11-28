@@ -40,6 +40,8 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.POST, "/api/auth/recuperacion/solicitar",
+                                "/api/auth/recuperacion/validar", "/api/auth/recuperacion/restablecer").permitAll()
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/usuarios/registro"

@@ -9,6 +9,7 @@
   </nav>
 </header>
 <main class="historial">
+  @if (mensajePedido) { <p class="mensaje-entrega" role="status">{{ mensajePedido }}</p> }
   @if (mensajeEntrega) {
   <p class="mensaje-entrega" role="status">
     {{ mensajeEntrega }}
@@ -99,6 +100,31 @@
             </button>
           </div>
 
+          @if (pedido.estado === 'PENDIENTE') {
+            <section class="acciones-pendientes" aria-label="Acciones del pedido pendiente">
+              <button type="button" class="boton-principal" [disabled]="cancelandoId !== null" (click)="pagarPendiente(pedido)">Pagar pedido</button>
+              <button type="button" class="boton-detalle" [disabled]="cancelandoId !== null"
+                (click)="confirmacionCancelacion = pedido.id; pagoPendiente = null">Cancelar pedido</button>
+              @if (confirmacionCancelacion === pedido.id) {
+                <div class="confirmacion-pendiente" role="group" aria-label="Confirmar cancelación">
+                  <p>¿Quieres cancelar este pedido pendiente?</p>
+                  <button type="button" class="boton-detalle" [disabled]="cancelandoId !== null" (click)="cancelarPendiente(pedido)">
+                    {{ cancelandoId === pedido.id ? 'Cancelando...' : 'Sí, cancelar pedido' }}
+                  </button>
+                  <button type="button" class="boton-detalle" [disabled]="cancelandoId !== null" (click)="confirmacionCancelacion = null">Conservar pedido</button>
+                </div>
+              }
+            </section>
+          }
+          @if (pagoPendiente?.id === pedido.id) {
+            <section class="pago-pendiente" aria-label="Pagar pedido pendiente">
+              <h3>Completar el pago</h3>
+              <p>Se usarán los productos, el total y la dirección guardados en este pedido.</p>
+              <app-pago [pedidoId]="pedido.id" [monto]="pedido.total" (compraConfirmada)="compraPagada(pedido)"></app-pago>
+              <button type="button" class="boton-detalle" (click)="pagoPendiente = null">Cerrar pago</button>
+            </section>
+          }
+
           @if (pedidoSeleccionado?.id === pedido.id) {
             <div class="detalle">
               <h3>Detalle de tu compra</h3>
@@ -154,7 +180,7 @@
               @for (producto of pedido.productos; track $index) {
                 <div class="producto">
                   <div class="producto-info">
-                    <strong>{{ producto.nombre }}</strong>
+                    <a routerLink="/" fragment="coleccion" class="enlace-producto">{{ producto.nombre }}</a>
                     <span>Cantidad: {{ producto.cantidad }}</span>
                   </div>
                   <strong>

@@ -36,6 +36,9 @@ public class Pedido {
     
     private String direccionEnvio; //se obtiene con el constructor cliente.getDireccion();
     private String telefono;
+
+    @Column(length = 150)
+    private String paymentIntentId;
     private BigDecimal subtotal;
     private BigDecimal descuento;
     private BigDecimal total;
@@ -108,6 +111,10 @@ public class Pedido {
 
     public String getDireccionEnvio() { return direccionEnvio; }
     public void setDireccionEnvio(String direccionEnvio) { this.direccionEnvio = direccionEnvio; }
+
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public String getPaymentIntentId() { return paymentIntentId; }
+    public void setPaymentIntentId(String paymentIntentId) { this.paymentIntentId = paymentIntentId; }
 
     public String getTelefono() { return telefono; }
     public void setTelefono(String telefono) { this.telefono = telefono; }

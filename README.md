@@ -87,7 +87,7 @@ El carrito responde `{items: [...], subtotal: 0}`. Cada elemento contiene perfum
 
 Los registros del carrito se guardan en MySQL. La asociación al navegador usa una sesión anónima: al expirar la sesión o reiniciar el servidor puede comenzar un carrito nuevo. No hay todavía recuperación por cuenta de usuario.
 
-Agregar al carrito no reserva ni descuenta stock. La validación de stock también se ejecuta en backend. Pago, creación del pedido y envío quedan para sus respectivas historias; el botón de pago aparece deshabilitado.
+Agregar al carrito o guardar un pedido pendiente no reserva ni descuenta stock. Las unidades se descuentan al confirmar un pago exitoso verificado en Stripe, dentro de la misma transacción que marca el pedido como pagado y registra sus correos. Una confirmación repetida no vuelve a descontar. Las actualizaciones condicionales impiden stock negativo y, si falta algún producto o falla la transacción, se revierten todos los descuentos. Si Stripe ya aprobó un pago y el stock resulta insuficiente, se requiere revisión administrativa; no se debe volver a pagar. Esta corrección no recalcula automáticamente las existencias de ventas anteriores.
 
 Registra primero las cuentas desde la pantalla de acceso y define sus correos en `ADMIN_EMAILS` antes de iniciar el backend. Solo esas cuentas reciben rol de administrador; las demás cuentas registradas son clientes. La administración de perfumes está en `/admin/perfumes` y los envíos en `/admin/pedidos`. En envíos, el administrador registra la guía de un pedido pagado; el pedido queda marcado como enviado y el número aparece en «Mis pedidos» del cliente. La columna `numero_guia` se agrega automáticamente al iniciar Spring Boot porque Hibernate usa `ddl-auto=update`.
 
@@ -118,3 +118,26 @@ En bases existentes, respaldar y ejecutar `docs/migrar-notificaciones-dos-correo
 Contrato Java, responsabilidades por historia, ejemplo de integración, variables de entorno y comprobaciones pendientes: [Guía de integración HU-13](docs/HU-13-integracion.md).
 
 La versión de Node está indicada en `Frontend/.nvmrc`. Spring Boot administra las versiones de sus starters y del driver MySQL para mantenerlas alineadas ([documentación oficial](https://docs.spring.io/spring-boot/reference/using/build-systems.html)). La interfaz usa signals para actualizarse al recibir las respuestas HTTP ([Angular](https://angular.dev/guide/signals)).
+
+## Restablecer contraseña
+
+En la pantalla de acceso, «¿Olvidaste tu contraseña?» permite solicitar un enlace
+al correo de una cuenta activa. La respuesta es la misma para correos registrados,
+inexistentes o bloqueados. El trabajo SMTP se ejecuta en segundo plano.
+
+El enlace dura 15 minutos, es de un solo uso y cada nueva solicitud invalida el
+anterior. Solo se guarda su hash SHA-256 en `recuperacion_contrasena`. Se comprueba
+que las contraseñas coincidan, tengan entre 7 y 64 caracteres (hasta 72 bytes UTF-8
+por BCrypt), no contengan controles y sean diferentes de la anterior. Al cambiarla
+se revocan las sesiones existentes y se envía un aviso al correo de la cuenta.
+
+Se reutilizan el SMTP y el remitente configurados para los correos de la aplicación.
+`APP_PUBLIC_URL` configura el origen confiable del enlace (por defecto
+`http://localhost:4200`; usar HTTPS al desplegar). El token viaja en el fragmento de
+la URL para no incluirlo en solicitudes de navegación o referentes.
+
+La instancia local limita a tres solicitudes por correo cada 15 minutos, veinte
+solicitudes por IP por hora y treinta validaciones/cambios por IP cada 15 minutos.
+Los límites se mantienen en memoria; para varias instancias se requiere un almacén
+compartido. Las cuentas bloqueadas no pueden recuperar acceso mediante este flujo.
+Las pruebas usan H2 y correo capturado en memoria, sin modificar cuentas reales.

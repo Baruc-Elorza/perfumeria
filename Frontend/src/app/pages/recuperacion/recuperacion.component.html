@@ -1,0 +1,38 @@
+<main class="login-page">
+  <section class="login-card" aria-labelledby="titulo-recuperacion">
+    <a class="marca" routerLink="/">PERFUMERÍA</a>
+    <p class="eyebrow">RECUPERA TU ACCESO</p>
+    <h1 id="titulo-recuperacion">{{ restableciendo ? 'Nueva contraseña' : '¿Olvidaste tu contraseña?' }}</h1>
+    <p class="descripcion">{{ restableciendo ? 'Elige una contraseña diferente de la anterior.' : 'Escribe el correo con el que registraste tu cuenta. Te enviaremos un enlace para restablecer tu contraseña.' }}</p>
+
+    @if (verificando()) { <p role="status">Comprobando enlace...</p> }
+    @if (error()) { <p class="error" role="alert">{{ error() }}</p> }
+    @if (mensaje()) { <p class="recuperacion-exito" role="status">{{ mensaje() }}</p> }
+
+    @if (!terminado() && !verificando() && (!restableciendo || enlaceValido())) {
+      <form #formulario="ngForm" (ngSubmit)="enviar(formulario)">
+        @if (restableciendo) {
+          <label for="nueva-contrasenia">Nueva contraseña</label>
+          <input id="nueva-contrasenia" type="password" name="contrasenia" [(ngModel)]="contrasenia"
+            required minlength="7" maxlength="64" autocomplete="new-password" aria-describedby="contrasenia-ayuda">
+          <p id="contrasenia-ayuda" class="ayuda">Usa de 7 a 64 caracteres. Puedes usar una frase larga; las letras acentuadas y los símbolos pueden ocupar más espacio.</p>
+          <label for="confirmar-contrasenia">Confirma la nueva contraseña</label>
+          <input id="confirmar-contrasenia" type="password" name="confirmacion" [(ngModel)]="confirmacion"
+            required minlength="7" maxlength="64" autocomplete="new-password">
+          @if (confirmacion && contrasenia !== confirmacion) { <p class="error">Las contraseñas no coinciden.</p> }
+        } @else {
+          <label for="correo-recuperacion">Correo electrónico</label>
+          <input id="correo-recuperacion" type="email" name="email" [(ngModel)]="email" required email maxlength="254" autocomplete="email">
+          <p class="ayuda">El enlace vencerá en 15 minutos. Si solicitas otro, el anterior dejará de funcionar.</p>
+        }
+        <button type="submit" [disabled]="formulario.invalid || cargando() || (restableciendo && contrasenia !== confirmacion)">
+          {{ cargando() ? 'Procesando...' : (restableciendo ? 'Guardar nueva contraseña' : 'Enviar enlace') }}
+        </button>
+      </form>
+    }
+    @if (restableciendo && !verificando() && !terminado()) {
+      <p class="alternativa"><a routerLink="/recuperar-contrasena" class="volver">Solicitar otro enlace</a></p>
+    }
+    <p class="alternativa"><a routerLink="/login" class="volver">{{ terminado() && restableciendo ? 'Iniciar sesión con mi nueva contraseña' : 'Volver a iniciar sesión' }}</a></p>
+  </section>
+</main>

@@ -58,9 +58,11 @@
 <!-- Cambia el botón por esto para que sea negro/oscuro, activo y clickeable -->
 <button
   class="btn-proceder-pago"
+  [disabled]="cargando() || actualizando() || !puedePagar()"
   routerLink="/checkout">
   Proceder al pago
 </button>
+        @if (!puedePagar()) { <p class="error" role="alert">Ajusta las cantidades o elimina los perfumes agotados antes de continuar.</p> }
         <a routerLink="/" class="continue">Seguir comprando</a>
       </aside>
     </div>

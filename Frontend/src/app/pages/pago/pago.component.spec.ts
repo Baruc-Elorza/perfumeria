@@ -12,6 +12,7 @@ describe('Formulario de pago', () => {
     const confirmar = vi.fn().mockResolvedValue({ paymentIntent: { id: 'pi_prueba', status: 'succeeded' } });
     const elemento = {
       mount: vi.fn(),
+      destroy: vi.fn(),
       on: vi.fn((evento: string, callback: () => void) => { if (evento === 'ready') alEstarListo = callback; }),
     };
     mocks.loadStripe.mockResolvedValue({

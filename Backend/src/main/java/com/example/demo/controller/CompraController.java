@@ -81,6 +81,8 @@ public class CompraController {
                     "total", pedido.getTotal()
             ));
 
+        } catch (org.springframework.web.server.ResponseStatusException e) {
+            throw e;
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest()
                     .body(Map.of("error", e.getMessage()));

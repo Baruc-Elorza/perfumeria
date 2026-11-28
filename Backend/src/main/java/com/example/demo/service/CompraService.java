@@ -26,12 +26,14 @@ public class CompraService {
     private final NotificacionCompraService notificacionCompraService;
     private final PagoService pagoService;
     private final UsuarioRepository usuarioRepository;
+    private final com.example.demo.repository.PerfumeRepository perfumes;
 
-    public CompraService(PedidoRepository pedidoRepository, NotificacionCompraService notificacionCompraService, PagoService pagoService, UsuarioRepository usuarioRepository) {
+    public CompraService(PedidoRepository pedidoRepository, NotificacionCompraService notificacionCompraService, PagoService pagoService, UsuarioRepository usuarioRepository, com.example.demo.repository.PerfumeRepository perfumes) {
         this.pedidoRepository = pedidoRepository;
         this.notificacionCompraService = notificacionCompraService;
         this.pagoService = pagoService;
         this.usuarioRepository = usuarioRepository;
+        this.perfumes = perfumes;
     
     }
 
@@ -89,6 +91,7 @@ public class CompraService {
     );
 
 
+    validarExistencias(pedido);
     return pedidoRepository.save(pedido);
 }
 
@@ -101,7 +104,7 @@ public class CompraService {
 
         // 1. Buscar el pedido y comprobar que pertenece al usuario.
         Pedido pedido = pedidoRepository
-                .findByIdAndClienteEmail(pedidoId, clienteEmail)
+                .bloquearPorIdYClienteEmail(pedidoId, clienteEmail)
                 .orElseThrow(() ->
                         new IllegalArgumentException(
                                 "No se encontró el pedido para este usuario."
@@ -164,6 +167,10 @@ if (!metadataCoincide && !esPagoAntiguoVerificado) {
             );
         }
 
+        // Descontar en la misma transacción que confirma el pedido y registra los correos.
+        // El bloqueo del pedido evita repetirlo; la actualización condicional impide stock negativo.
+        descontarExistencias(pedido);
+
         // 5. Actualizar el pedido.
         pedido.setEstado(Pedido.EstadoPedido.PAGADO);
         pedidoRepository.save(pedido);
@@ -219,4 +226,48 @@ if (!metadataCoincide && !esPagoAntiguoVerificado) {
         // 8. Registrar la notificación HU-13.
         notificacionCompraService.registrar(datosNotificacion);
     }
+    @Transactional(readOnly = true)
+    public void validarExistencias(Pedido pedido) {
+        for (var entrada : cantidadesDelPedido(pedido).entrySet()) {
+            var perfume = perfumes.findById(entrada.getKey()).orElseThrow(() ->
+                    new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT,
+                            "Uno de los perfumes ya no está disponible. Actualiza el carrito."));
+            int disponibles = perfume.getStock() == null ? 0 : perfume.getStock();
+            if (entrada.getValue() > disponibles) {
+                throw new org.springframework.web.server.ResponseStatusException(org.springframework.http.HttpStatus.CONFLICT,
+                        "Solo hay " + disponibles + " unidades disponibles de " + perfume.getNombre()
+                                + ". Ajusta la cantidad antes de pagar.");
+            }
+        }
+    }
+
+    private java.util.SortedMap<Long, Integer> cantidadesDelPedido(Pedido pedido) {
+        if (pedido.getProductos() == null || pedido.getProductos().isEmpty()) {
+            throw new IllegalStateException("El pedido no tiene productos para descontar.");
+        }
+        // Siempre se actualizan los perfumes en el mismo orden para reducir bloqueos cruzados.
+        var cantidades = new java.util.TreeMap<Long, Integer>();
+        for (var producto : pedido.getProductos()) {
+            if (producto.getProductoId() == null || producto.getCantidad() == null || producto.getCantidad() < 1) {
+                throw new IllegalStateException("El pedido contiene cantidades de productos inválidas.");
+            }
+            try {
+                cantidades.merge(producto.getProductoId(), producto.getCantidad(), Math::addExact);
+            } catch (ArithmeticException ex) {
+                throw new IllegalStateException("La cantidad solicitada supera el límite permitido.");
+            }
+        }
+        return cantidades;
+    }
+
+    private void descontarExistencias(Pedido pedido) {
+        var cantidades = cantidadesDelPedido(pedido);
+        for (var entrada : cantidades.entrySet()) {
+            if (perfumes.descontarExistencias(entrada.getKey(), entrada.getValue()) != 1) {
+                throw new IllegalStateException("No hay existencias suficientes para completar el pedido. "
+                        + "El pago ya fue aprobado: no vuelvas a pagar y contacta al administrador para revisarlo.");
+            }
+        }
+    }
+
 }

@@ -2,8 +2,9 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
-  Input
+  Input, Output, EventEmitter, OnDestroy, DestroyRef, inject
 } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import {
   loadStripe,
@@ -39,7 +40,10 @@ import { PagoService } from '../../services/pago.service';
       }
     </div>
   `,})
-export class PagoComponent implements AfterViewInit {
+export class PagoComponent implements AfterViewInit, OnDestroy {
+  @Output() compraConfirmada = new EventEmitter<void>();
+  private readonly destroyRef = inject(DestroyRef);
+  private destruido = false;
 
   @Input() monto: number = 0;
   @Input() pedidoId = '';
@@ -61,11 +65,13 @@ export class PagoComponent implements AfterViewInit {
   ) {}
 
   ngAfterViewInit(): void {
-    this.pagoService.obtenerConfiguracion().subscribe({
+    this.pagoService.obtenerConfiguracion().pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: async (config) => {
         try {
           this.stripe = await loadStripe(config.publicKey);
+          if (this.destruido) return;
         } catch {
+          if (this.destruido) return;
           this.mensaje = 'No se pudo cargar el formulario de pago. Recarga la página e inténtalo de nuevo.';
           this.cargando = false;
           this.cdr.detectChanges();
@@ -86,8 +92,16 @@ export class PagoComponent implements AfterViewInit {
          return;
        }
 
-       this.pagoService.crearPago(this.pedidoId).subscribe({
+       this.pagoService.crearPago(this.pedidoId).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
           next: (respuesta) => {
+            if (respuesta.pagoConfirmado) {
+              this.pagoExitoso = true;
+              this.cargando = false;
+              this.mensaje = 'Este pedido ya está pagado.';
+              this.cdr.detectChanges();
+              this.compraConfirmada.emit();
+              return;
+            }
             this.paymentIntentId = respuesta.paymentIntentId;
 
             this.elements = this.stripe!.elements({
@@ -107,7 +121,7 @@ export class PagoComponent implements AfterViewInit {
           },
           error: (error) => {
             console.error('Error al crear PaymentIntent:', error);
-            this.mensaje = 'No se pudo iniciar el pago.';
+            this.mensaje = error.error?.message || 'No se pudo iniciar el pago.';
             this.cargando = false;
             this.cdr.detectChanges();
           }
@@ -120,6 +134,11 @@ export class PagoComponent implements AfterViewInit {
         this.cdr.detectChanges();
       }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destruido = true;
+    this.paymentElement?.destroy();
   }
 
   async pagar(): Promise<void> {
@@ -141,6 +160,7 @@ export class PagoComponent implements AfterViewInit {
         redirect: 'if_required'
       });
     } catch {
+      if (this.destruido) return;
       this.procesando = false;
       this.listo = false;
       this.mensaje = 'No se pudo verificar el pago. Revisa el pedido antes de volver a intentarlo.';
@@ -148,6 +168,7 @@ export class PagoComponent implements AfterViewInit {
       return;
     }
 
+    if (this.destruido) return;
     if (resultado.error) {
       this.procesando = false;
       console.error('Error en el pago:', resultado.error);
@@ -166,12 +187,13 @@ export class PagoComponent implements AfterViewInit {
         this.pagoService.confirmarCompra(
       this.pedidoId,
       this.paymentIntentId
-    ).subscribe({
+    ).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: (respuesta) => {
         this.mensaje = respuesta.mensaje;
         this.pagoExitoso = true;
         this.procesando = false;
         this.cdr.detectChanges();
+        this.compraConfirmada.emit();
       },
       error: (error) => {
         console.error('Error al confirmar la compra:', error);

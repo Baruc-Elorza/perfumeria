@@ -18,6 +18,16 @@
         <label>Marca *<input name="marca" [(ngModel)]="nuevoPerfume.marca" required maxlength="255"></label>
         <label>Precio (MXN) *<input type="number" name="precio" [(ngModel)]="nuevoPerfume.precio" required min="0.01" step="0.01" aria-describedby="precio-ayuda"><small id="precio-ayuda">El precio mínimo es $0.01 MXN.</small></label>
         <label>Existencias *<input type="number" name="stock" [(ngModel)]="nuevoPerfume.stock" required min="0" step="1"></label>
+        <label>Mililitros (ml)<input type="number" name="ml" [(ngModel)]="nuevoPerfume.ml" min="1" max="2147483647" step="1" placeholder="Ej. 100"></label>
+        <label>Concentración
+          <select name="concentracion" [(ngModel)]="nuevoPerfume.concentracion">
+            <option [ngValue]="null">Sin especificar</option>
+            <option value="EDC">EDC</option>
+            <option value="EDT">EDT</option>
+            <option value="EDP">EDP</option>
+            <option value="PARFUM">PARFUM</option>
+          </select>
+        </label>
         <label class="ancho">Descripción<textarea name="descripcion" [(ngModel)]="nuevoPerfume.descripcion" maxlength="500" rows="3"></textarea></label>
         <label class="ancho">URL de imagen<input type="url" name="imagenUrl" [(ngModel)]="nuevoPerfume.imagenUrl" maxlength="255" placeholder="https://ejemplo.com/perfume.jpg"></label>
         <label>Aroma inicial<input name="notasTop" [(ngModel)]="nuevoPerfume.notasTop" maxlength="500"></label>
@@ -42,6 +52,8 @@
   @if (detalle(); as producto) {
     <section class="estado product-info" aria-label="Detalle del perfume">
       <h2>{{ producto.nombre }} — {{ producto.marca }}</h2>
+      @if (producto.ml) { <p>Presentación: {{ producto.ml }} ml</p> }
+      @if (producto.concentracion) { <p>Concentración: {{ producto.concentracion }}</p> }
       <p>{{ producto.descripcion || 'Sin descripción.' }}</p>
       <p>{{ producto.precio | currency:'MXN':'symbol-narrow' }} MXN · Existencias: {{ producto.stock }}</p>
       <p>Aroma inicial: {{ producto.notasTop || 'Sin especificar' }}</p>

@@ -23,10 +23,12 @@ export class PagoService {
     pedidoId: string
   ): Observable<{
     clientSecret: string;
+    pagoConfirmado?: boolean;
     paymentIntentId: string;
   }> {
     return this.http.post<{
       clientSecret: string;
+    pagoConfirmado?: boolean;
       paymentIntentId: string;
     }>(
       `${this.apiUrl}/crear`,

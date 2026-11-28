@@ -25,7 +25,7 @@ public class Perfume {
     private String marca;
 
     public enum concentracionEnum{
-        EDF,
+        EDC,
         EDT,
         EDP,
         PARFUM
@@ -44,10 +44,10 @@ public class Perfume {
     private String notasBase;
 
     @Column(length = 3)
-    private int ml;
+    private Integer ml;
 
     @NotNull(message = "El precio es obligatorio") 
-    @DecimalMin(value = "0.01", message = "El precio mínimo es $0.01 MXN")
+    @DecimalMin(value = "1.00", message = "El precio mínimo es $1.00 MXN")
     private Double precio;
 
     @NotNull(message = "El stock es obligatorio") 
@@ -58,7 +58,7 @@ public class Perfume {
 
     public Perfume() {}
 
-    public Perfume(String nombre, String marca, int ml, concentracionEnum concentracion, String notasTop, String notasMiddle,
+    public Perfume(String nombre, String marca, Integer ml, concentracionEnum concentracion, String notasTop, String notasMiddle,
         String notasBase, Double precio, Integer stock, String imagenUrl) {
         this.nombre = nombre;
         this.marca = marca;
@@ -81,8 +81,8 @@ public class Perfume {
     public String getDescripcion() { return descripcion; }
     public void setDescripcion(String descripcion) { this.descripcion = descripcion; }
 
-    public int getMl() { return ml; }
-    public void setMl(int ml) { this.ml = ml; }
+    public Integer getMl() { return ml; }
+    public void setMl(Integer ml) { this.ml = ml; }
 
     public concentracionEnum getConcentracion() { return concentracion; }
     public void setConcentracion(concentracionEnum concentracion) { this.concentracion = concentracion; }

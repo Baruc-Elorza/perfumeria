@@ -9,6 +9,18 @@ import java.util.Map;
 
 @RestControllerAdvice
 public class ApiExceptionHandler {
+    @ExceptionHandler(org.springframework.web.bind.MethodArgumentNotValidException.class)
+    ResponseEntity<Map<String, String>> datosInvalidos(org.springframework.web.bind.MethodArgumentNotValidException error) {
+        return ResponseEntity.badRequest().body(Map.of("message", "Revisa los campos obligatorios y su formato."));
+    }
+    @ExceptionHandler(org.springframework.http.converter.HttpMessageNotReadableException.class)
+    ResponseEntity<Map<String, String>> formatoInvalido() {
+        return ResponseEntity.badRequest().body(Map.of("message", "La solicitud contiene datos con formato inválido."));
+    }
+    @ExceptionHandler(com.stripe.exception.StripeException.class)
+    ResponseEntity<Map<String, String>> falloPasarela() {
+        return ResponseEntity.status(502).body(Map.of("message", "No se pudo verificar la operación con Stripe. Actualiza el pedido antes de intentarlo de nuevo."));
+    }
     @ExceptionHandler(org.springframework.security.authentication.DisabledException.class)
     ResponseEntity<Map<String, String>> cuentaBloqueada() {
         return ResponseEntity.status(401).body(Map.of("message", "Tu cuenta está bloqueada. Contacta al administrador."));

@@ -15,7 +15,8 @@ public class UsuarioActivoFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getRequestURI().equals("/api/auth/login");
+        return request.getRequestURI().equals("/api/auth/login")
+                || request.getRequestURI().startsWith("/api/auth/recuperacion/");
     }
 
     @Override

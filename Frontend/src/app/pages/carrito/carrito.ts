@@ -1,5 +1,5 @@
 import { CurrencyPipe } from '@angular/common';
-import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnInit, computed, inject, signal } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
@@ -18,6 +18,9 @@ export class Carrito implements OnInit {
     items: [],
     subtotal: 0,
   });
+
+  readonly puedePagar = computed(() => this.carrito().items.length > 0 && this.carrito().items.every(
+    producto => Number.isInteger(producto.cantidad) && producto.cantidad > 0 && producto.cantidad <= producto.stock));
 
   readonly cargando = signal(true);
   readonly actualizando = signal(false);
@@ -40,11 +43,13 @@ export class Carrito implements OnInit {
 cambiarCantidad(producto: LineaCarrito | any, diferencia: number): void {
   // Extraemos el ID del producto asegurando que no sea undefined
   const perfumeId = producto.perfumeId ?? producto.id ?? producto.productoId;
-  const cantidadNueva = (producto.cantidad || 1) + diferencia;
+  const cantidadSolicitada = (producto.cantidad || 1) + diferencia;
+  const cantidadNueva = diferencia < 0 && producto.stock > 0
+    ? Math.min(cantidadSolicitada, producto.stock) : cantidadSolicitada;
 
   // Evitamos peticiones innecesarias si baja de 1 o sobrepasa el stock
   if (this.actualizando() || cantidadNueva < 1) return;
-  if (producto.stock && cantidadNueva > producto.stock) return;
+  if (cantidadNueva > producto.stock) return;
 
   if (!perfumeId) {
     console.error('Error: No se encontró el perfumeId en el producto', producto);

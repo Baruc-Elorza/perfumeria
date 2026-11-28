@@ -138,6 +138,23 @@ class DemoApplicationTests {
         assertEquals("Aroma fresco", detalle.get("descripcion").asText());
         assertEquals(100, detalle.get("ml").asInt());
         assertEquals("EDP", detalle.get("concentracion").asText());
+        for (String concentracion : java.util.List.of("EDC", "EDT", "EDP", "PARFUM")) {
+            JsonNode presentacion = contenido(request(cliente, "POST", "/api/perfumes",
+                    datos.replace("EDP", concentracion)), 200);
+            assertEquals(concentracion, presentacion.get("concentracion").asText());
+            assertEquals(100, presentacion.get("ml").asInt());
+        }
+        assertEquals(400, request(cliente, "POST", "/api/perfumes", datos.replace("\"ml\":100", "\"ml\":0")).statusCode());
+        assertEquals(400, request(cliente, "POST", "/api/perfumes", datos.replace("\"ml\":100", "\"ml\":-1")).statusCode());
+        String sinPresentacion = datos.replace("\"ml\":100", "\"ml\":null");
+        JsonNode sinMl = contenido(request(cliente, "POST", "/api/perfumes", sinPresentacion), 200);
+        assertTrue(sinMl.get("ml").isNull());
+        JsonNode actualizadoSinMl = contenido(request(cliente, "PUT", "/api/perfumes/" + id, sinPresentacion), 200);
+        assertTrue(actualizadoSinMl.get("ml").isNull());
+        JsonNode sinCampoMl = contenido(request(cliente, "POST", "/api/perfumes",
+                datos.replace("\"ml\":100,", "")), 200);
+        assertTrue(sinCampoMl.get("ml").isNull());
+
         HttpClient comprador = nuevoCliente();
         request(comprador, "POST", "/api/usuarios/registro",
                 "{\"nombre\":\"Comprador\",\"email\":\"comprador@test.example\",\"contrasenia\":\"test12345\"}");

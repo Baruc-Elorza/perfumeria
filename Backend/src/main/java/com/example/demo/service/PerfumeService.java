@@ -59,6 +59,9 @@ public class PerfumeService {
                 || datos.getStock() == null || datos.getStock() < 0) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "El precio mínimo es $0.01 MXN y las existencias deben ser no negativas.");
         }
+        if (datos.getMl() != null && datos.getMl() < 1) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Los mililitros deben ser mayores que cero.");
+        }
         validarLongitud(datos.getNombre(), 255);
         validarLongitud(datos.getDescripcion(), 500);
         validarLongitud(datos.getMarca(), 255);

@@ -22,6 +22,9 @@
       </button>
     </form>
 
+    @if (!registrando()) {
+      <p class="alternativa"><a routerLink="/recuperar-contrasena" class="volver">¿Olvidaste tu contraseña?</a></p>
+    }
     <p class="alternativa">
       {{ registrando() ? '¿Ya tienes cuenta?' : '¿Aún no tienes cuenta?' }}
       <button type="button" class="link" (click)="alternarModo()">{{ registrando() ? 'Inicia sesión' : 'Regístrate' }}</button>

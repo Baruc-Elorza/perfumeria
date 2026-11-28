@@ -3881,3 +3881,17 @@ html:has(.detalle-perfume[open]) { overflow: hidden; }
 }
 @media (hover: none) { .page-catalogo .detalle-ayuda { display: none; } }
 @media (prefers-reduced-motion: reduce) { .page-catalogo .detalle-imagen img { transition: none; } }
+
+/* Acciones para retomar o cancelar una compra pendiente. */
+.page-historial .acciones-pendientes { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; padding: 20px 24px; border-top: 1px solid var(--color-border); }
+.page-historial .confirmacion-pendiente { width: 100%; padding: 16px; background: #faf8f5; border: 1px solid var(--color-border); border-radius: 8px; }
+.page-historial .confirmacion-pendiente button { margin: 8px 12px 0 0; }
+.page-historial .pago-pendiente { padding: 24px; border-top: 1px solid var(--color-border); }
+.page-historial .pago-pendiente h3 { font: 400 1.65rem var(--font-elegant, Georgia, serif); }
+.page-historial .pago-pendiente > p { margin: 12px 0 20px; }
+.page-historial .pago-pendiente > button { margin-top: 20px; }
+.page-historial .enlace-producto { color: inherit; font-weight: 700; text-decoration: underline; text-underline-offset: 4px; }
+.page-historial .enlace-producto:hover { color: var(--color-gold-dark); }
+.page-historial .enlace-producto:focus-visible { outline: 2px solid var(--color-gold-dark); outline-offset: 4px; }
+
+.login-page .recuperacion-exito { color: #236442; padding: 14px; background: #eef7f0; border: 1px solid #b8d7c2; border-radius: 6px; line-height: 1.6; }

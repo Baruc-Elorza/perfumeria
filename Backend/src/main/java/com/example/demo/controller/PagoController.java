@@ -32,6 +32,9 @@ public class PagoController {
     @Autowired
         private PedidoRepository pedidoRepository;
 
+    @Autowired
+    private com.example.demo.service.GestionPedidoService gestionPedidos;
+
     @Value("${stripe.public.key}")
     private String publicKey;
 
@@ -46,40 +49,7 @@ public class PagoController {
                     .body(Map.of("mensaje", "Debes iniciar sesión."));
         }
 
-        Optional<Pedido> pedidoEncontrado =
-                pedidoRepository.findByIdAndClienteEmail(
-                        pedidoId,
-                        authentication.getName()
-                );
-
-        if (pedidoEncontrado.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body(Map.of(
-                            "mensaje",
-                            "No se encontró el pedido para este usuario."
-                    ));
-        }
-
-        Pedido pedido = pedidoEncontrado.get();
-
-        if (pedido.getEstado() != Pedido.EstadoPedido.PENDIENTE) {
-            return ResponseEntity.status(HttpStatus.CONFLICT)
-                    .body(Map.of(
-                            "mensaje",
-                            "El pedido no está pendiente de pago."
-                    ));
-        }
-
-        PaymentIntent intent = pagoService.crearPago(
-                pedido.getTotal(),
-                pedido.getId().toString()
-        );
-
-        Map<String, String> response = new HashMap<>();
-        response.put("clientSecret", intent.getClientSecret());
-        response.put("paymentIntentId", intent.getId());
-
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(gestionPedidos.iniciarPago(pedidoId, authentication.getName()));
     }
 
     @GetMapping("/estado/{id}")

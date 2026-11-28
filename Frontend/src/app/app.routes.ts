@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { RecuperacionComponent } from './pages/recuperacion/recuperacion.component';
 import { AdminPerfumesComponent } from './pages/admin-perfumes/admin-perfumes.component';
 import { Carrito } from './pages/carrito/carrito';
 import { CatalogoPerfumesComponent } from './pages/catalogo-perfumes/catalogo-perfumes.component';
@@ -14,6 +15,8 @@ import { AdminUsuariosComponent } from './pages/admin-usuarios/admin-usuarios.co
 export const routes: Routes = [
     { path: '', component: CatalogoPerfumesComponent, pathMatch: 'full' },
     { path: 'login', component: LoginComponent },
+    { path: 'recuperar-contrasena', component: RecuperacionComponent },
+    { path: 'restablecer-contrasena', component: RecuperacionComponent, data: { restablecer: true } },
     { path: 'carrito', component: Carrito, canActivate: [authGuard] },
     { path: 'checkout', component: CheckoutComponent, canActivate: [authGuard] },
     { path: 'direcciones', component: DireccionesComponent, canActivate: [authGuard] },

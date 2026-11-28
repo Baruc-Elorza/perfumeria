@@ -2,12 +2,13 @@
 import { CommonModule, CurrencyPipe, DatePipe } from '@angular/common';
 import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { PagoComponent } from '../pago/pago.component';
 import { Pedido, PedidoService } from '../../services/pedido.service';
 
 @Component({
   selector: 'app-historial-pedidos',
   standalone: true,
-  imports: [CommonModule, CurrencyPipe, DatePipe, RouterLink],
+  imports: [CommonModule, CurrencyPipe, DatePipe, RouterLink, PagoComponent],
   templateUrl: './historial-pedidos.html',
 })
 export class HistorialPedidosComponent implements OnInit {
@@ -20,6 +21,10 @@ export class HistorialPedidosComponent implements OnInit {
   error = '';
   confirmandoEntrega = false;
   mensajeEntrega = '';
+  mensajePedido = '';
+  pagoPendiente: Pedido | null = null;
+  confirmacionCancelacion: string | null = null;
+  cancelandoId: string | null = null;
 
   ngOnInit(): void {
     this.cargarHistorial();
@@ -122,6 +127,41 @@ confirmarRecepcion(pedido: Pedido): void {
   });
 }
 
+
+  pagarPendiente(pedido: Pedido): void {
+    if (pedido.estado !== 'PENDIENTE' || this.cancelandoId !== null) return;
+    this.pagoPendiente = pedido;
+    this.confirmacionCancelacion = null;
+    this.mensajePedido = '';
+  }
+
+  compraPagada(pedido: Pedido): void {
+    this.pagoPendiente = null;
+    this.pedidos = this.pedidos.map(p => p.id === pedido.id ? { ...p, estado: 'PAGADO' } : p);
+    this.mensajePedido = 'Pago confirmado. Tu pedido ya aparece como pagado.';
+    this.cdr.detectChanges();
+  }
+
+  cancelarPendiente(pedido: Pedido): void {
+    if (pedido.estado !== 'PENDIENTE' || this.cancelandoId !== null) return;
+    this.pagoPendiente = null;
+    this.cancelandoId = pedido.id;
+    this.mensajePedido = '';
+    this.pedidoService.cancelarPedido(pedido.id).subscribe({
+      next: respuesta => {
+        this.pedidos = this.pedidos.map(p => p.id === pedido.id ? { ...p, estado: respuesta.estado } : p);
+        this.confirmacionCancelacion = null;
+        this.cancelandoId = null;
+        this.mensajePedido = 'Pedido cancelado.';
+        this.cdr.detectChanges();
+      },
+      error: err => {
+        this.cancelandoId = null;
+        this.mensajePedido = err.error?.message || 'No se pudo cancelar el pedido. Actualiza su estado e inténtalo de nuevo.';
+        this.cdr.detectChanges();
+      }
+    });
+  }
 
   textoEstado(estado: string): string {
     switch (estado) {

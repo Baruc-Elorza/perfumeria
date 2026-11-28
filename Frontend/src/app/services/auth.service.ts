@@ -29,6 +29,19 @@ export class AuthService {
     );
   }
 
+  solicitarRecuperacion(email: string): Observable<{ mensaje: string }> {
+    return this.http.post<{ mensaje: string }>(`${this.api}/auth/recuperacion/solicitar`,
+      { email: email.trim().toLowerCase() });
+  }
+
+  validarEnlaceRecuperacion(token: string): Observable<{ valido: boolean }> {
+    return this.http.post<{ valido: boolean }>(`${this.api}/auth/recuperacion/validar`, { token });
+  }
+
+  restablecerContrasenia(token: string, contrasenia: string, confirmacion: string): Observable<{ mensaje: string }> {
+    return this.http.post<{ mensaje: string }>(`${this.api}/auth/recuperacion/restablecer`, { token, contrasenia, confirmacion });
+  }
+
   registrar(
     nombre: string,
     email: string,

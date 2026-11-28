@@ -1,11 +1,17 @@
 <div class="page-catalogo">
 <header class="catalogo-header">
   <a routerLink="/" class="logo">PERFUMERÍA</a>
-  <nav class="catalogo-nav" aria-label="Mi cuenta y compras">
-    <a routerLink="/carrito" class="back-link">Mi carrito</a>
-    @if (auth.usuario()) {
-      <a routerLink="/mis-pedidos" class="back-link">Mis pedidos</a>
-      <a routerLink="/direcciones" class="back-link">Mis direcciones</a>
+  <nav class="catalogo-nav" [attr.aria-label]="auth.usuario()?.administrador ? 'Administración' : 'Mi cuenta y compras'">
+    @if (auth.usuario()?.administrador) {
+      <a routerLink="/admin/perfumes" class="back-link">Perfumes</a>
+      <a routerLink="/admin/pedidos" class="back-link">Envíos</a>
+      <a routerLink="/admin/usuarios" class="back-link">Usuarios</a>
+    } @else {
+      <a routerLink="/carrito" class="back-link">Mi carrito</a>
+      @if (auth.usuario()) {
+        <a routerLink="/mis-pedidos" class="back-link">Mis pedidos</a>
+        <a routerLink="/direcciones" class="back-link">Mis direcciones</a>
+      }
     }
   </nav>
   <div class="catalogo-cuenta">
@@ -17,14 +23,6 @@
   }
   </div>
 </header>
-  @if (auth.usuario()?.administrador) {
-    <nav class="catalogo-admin" aria-label="Administración">
-      <span>ADMINISTRACIÓN</span>
-      <a routerLink="/admin/perfumes">Perfumes</a>
-      <a routerLink="/admin/pedidos">Envíos</a>
-      <a routerLink="/admin/usuarios">Usuarios</a>
-    </nav>
-  }
 <main class="container">
   <section class="catalogo-presentacion" aria-labelledby="titulo-catalogo">
     <div>

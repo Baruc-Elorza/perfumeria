@@ -28,7 +28,7 @@ export class AdminPerfumesComponent implements OnInit {
   ngOnInit(): void { this.cargarPerfumes(); }
 
   private vacio(): Perfume {
-    return { nombre: '', marca: '', precio: 0, stock: 0, descripcion: '',
+    return { nombre: '', marca: '', precio: 0, stock: 0, ml: null, concentracion: null, descripcion: '',
       imagenUrl: '', notasTop: '', notasMiddle: '', notasBase: '' };
   }
 
@@ -65,6 +65,10 @@ export class AdminPerfumesComponent implements OnInit {
       || !Number.isFinite(datos.precio) || datos.precio < 0.01 || datos.stock == null
       || !Number.isInteger(datos.stock) || datos.stock < 0) {
       this.error.set('Completa nombre y marca, un precio mínimo de $0.01 MXN y existencias enteras no negativas.');
+      return;
+    }
+    if (datos.ml != null && (!Number.isInteger(datos.ml) || datos.ml < 1 || datos.ml > 2147483647)) {
+      this.error.set('Los mililitros deben ser un número entero mayor que cero.');
       return;
     }
     const editando = this.editandoId !== null;
